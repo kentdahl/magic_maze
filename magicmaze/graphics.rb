@@ -1,4 +1,7 @@
 require 'sdl'
+
+require 'magicmaze/tile'
+
 module MagicMaze
 
   ################################################
@@ -304,13 +307,13 @@ module MagicMaze
     #
 
     def set_palette( pal, start_color = 0 )
-      @screen.set_palette( SDL::PHYSPAL|SDL::LOGPAL, pal, start_color )
+      @screen.set_palette( SDL::PHYSPAL, pal, start_color )
     end
 
     def fade_out( tr = 0, tg = 0, tb = 0 )
       mypal = @sprite_palette.dup
       @old_palette = mypal
-      range = 127
+      range = 63 # 127
       (0..range).each {|i|
 	factor = (range-i).to_f / range
 	set_palette( mypal.map {|r,g,b| 
@@ -326,7 +329,7 @@ module MagicMaze
     def fade_in
       mypal = @old_palette || @sprite_palette
       tr, tg, tb = *(@fade_color || [0,0,0])
-      range = 127
+      range = 63 # 127
       (0..range).each {|i|
 	factor = i.to_f / range
 	set_palette( mypal.map {|r,g,b| 
@@ -417,4 +420,11 @@ module MagicMaze
 
   end # Graphics
 
+end
+
+
+
+# For testing
+if $0 == __FILE__
+  MagicMaze::Graphics.new
 end
