@@ -132,7 +132,7 @@ module MagicMaze
         x = ox + dx
         y = oy + dy        
         entity = @location.map.entity.get(x, y)        
-        if (entity and entity.kind_of? Monster) then 
+        if (entity and entity.kind_of? Monster and entity.alive?) then 
           play_sound( :punch )
           loose_health( 1 )
         end

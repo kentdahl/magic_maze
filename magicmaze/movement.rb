@@ -30,6 +30,7 @@ module MagicMaze
       else
         raise ArgumentError, "Could not add #{diff.class} to Location."
       end
+      # puts "#{@x}+#{dx}, #{@y}+#{dy}"
       set_coords!( @x+dx, @y+dy )
     end
 
@@ -97,36 +98,93 @@ module MagicMaze
 
   ## 
   # an entity on the map.
-  class EntityLocation < MapLocation
+  class GeneralEntityLocation < MapLocation
     attr_reader :entity
-    def initialize( entity, *args)
+    def initialize( entity_type, entity, *args)
       @entity = entity
+      @entity_type = entity_type
       super(*args)
+    end
+
+    def remove_old_entity
+      @grid = @map.send(@entity_type)
+      old_entity = @grid.get(@x, @y) 
+      if old_entity == @entity
+	@grid.set(@x,@y, nil) 
+      end
     end
 
     def set_coords!(x,y)
       oldx, oldy = @x, @y
       was_moved = super(x,y)
       if was_moved
-        old_entity = @map.entity.get(oldx, oldy) if oldx && oldy
-        unless not old_entity or old_entity == @entity
-          raise ArgumentError, "Moved entity not found on point of origin."
-        end
-        replaced_entity = @map.entity.get(x,y)       
-        unless not replaced_entity
-          raise ArgumentError, "Replaced existing entity, map corrupted."
-        end
+	@grid = @map.send(@entity_type)
+        old_entity = @grid.get(oldx, oldy) if oldx && oldy
+        replaced_entity = @grid.get(x,y)       
+
+        warn_could_not_find_old_entity unless not old_entity or old_entity == @entity
+        warn_replacing_existing_entity  unless not replaced_entity
+
         # Remove our previous position on the map
-        @map.entity.set(oldx,oldy, nil) if oldx&&oldy
-        @map.entity.set( x,y, @entity )
+        @grid.set(oldx,oldy, nil) if oldx&&oldy
+        @grid.set( x,y, @entity )
       end
       return was_moved
     end
 
     def allowed_access_to?( x, y )
-      super and not @map.entity.get(x,y)
+      @grid = @map.send(@entity_type)
+      super and not @grid.get(x,y)
     end
+
+    def warn_could_not_find_old_entity
+    end
+
+    def warn_replacing_existing_entity
+    end
+
   end
+
+
+  ## 
+  # an entity on the map.
+  class EntityLocation < GeneralEntityLocation
+    def initialize( *args)
+      super(:entity, *args)
+    end
+
+    def warn_could_not_find_old_entity
+      raise ArgumentError, "Moved entity not found on point of origin."
+    end
+
+    def warn_replacing_existing_entity
+      raise ArgumentError, "Replaced existing entity, map corrupted."
+    end
+
+  end
+
+
+
+  class SpiritualLocation < GeneralEntityLocation
+    def initialize( *args)
+      super(:spiritual, *args)
+    end
+    def allowed_access_to?( x, y )
+      true
+    end
+
+    def set_coords!(x,y)
+      if allowed_access_to?( x, y )
+        super(x,y)
+      else
+        nil
+      end
+    end
+
+
+
+  end
+
 
 
 

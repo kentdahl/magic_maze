@@ -191,7 +191,7 @@ module MagicMaze
     def add_active_entity( entity )
       @active_entities.add_entity( entity )
     end
-    protected :add_active_entity
+    # protected :add_active_entity
 
 
   end

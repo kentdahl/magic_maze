@@ -17,6 +17,14 @@ module MagicMaze
     def active?
       true
     end
+
+    ##
+    # try to move in the facing direction
+    def move_forward(*a)
+      @location.add!( @direction )
+    end
+
+
   end
 
   class Being < Entity
@@ -26,12 +34,6 @@ module MagicMaze
     def initialize( *args )
       super(*args)
       @direction = Direction.new
-    end
-
-    ##
-    # try to move in the facing direction
-    def move_forward(*a)
-      @location.add!( @direction )
     end
 
 
@@ -44,9 +46,18 @@ module MagicMaze
 
 
     def add_life( diff )
+      old_life = @life
       @life += diff
-      @life = 0 if @life < 0
       @life = MAX_LIFE if @life > MAX_LIFE
+
+      if @life <= 0
+	@life = 0
+	location.remove_old_entity
+	unless location.get(:object)
+	  location.set(:object,  DEFAULT_TILES[ :BLOOD_SPLAT ])
+	end
+	(old_life > 0 ? :died : :dead) 
+      end
     end
 
 
@@ -72,21 +83,57 @@ module MagicMaze
     def initialize( *args )
       super(*args)
     end
-    def sprite_id
-      (@tile ? @tile.sprite_id : 0)
+  end
+
+  class Missile < Entity
+    def initialize( caster, map = nil, x = 0, y = 0, tile = nil )
+      @location = SpiritualLocation.new( self, map, x, y )
+      @tile = tile
+      @caster = caster
+      @direction = @caster.direction.dup
+      @active = true
+    end
+    def action_tick( *args )
+      return unless @active
+      backgorund =  @location.get(:background)
+      entity     =  @location.get(:entity)
+      if @location.get(:background).blocked?
+	remove_missile
+      elsif entity and entity.kind_of? Monster
+	if entity.add_life( -@tile.damage ) == :died
+	  puts "SMACK! #{entity.alive?}"
+	  @caster.play_sound( :argh ) 
+	  @caster.increase_score( 1 ) # whats the value again?
+	end
+	remove_missile
+      else
+	move_forward || remove_missile
+      end
+     end
+
+    def remove_missile
+      @active = false
+      @location.remove_old_entity
+    end
+
+    def active?
+      @active
     end
   end
 
 
-
+  ###############################
+  # Monsters
+  #
   class Monster < Being
     def initialize( map, x, y, tile )
       super( map, x, y, tile )
       @life = tile.start_health
+      puts "Monster life: #@life"
       @sleep = 8
     end
 
-    def action_tick( *args )      
+    def action_tick( *args )           
       @sleep -= 1
       if @sleep < 0    
         ox = @location.x
@@ -100,7 +147,8 @@ module MagicMaze
           @sleep = 4
         end
       end
-    end
+
+    end # action_tick
 
   end
 
