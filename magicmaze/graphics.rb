@@ -374,6 +374,7 @@ module MagicMaze
     #
 
     def set_palette( pal, start_color = 0 )
+      pal ||= @sprite_palette
       @screen.set_palette( SDL::PHYSPAL, pal, start_color )
     end
 
@@ -518,6 +519,26 @@ module MagicMaze
         @scrolltext_index = - @xsize
       end
 
+    end
+
+
+    def setup_rotating_palette( range, screen = nil )
+      pal = @sprite_palette
+      if screen
+        pal = @background_images[ screen ].get_palette
+      end
+      @rotating_palette = pal[ range ]
+      @rotating_palette_range = range
+    end
+
+    ##
+    #
+    def rotate_palette
+      pal = @rotating_palette 
+      col = pal.shift
+      pal.push col
+
+      @screen.set_palette( SDL::PHYSPAL|SDL::LOGPAL, pal, @rotating_palette_range.first )
     end
 
 
