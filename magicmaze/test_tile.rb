@@ -3,6 +3,16 @@ require 'test/unit'
 require 'magicmaze/tile'
 
 
+class TestBackgroundTile < Test::Unit::TestCase
+  def test_blocked
+    t = MagicMaze::BackgroundTile.new( 5, true )
+    assert( t.blocked? )
+    t = MagicMaze::BackgroundTile.new( 6, false )
+    assert( ! t.blocked? )
+  end
+end
+
+
 class TestSpellTile < Test::Unit::TestCase
 
   class TestSpell < MagicMaze::SpellTile

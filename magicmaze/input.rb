@@ -25,8 +25,11 @@ module MagicMaze
 	SDL::Key::R      => :restart_level,
 
 	SDL::Key::PAGEUP   => :increase_volume,
-	SDL::Key::PAGEDOWN   => :decrease_volume,
-	
+	SDL::Key::PAGEDOWN => :decrease_volume,
+
+	SDL::Key::KP_PLUS   => :increase_speed,
+	SDL::Key::KP_MINUS  => :decrease_speed,
+
 
        
       }

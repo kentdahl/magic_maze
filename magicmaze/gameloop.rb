@@ -24,6 +24,7 @@ module MagicMaze
 
       @level = level
       @map = filemap.to_gamemap
+      @map_title = filemap.title
       if @player
         @player.reset( @map, @restart_status )
 	@restart_status = nil
@@ -116,6 +117,16 @@ module MagicMaze
       @sound.play_sound( :bonus )
     end
 
+    def increase_speed
+      @game_delay -= 5 if @game_delay > 10      
+      puts "Game delay: #@game_delay"
+    end
+
+    def decrease_speed
+      @game_delay += 5 if @game_delay < 100      
+      puts "Game delay: #@game_delay"
+    end
+
 
    def helpscreen
      @graphics.show_help
@@ -178,6 +189,8 @@ module MagicMaze
 
     def game_loop
       puts "Game loop"  
+      
+      # Fade in the background
       @graphics.fade_in do 
 	@graphics.put_screen( :background, false, false )
 	draw_now
@@ -219,6 +232,17 @@ module MagicMaze
     def start
       begin
         load_map( @level )
+
+	# Loading message
+	loading_message = "Entering level " + 
+	  @level.to_s + "\n#@map_title\nGet ready!"
+	@graphics.fade_in_and_out do
+	  @graphics.clear_screen
+	  @graphics.show_long_message(loading_message, false, :fullscreen )
+	end
+
+
+
         game_loop
         case @state
         when :next_level  

@@ -13,8 +13,10 @@ module MagicMaze
     MONSTER_NUMBER_END   = MONSTER_NUMBER_BEGIN + 20 - 1
     EMPTY_ROW = []
 
+    TILE_BITS   = 127
+    BLOCKED_BIT = 128
 
-    attr_reader :startx, :starty
+    attr_reader :startx, :starty, :title
 
     ##
     # Open an old-style filemap for Magic Maze.
@@ -49,7 +51,7 @@ module MagicMaze
       @startx =   header_data[24]
       @starty =   header_data[25]
       @default_wall_tile = header_data[30]
-      @last_level = header_data[32]&128==128
+      @last_level = header_data[32]&BLOCKED_BIT==BLOCKED_BIT
 
       @title = ""
       index = 128        
@@ -123,7 +125,7 @@ module MagicMaze
     ##
     # return background tile, without the blocked bit.
     def get_background_tile( x, y )
-      get_background_data( x, y ) & 127
+      get_background_data( x, y ) & TILE_BITS
     end
     
 
@@ -143,7 +145,7 @@ module MagicMaze
     ##
     # is that position blocked?
     def is_blocked?( x, y )
-      get_background_data( x, y ) & 128 == 128
+      get_background_data( x, y ) & BLOCKED_BIT == BLOCKED_BIT
     end
 
 
@@ -157,7 +159,7 @@ module MagicMaze
       background_tile = BackgroundTile.new(0, false)
       wall_tile       = BackgroundTile.new(wall_id, true)
       @tilehash[:background][0] = background_tile
-      @tilehash[:background][wall_id] = wall_tile
+      @tilehash[:background][wall_id|BLOCKED_BIT] = wall_tile
 
 
       gamemap = GameMap.new(background_tile, wall_tile,
@@ -166,9 +168,22 @@ module MagicMaze
         each_column{|x|  
           # background tiles.
           tile_id =  self.get_background_data( x, y )
+
+	  tile_number = tile_id&TILE_BITS
+	  tile_blocked = tile_id&BLOCKED_BIT==BLOCKED_BIT
+	  
           tile = fetch_or_create_tile( tile_id, :background ) {|tile_id| 
-            BackgroundTile.new( tile_id&127, tile_id&128==128 )
+            BackgroundTile.new( tile_number, tile_blocked )
           }
+
+	  # Just for testing...
+	  if tile.blocked? and !tile_blocked
+	    puts "ERROR with tile at #{x}, #{y}" 
+	    p @tilehash[:background][10]
+	    p @tilehash[:background][138]
+	    p tile
+	  end
+
           gamemap.set_background( x, y, tile )
           # object tiles
           tile_id = self.get_object_data( x, y )

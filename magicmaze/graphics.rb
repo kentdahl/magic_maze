@@ -28,6 +28,7 @@ module MagicMaze
     VIEW_AREA_UPPER_LEFT_Y = 2
 
     # rectangles on the display. [startx, starty, width, height, colour]  
+    FULLSCREEN          = [ 0, 0, 320, 240,0]
     INVENTORY_RECTANGLE = [230, 16, 87,32, 0] 
     LIFE_MANA_RECTANGLE = [230, 63, 87,16, 0] 
     SCORE_RECTANGLE     = [230, 93, 87,14, 0] 
@@ -45,8 +46,8 @@ module MagicMaze
 
 
     def initialize
-      @xsize = 320
-      @ysize = 240
+      @xsize = FULLSCREEN[2]
+      @ysize = FULLSCREEN[3]
       @bpp = 8 # 16 wont work
       SDL.init( SDL::INIT_VIDEO )
       SDL::Mouse.hide
@@ -180,7 +181,7 @@ module MagicMaze
     # Show a single line message centered in the 
     # maze view area.
     #
-    def show_message( text )
+    def show_message( text, flip = true )
       rect = MAZE_VIEW_RECTANGLE
       @screen.fillRect(*rect)
 
@@ -195,14 +196,14 @@ module MagicMaze
 		 x + (w-tw)/2,
 		 y + (h-th)/2, 
 		 @font32 ) 
-      @screen.flip
+      @screen.flip if flip
     end
 
     ##
     # Show a multi-line message centered in the
     # maze view area.
-    def show_long_message( text )
-      rect = MAZE_VIEW_RECTANGLE
+    def show_long_message( text, flip = true, fullscreen = false )
+      rect = ( fullscreen ? FULLSCREEN : MAZE_VIEW_RECTANGLE)
       @screen.fillRect(*rect)
 
       gth = 0
@@ -227,7 +228,7 @@ module MagicMaze
 	y_offset += th
       end
 
-      @screen.flip
+      @screen.flip if flip
     end
 
     
@@ -337,29 +338,38 @@ module MagicMaze
       set_palette( mypal )
     end
 
+    def fade_in_and_out( sleep_ms = 1000, &block )
+      fade_in( &block )
+      SDL.delay( sleep_ms )
+      fade_out( &block )      
+    end
+
+    def clear_screen
+      @screen.fillRect( 0, 0, @xsize, @ysize, 0 )
+    end
 
     ####################################
     #
     def show_help
-      @screen.fillRect( 0, 0, @xsize, @ysize, 0 )
-
-      write_smooth_text( "Magic Maze Help", 50, 0, @font32 )
+      clear_screen
 
       lines = [
+	'  ---++* Magic Maze Help *++---',
 	'Arrow keys to move the wizard.',
-	'Ctrl  :-  Cast attack spell',
-	'Alt   :-  Cast secondary spell',
+	'Ctrl :-  Cast attack spell',
+	'Alt :-  Cast secondary spell',
 	'X / Z :- Toggle attack spell',
 	'A / S :- Toggle secondary spell',
 	'',
 	'Esc / Q :- Quit playing',
-	'F9 :- Restart level',
+	'F9 / R :- Restart level',
 	# '[F4]: Load game    [F5]: Save game',
 	# '[S]: Sound on/off',
-	'PgUp / PgDn :- Tune Volume'
+	'PgUp / PgDn :- Tune Volume',
+	'Plus / Minus :- Tune Speed (on keypad)',
       ]
       
-      y_offset = 48
+      y_offset = 0
       font = @font16
       lines.each{|line|
 	write_smooth_text( line, 5, y_offset, font )
