@@ -56,6 +56,7 @@ module MagicMaze
         },
         :titlescreen => {
           :normal_keys => {
+            SDL::Key::F1     => :test_helpscreen,
             SDL::Key::F6     => :test_fade,
             SDL::Key::F12    => :toogle_fullscreen,
             SDL::Key::ESCAPE => :exit_game,
@@ -88,6 +89,23 @@ module MagicMaze
 	end until event.kind_of? SDL::Event2::KeyUp
 	return event
       end
+
+
+      YES_NO_ANSWERS = {
+	SDL::Key::ESCAPE => false,
+	SDL::Key::Q => false,
+	SDL::Key::N => false,
+	SDL::Key::Y => true,	  
+      }
+
+      def get_yes_no_answer
+	answers = YES_NO_ANSWERS
+	begin
+	  key = get_key_press.sym
+	end until answers.has_key?( key )
+	return answers[ key ]
+      end
+
       
       def check_input      
         event = SDL::Event2.poll

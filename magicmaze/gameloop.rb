@@ -84,13 +84,25 @@ module MagicMaze
       @graphics.toogle_fullscreen
     end
 
+
+    ##
+    # Refactored block form for all actions that require verification. 
+    #
+    def really_do?( message )
+      @graphics.show_long_message( message + "\n[Y/N]" )
+      if @game_input.get_yes_no_answer
+	yield
+      end
+    end
+
     def escape
-      puts "Escape"
-      @state = :stopped_game
+      really_do?("Quit game?") do
+	@state = :stopped_game
+      end
     end
 
     def pause_game
-      @graphics.show_message( "Paused!" )
+      @graphics.show_long_message( "Paused!\n\nPress any key\nto resume game." )
       @game_input.get_key_press
     end
 
@@ -101,7 +113,9 @@ module MagicMaze
     end
 
     def restart_level
-      @state = :restart_level
+      really_do?("Restart level?") do
+	@state = :restart_level
+      end
     end
 
     def next_primary_spell

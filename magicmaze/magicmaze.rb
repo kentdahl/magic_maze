@@ -64,16 +64,25 @@ module MagicMaze
 	@graphics.put_screen( :titlescreen, true )
       end
       @graphics.fade_in do 
-	@graphics.put_screen( :titlescreen, true )
+	put_titlescreen
       end
-
     end
-
-
+    
+    def test_helpscreen
+      @graphics.show_help
+      @title_input.get_key_press
+      put_titlescreen
+    end
+    
+    def put_titlescreen
+      @graphics.put_screen( :titlescreen, true )
+    end
+    
+    
     def title_loop
       puts "Title loop..."
       @graphics.fade_in do 
-	@graphics.put_screen( :titlescreen, true )
+	put_titlescreen
 	SDL.delay(1)
       end
       @state = :title_loop

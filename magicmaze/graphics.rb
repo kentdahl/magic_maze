@@ -175,6 +175,11 @@ module MagicMaze
       write_text( text, rect[0]+4, rect[1]-3 ) 
     end
 
+
+    ##
+    # Show a single line message centered in the 
+    # maze view area.
+    #
     def show_message( text )
       rect = MAZE_VIEW_RECTANGLE
       @screen.fillRect(*rect)
@@ -192,6 +197,39 @@ module MagicMaze
 		 @font32 ) 
       @screen.flip
     end
+
+    ##
+    # Show a multi-line message centered in the
+    # maze view area.
+    def show_long_message( text )
+      rect = MAZE_VIEW_RECTANGLE
+      @screen.fillRect(*rect)
+
+      gth = 0
+      lines = text.split("\n").collect do |line| 
+	tw, th = @font32.text_size( line ) 
+	gth += th
+	[ line, tw, th ]
+      end
+
+      x = rect[0] 
+      y = rect[1]
+      w = rect[2] 
+      h = rect[3] 
+
+      y_offset = y + (h-gth)/2
+
+      lines.each do |line, tw, th|
+	write_smooth_text(line, 
+			  x + (w-tw)/2,
+			  y_offset, 
+			  @font32 )
+	y_offset += th
+      end
+
+      @screen.flip
+    end
+
     
     ##
     # assumes life and mana are in range (0..100)
@@ -315,7 +353,7 @@ module MagicMaze
 	'A / S :- Toggle secondary spell',
 	'',
 	'Esc / Q :- Quit playing',
-	'[F9] :- Restart level',
+	'F9 :- Restart level',
 	# '[F4]: Load game    [F5]: Save game',
 	# '[S]: Sound on/off',
 	# '[PgUp]/[PgDn]: Tune Volume'
