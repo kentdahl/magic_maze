@@ -85,7 +85,10 @@ module MagicMaze
     end
   end
 
+  ###############################
+  # Missiles, such as attack spells
   class Missile < Entity
+
     def initialize( caster, map = nil, x = 0, y = 0, tile = nil )
       @location = SpiritualLocation.new( self, map, x, y )
       @tile = tile
@@ -94,6 +97,7 @@ module MagicMaze
       @active = true
       @movements = 10 # How far the missile goes.
     end
+
     def action_tick( *args )
       return unless @active
       backgorund =  @location.get(:background)
@@ -113,13 +117,13 @@ module MagicMaze
       if entity.kind_of?(Monster) && entity.add_life( -@tile.damage ) == :died
 	# puts "SMACK! #{entity.alive?}"
 	@caster.play_sound( :argh ) 
-	@caster.increase_score( 1 ) # whats the value again?
+	@caster.increase_score( 10 ) # whats the value again?
       end
       remove_missile
     end
 
     def remove_missile
-      @caster.missile_removed( self )
+      @tile.remove_missile( self )
       @active = false
       @location.remove_old_entity
     end
@@ -137,7 +141,6 @@ module MagicMaze
     def initialize( map, x, y, tile )
       super( map, x, y, tile )
       @life = tile.start_health
-      puts "Monster life: #@life"
       @sleep = 8
     end
 

@@ -17,8 +17,8 @@ module MagicMaze
     attr_reader :life, :mana
 
 
-    START_MANA = 81
-    START_LIFE = 13
+    START_MANA = 100
+    START_LIFE = 100
 
     def initialize( map, game_config, *args )
       super( map, map.start_x, map.start_y, *args )
@@ -35,8 +35,14 @@ module MagicMaze
       @last_action = nil
     end
 
-    def reset( map )
+    def reset( map, saved = nil )
       @location = EntityLocation.new( self, map, map.start_x, map.start_y )
+
+      if saved
+	@mana = saved[:mana]
+	@life = saved[:life]
+	@score = saved[:score]
+      end
 
       @mana = [ @mana, START_MANA ].max
       @life = [ @life, START_LIFE ].max
@@ -44,7 +50,20 @@ module MagicMaze
       @inventory = Inventory.new # Flush inventory
 
       @impulses = Hash.new
-      @last_action = nil     
+      @last_action = nil 
+
+      @override_sprite = nil
+    
+    end
+
+    ##
+    # return hash with saved game status... Only restart point of level so far.
+    def get_saved
+      {
+	:mana => @mana,
+	:life => @life,
+	:score=> @score
+      }      
     end
 
 
@@ -200,7 +219,7 @@ module MagicMaze
 
     # callback from missiles.
     def missile_removed( missile )
-      
+      # @num_missiles -= 1
     end
 
 
@@ -230,6 +249,8 @@ module MagicMaze
     end
 
 
+    ##################################################
+    #
     class SpellBook
       SPELL_NAMES = {
         :primary => [:spell_lightning, :spell_bigball, :spell_coolcube],
@@ -289,7 +310,7 @@ module MagicMaze
       end
       private :bound_index!
       
-    end
+    end # SpellBook
 
   end # Player
 

@@ -10,6 +10,9 @@ module MagicMaze
     class Control
       DEFAULT_KEY_MAP = {
         SDL::Key::F1     => :helpscreen,
+        SDL::Key::F4     => :load_game,
+        SDL::Key::F5     => :save_game,
+
         SDL::Key::F12    => :toogle_fullscreen,
         SDL::Key::ESCAPE => :escape,
         SDL::Key::Q      => :escape,
@@ -17,7 +20,9 @@ module MagicMaze
         SDL::Key::Z      => :previous_primary_spell,
         SDL::Key::S      => :next_secondary_spell,
         SDL::Key::A      => :previous_secondary_spell,
-
+	SDL::Key::P      => :pause_game,
+	SDL::Key::R      => :restart_level,
+	SDL::Key::F9     => :restart_level,
         
       }
       DEFAULT_ACTION_KEY_MAP = {
@@ -29,6 +34,8 @@ module MagicMaze
       }
       DEFAULT_MODIFIER_KEY_MAP = {
         SDL::Key::MOD_LCTRL  => :cast_primary_spell,
+        SDL::Key::MOD_LALT   => :cast_alternative_spell,
+
       }
       EMPTY_KEY_MAP = {}
 
@@ -73,6 +80,13 @@ module MagicMaze
         @keymap = KEY_MAPS[ key_mode ]
       end
 
+
+      def get_key_press
+	begin
+	  event = SDL::Event2.poll
+	end until event.kind_of? SDL::Event2::KeyUp
+	return event
+      end
       
       def check_input      
         event = SDL::Event2.poll

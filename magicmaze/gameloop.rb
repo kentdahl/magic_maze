@@ -16,7 +16,7 @@ module MagicMaze
       @level = level
     end
     
-    def load_map( level = 1 )
+    def load_map( level = 1, saved = nil )
       filename = level
       filename = sprintf("data/maps/mm_map.%03d",level
                          ) if level.kind_of? Numeric
@@ -25,10 +25,13 @@ module MagicMaze
       @level = level
       @map = filemap.to_gamemap
       if @player
-        @player.reset( @map )
+        @player.reset( @map, @restart_status )
+	@restart_status = nil
       else
         @player = Player.new( @map, @game_config )
       end
+      @saved_player_status = @player.get_saved
+
       GC.start
     end
 
@@ -84,6 +87,15 @@ module MagicMaze
     def escape
       puts "Escape"
       @state = :stopped_game
+    end
+
+    def pause_game
+      @graphics.show_message( "Paused" )
+      @game_input.get_key_press
+    end
+
+    def restart_level
+      @state = :restart_level
     end
 
     def next_primary_spell
@@ -155,8 +167,9 @@ module MagicMaze
         end
 
         time_end = SDL.get_ticks
-        delay = @game_delay + time_end - time_start
-        SDL.delay(delay) if delay>0
+        delay = @game_delay + time_start - time_end
+        SDL.delay(delay) if delay > 0 
+	# puts delay
       end
       @state
     end # loop
@@ -169,12 +182,15 @@ module MagicMaze
         case @state
         when :next_level  
           @level += 1 
+	when :restart_level
+	  @restart_status = @saved_player_status
         when :player_died 
           draw_now
           puts "Score: #{@player.score}"
           sleep 1
+	  @restart_status = @saved_player_status
         end
-      end while @state == :next_level
+      end while [:next_level,:restart_level,:player_died].include? @state
     end
 
 

@@ -165,6 +165,13 @@ module MagicMaze
       @screen.fillRect(*rect) 
       write_text( text, rect[0]+4, rect[1]-3 ) #216,75)
     end
+
+    def show_message( text )
+      rect = MAZE_VIEW_RECTANGLE
+      @screen.fillRect(*rect)
+      write_text( text, rect[0]+4, rect[1]-3 ) 
+      @screen.flip
+    end
     
     ##
     # assumes life and mana are in range (0..100)

@@ -62,7 +62,9 @@ Space      - cast secondary spell (only heal and summon mana so far)
 Z and X    - leaf through missile spells in book
 A and S    - leaf through secondary spells in book
 Esc        - exit game 
+F9 / R     - restart level
 F12	   - toggle fullscreen
+
 
 
 ___________________________________________________

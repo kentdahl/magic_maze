@@ -3,7 +3,7 @@ require 'sdl'
 module MagicMaze
   ################################################
   #
-  SOUND_ENABLED = true #|| false
+  SOUND_ENABLED = true unless defined? SOUND_ENABLED 
   if SOUND_ENABLED then
     class Sound
       def initialize
