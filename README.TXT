@@ -61,10 +61,19 @@ Ctrl       - cast missile spell (not implemented yet)
 Space      - cast secondary spell (only heal and summon mana so far)
 Z and X    - leaf through missile spells in book
 A and S    - leaf through secondary spells in book
-Esc        - exit game 
+Esc / Q    - exit game 
+F1         - help
 F9 / R     - restart level
 F12	   - toggle fullscreen
+PgUp/PgDn  - tune volume
 
+
+___________________________________________________
+*** Command-line options ***
+
+
+--nosound	Disables sound
+--level [#]	Assign a start level (1-10)
 
 
 ___________________________________________________
@@ -101,8 +110,8 @@ Graphics:               MenThal
 Level design:           Daniel Dahl
                         MenThal
 
-Game testing:           Per Ejnar Thomsen
-                        Daniel Dahl
+Game testing:           Per Ejnar Thomsen   (original)
+                        Daniel Dahl         (original)
 
 Other:
 - Free font found at: http://www.squaregear.net/fonts/ 

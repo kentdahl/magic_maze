@@ -2,6 +2,17 @@ TO DO
 - ideas, suggestions, plans etc for Magic Maze.
 
 
+MISSING FROM OLD MAGIC MAZE
+
+* Default background tiles differ to show motion.
+* Lookahead spell
+* Map spell
+* End game sequence
+* Load/save game
+* Train level
+	
+
+
 
 MOVEMENT
 
@@ -22,6 +33,11 @@ GAMEPLAY
 
 * different modes of enemy perception (some smell, some see, some hear)
   - change when/how they react to the player
+  - store events they can access (sound of player within range, smell of player within range etc)
+
+* triggers
+  - on positions (such as hints about key use before hitting doors)
+  - on events (specific monsters attacked)
 
 
 MULTIPLAYER
