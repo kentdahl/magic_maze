@@ -94,6 +94,12 @@ module MagicMaze
       @game_input.get_key_press
     end
 
+   def helpscreen
+     @graphics.show_help
+     @game_input.get_key_press
+     @graphics.put_screen( :background, false, false )
+    end
+
     def restart_level
       @state = :restart_level
     end

@@ -300,6 +300,36 @@ module MagicMaze
     end
 
 
+    ####################################
+    #
+    def show_help
+      @screen.fillRect( 0, 0, @xsize, @ysize, 0 )
+
+      write_smooth_text( "Magic Maze Help", 50, 0, @font32 )
+
+      lines = [
+	'Arrow keys to move the wizard.',
+	'Ctrl  :-  Cast attack spell',
+	'Alt   :-  Cast secondary spell',
+	'X / Z :- Toggle attack spell',
+	'A / S :- Toggle secondary spell',
+	'',
+	'Esc / Q :- Quit playing',
+	'[F9] :- Restart level',
+	# '[F4]: Load game    [F5]: Save game',
+	# '[S]: Sound on/off',
+	# '[PgUp]/[PgDn]: Tune Volume'
+	 ]
+      
+      y_offset = 48
+      font = @font16
+      lines.each{|line|
+	write_smooth_text( line, 5, y_offset, font )
+	y_offset+= font.height
+      }
+      
+      flip
+    end
 
 
   end # Graphics
