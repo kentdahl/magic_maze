@@ -105,14 +105,20 @@ module MagicMaze
       puts "Exiting..."
     end
 
-    def start_game
+    def start_game( level = nil, player_status = nil )
       @graphics.fade_out do 
 	@graphics.put_screen( :titlescreen, true )
       end
       @state = :starting_game
-      @current_game = GameLoop.new( self, @options[ :start_level] || 1 )
+      @current_game = GameLoop.new( self, level || @options[ :start_level] || 1, player_status )
       @current_game.start
       @state = :stopped_game
+    end
+
+
+    def select_game_checkpoint
+      level, status = @saved_checkpoints.max
+      start_game( level, status )      
     end
 
 

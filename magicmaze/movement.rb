@@ -4,8 +4,8 @@ module MagicMaze
   # a 2D location
   class Location
     attr_reader :x, :y
-    def initialize( x = 0, y = 0 )
-      set_coords!(x,y)
+    def initialize( ax = 0, ay = 0 )
+      set_coords!(ax,ay)
     end
 
     ##
@@ -132,6 +132,14 @@ module MagicMaze
         @grid.set( x,y, @entity )
       end
       return was_moved
+    end
+
+
+    def delete
+      old_entity = @grid.get(self.x, self.y) 
+      if old_entity == @entity
+	@map.send(@entity_type).set(self.x, self.y, nil )
+      end      
     end
 
     def allowed_access_to?( x, y )

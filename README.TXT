@@ -53,7 +53,7 @@ ___________________________________________________
 
 Space / Return - start playing
 Esc / Q        - quit game
-
+F4             - load savegame
 
 * In-game *       
 

@@ -25,6 +25,8 @@ module MagicMaze
 
     def initialize( map, game_config, *args )
       super( map, map.start_x, map.start_y, *args )
+      print "init: Player#location: ", @location.x, " ", @location.y, "\n"
+
       @game_config = game_config
       @score = 0
       @primary_spell = DEFAULT_ATTACK_SPELL_TILES[:spell_lightning]
@@ -39,7 +41,10 @@ module MagicMaze
     end
 
     def reset( map, saved = nil )
-      @location = EntityLocation.new( self, map, map.start_x, map.start_y )
+      if map
+        @location.delete # Necessary to release the player entity from the grid.
+        @location = EntityLocation.new( self, map, map.start_x, map.start_y )
+      end
 
       if saved
 	@mana = saved[:mana]

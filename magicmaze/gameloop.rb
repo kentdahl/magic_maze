@@ -10,13 +10,14 @@ module MagicMaze
 
     attr_reader :graphics, :sound, :input
 
-    def initialize( game_config, level = 1 )
+    def initialize( game_config, level = 1, player_status = nil )
       @game_config = game_config
       @graphics    = game_config.graphics
       @sound       = game_config.sound
       @input = @game_input  = Input::Control.new( self, :in_game )
       @game_delay  = 50
       @level = level
+      @restart_status = player_status
     end
     
     def load_map( level = 1, saved = nil )
@@ -29,12 +30,13 @@ module MagicMaze
       @level = level
       @map = filemap.to_gamemap
       @map_title = filemap.title
-      if @player
-        @player.reset( @map, @restart_status )
-	@restart_status = nil
-      else
-        @player = Player.new( @map, self ) # @game_config )
-      end
+
+      should_reset = @player || @restart_status
+      @player = Player.new( @map, self )  unless @player
+      @player.reset( @map, @restart_status )  if should_reset
+      @restart_status = nil
+
+
       @saved_player_status = @player.get_saved
       @game_config.update_checkpoint( level, @saved_player_status )
 
@@ -105,6 +107,10 @@ module MagicMaze
       really_do?("Quit game?") do
 	@state = :stopped_game
       end
+    end
+
+    def save_game
+      @game_config.save_checkpoints
     end
 
     def pause_game

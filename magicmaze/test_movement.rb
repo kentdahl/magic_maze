@@ -51,3 +51,4 @@ class TestDirection < Test::Unit::TestCase
 
 
 end
+

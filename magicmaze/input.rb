@@ -65,6 +65,7 @@ module MagicMaze
         :titlescreen => {
           :normal_keys => {
             SDL::Key::F1     => :test_helpscreen,
+            SDL::Key::F4     => :select_game_checkpoint,
             SDL::Key::F6     => :test_fade,
             SDL::Key::F12    => :toogle_fullscreen,
             SDL::Key::ESCAPE => :exit_game,
