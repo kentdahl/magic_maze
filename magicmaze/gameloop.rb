@@ -106,6 +106,17 @@ module MagicMaze
       @game_input.get_key_press
     end
 
+    def increase_volume
+      @sound.change_volume( 1 )
+      @sound.play_sound( :bonus )
+    end
+
+    def decrease_volume
+      @sound.change_volume( -1 )
+      @sound.play_sound( :bonus )
+    end
+
+
    def helpscreen
      @graphics.show_help
      @game_input.get_key_press

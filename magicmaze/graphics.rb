@@ -356,8 +356,8 @@ module MagicMaze
 	'F9 :- Restart level',
 	# '[F4]: Load game    [F5]: Save game',
 	# '[S]: Sound on/off',
-	# '[PgUp]/[PgDn]: Tune Volume'
-	 ]
+	'PgUp / PgDn :- Tune Volume'
+      ]
       
       y_offset = 48
       font = @font16

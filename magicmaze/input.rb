@@ -23,6 +23,11 @@ module MagicMaze
         SDL::Key::A      => :previous_secondary_spell,
 	SDL::Key::P      => :pause_game,
 	SDL::Key::R      => :restart_level,
+
+	SDL::Key::PAGEUP   => :increase_volume,
+	SDL::Key::PAGEDOWN   => :decrease_volume,
+	
+
        
       }
       DEFAULT_ACTION_KEY_MAP = {

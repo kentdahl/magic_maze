@@ -20,9 +20,10 @@ module MagicMaze
   class Game
 
     attr_reader :graphics, :sound
-    def initialize
+    def initialize( options )
+      @options = options
       @graphics = Graphics.new
-      @sound = Sound.new
+      @sound = if @options[:sound] then SDLSound.new else NoSound.new end
       @title_input = Input::Control.new( self, :titlescreen )    
       @quit = false
     end
@@ -104,7 +105,7 @@ module MagicMaze
 	@graphics.put_screen( :titlescreen, true )
       end
       @state = :starting_game
-      @current_game = GameLoop.new( self )
+      @current_game = GameLoop.new( self, @options[ :start_level] || 1 )
       @current_game.start
       @state = :stopped_game
     end
