@@ -90,7 +90,7 @@ module MagicMaze
     end
 
     def pause_game
-      @graphics.show_message( "Paused" )
+      @graphics.show_message( "Paused!" )
       @game_input.get_key_press
     end
 

@@ -28,11 +28,11 @@ module MagicMaze
     VIEW_AREA_UPPER_LEFT_Y = 2
 
     # rectangles on the display. [startx, starty, width, height, colour]  
-    INVENTORY_RECTANGLE = [230, 16, 87,32, 0]  # 316,47]
-    LIFE_MANA_RECTANGLE = [230, 63, 87,16, 0]  # 316,78]
-    SCORE_RECTANGLE     = [230, 93, 87,14, 0] # 316,106]
-    SPELL_RECTANGLE     = [230,126, 32,32, 0] #261,157]
-    ALT_SPELL_RECTANGLE = [285,126, 32,32, 0] #316,157]
+    INVENTORY_RECTANGLE = [230, 16, 87,32, 0] 
+    LIFE_MANA_RECTANGLE = [230, 63, 87,16, 0] 
+    SCORE_RECTANGLE     = [230, 93, 87,14, 0] 
+    SPELL_RECTANGLE     = [230,126, 32,32, 0] 
+    ALT_SPELL_RECTANGLE = [285,126, 32,32, 0] 
     MAZE_VIEW_RECTANGLE = [
       VIEW_AREA_UPPER_LEFT_X, VIEW_AREA_UPPER_LEFT_Y, 
       SPRITE_WIDTH*VIEW_AREA_MAP_WIDTH, SPRITE_HEIGHT*VIEW_AREA_MAP_HEIGHT, 0
@@ -69,7 +69,9 @@ module MagicMaze
       ## Fonts
       SDL::TTF.init
       # Free font found at: http://www.squaregear.net/fonts/ 
-      @font = SDL::TTF.open( "data/gfx/fraktmod.ttf", 16 )
+      @font16 = SDL::TTF.open( "data/gfx/fraktmod.ttf", 16 )
+      @font32 = SDL::TTF.open( "data/gfx/fraktmod.ttf", 32 )
+      @font = @font16
     end
 
 
@@ -153,8 +155,12 @@ module MagicMaze
       @screen.toggle_fullscreen
     end
 
-    def write_text( text, x, y )
-      @font.drawSolidUTF8(@screen,text,x,y,255,255,255)
+    def write_text( text, x, y, font = @font16 )
+      font.drawSolidUTF8(@screen,text,x,y,255,255,255)
+    end
+
+    def write_smooth_text( text, x, y, font = @font16 )
+      font.drawBlendedUTF8(@screen,text,x,y,255,255,255)
     end
 
 
@@ -166,13 +172,24 @@ module MagicMaze
       text = sprintf "%09d", score
       rect = SCORE_RECTANGLE
       @screen.fillRect(*rect) 
-      write_text( text, rect[0]+4, rect[1]-3 ) #216,75)
+      write_text( text, rect[0]+4, rect[1]-3 ) 
     end
 
     def show_message( text )
       rect = MAZE_VIEW_RECTANGLE
       @screen.fillRect(*rect)
-      write_text( text, rect[0]+4, rect[1]-3 ) 
+
+      tw, th = @font32.text_size( text )
+
+      x = rect[0] 
+      y = rect[1]
+      w = rect[2] 
+      h = rect[3] 
+      
+      write_smooth_text(text, 
+		 x + (w-tw)/2,
+		 y + (h-th)/2, 
+		 @font32 ) 
       @screen.flip
     end
     
