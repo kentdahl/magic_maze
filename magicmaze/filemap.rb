@@ -169,6 +169,11 @@ module MagicMaze
           # background tiles.
           tile_id =  self.get_background_data( x, y )
 
+	  # Change the plain empty background tile occasionally. Helps with large open spaces.
+	  if tile_id == 0 and x&2==2 and y&2==2 then
+	    tile_id = 1
+	  end
+	  
 	  tile_number = tile_id&TILE_BITS
 	  tile_blocked = tile_id&BLOCKED_BIT==BLOCKED_BIT
 	  

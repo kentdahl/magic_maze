@@ -52,7 +52,8 @@ ___________________________________________________
 * Title screen *
 
 Space / Return - start playing
-Esc            - quit game
+Esc / Q        - quit game
+
 
 * In-game *       
 
@@ -65,7 +66,8 @@ Esc / Q    - exit game
 F1         - help
 F9 / R     - restart level
 F12	   - toggle fullscreen
-PgUp/PgDn  - tune volume
+PageUp/Dn  - tune volume
+Plus/Minus - tune speed (on numeric keypad)
 
 
 ___________________________________________________
