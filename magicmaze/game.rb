@@ -25,6 +25,15 @@ module MagicMaze
     end
 
 
+    ##
+    # any clean-up.
+    # (remove entity from map, lists etc)
+    #
+    def remove_entity
+      @location.remove_old_entity
+    end
+
+
   end
 
   class Being < Entity
@@ -127,6 +136,11 @@ module MagicMaze
       @active = false
       @location.remove_old_entity
     end
+
+    def remove_entity
+      remove_missile
+    end
+
 
     def active?
       @active

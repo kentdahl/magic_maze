@@ -71,6 +71,14 @@ module MagicMaze
         }
         @entities.reject!{|entity| not entity.active? }
       end
+
+      def remove_all
+        @entities.each{|entity|
+          entity.remove_entity
+        }
+        @entities.clear
+      end
+
     end
 
 
@@ -192,6 +200,11 @@ module MagicMaze
       @active_entities.add_entity( entity )
     end
     # protected :add_active_entity
+
+
+    def purge
+      @active_entities.remove_all
+    end
 
     
     def iterate_all_cells( offset = 0, &block )

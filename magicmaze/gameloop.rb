@@ -27,6 +27,8 @@ module MagicMaze
                          ) if level.kind_of? Numeric
       filemap = MagicMaze::FileMap.new( filename )
 
+      @map.purge if @map # Clean up old map, if any.
+
       @level = level
       @map = filemap.to_gamemap
       @map_title = filemap.title
