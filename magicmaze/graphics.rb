@@ -13,7 +13,8 @@ module MagicMaze
 
     BACKGROUND_TILES_BEGIN = BackgroundTile::BACKGROUND_TILES_BEGIN
 
-    COL_RED = 20;   COL_GREEN = 30;  COL_BLUE = 40;
+    COL_WHITE=10;   COL_RED = 20;   COL_GREEN = 30;  COL_BLUE = 40; 
+    COL_YELLOW = 50;
 
     SPRITE_WIDTH = 32; SPRITE_HEIGHT = 32;
 
@@ -377,6 +378,40 @@ module MagicMaze
       }
       
       flip
+    end
+
+    ####################################
+    #
+    def draw_map( player )
+      map = player.location.map
+
+      rect = MAZE_VIEW_RECTANGLE
+      @screen.fillRect(*rect)
+
+      ox = rect[0] + (rect[2] - map.max_x - 2 )/2
+      oy = rect[1] + (rect[3] - map.max_y - 2 )/2
+
+      @screen.lock
+
+      # @screen.draw_rect( ox-1, oy-1, ox+map.max_x+1, oy+map.max_y+1, COL_WHITE )
+      map.iterate_all_cells(1) do |x,y, background, object, entity, spiritual|
+	col = nil
+	col = COL_WHITE   if background.blocked? 
+	col = COL_YELLOW  if entity.kind_of?( DoorTile )
+	col = COL_RED     if entity.kind_of?( Monster )
+	if col
+	  @screen.put_pixel( x + ox, y + oy, col )
+	end	
+      end
+
+      @screen.put_pixel( ox + player.location.x, oy + player.location.y, COL_BLUE )
+
+      @screen.unlock
+
+      @screen.flip
+
+
+      # TODO!
     end
 
 

@@ -7,11 +7,14 @@ require 'magicmaze/graphics'
 module MagicMaze
 
   class GameLoop
+
+    attr_reader :graphics, :sound, :input
+
     def initialize( game_config, level = 1 )
       @game_config = game_config
       @graphics    = game_config.graphics
       @sound       = game_config.sound
-      @game_input  = Input::Control.new( self, :in_game )
+      @input = @game_input  = Input::Control.new( self, :in_game )
       @game_delay  = 50
       @level = level
     end
@@ -29,7 +32,7 @@ module MagicMaze
         @player.reset( @map, @restart_status )
 	@restart_status = nil
       else
-        @player = Player.new( @map, @game_config )
+        @player = Player.new( @map, self ) # @game_config )
       end
       @saved_player_status = @player.get_saved
 

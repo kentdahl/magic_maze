@@ -71,8 +71,13 @@ Plus/Minus - tune speed (on numeric keypad)
 
 
 ___________________________________________________
-*** Command-line options ***
+*** Command-line usage ***
 
+Start Magic Maze by executing:
+
+  ruby mm.rb
+
+The following command-line options are available:
 
 --nosound	Disables sound
 --level [#]	Assign a start level (1-10)

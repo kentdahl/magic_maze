@@ -9,6 +9,7 @@ module MagicMaze
   class Player < Being
     attr_reader :impulses
     attr_reader :spellbook
+
     IMPULSES = [ :move_forward, :turn_around, :die ]
 
     attr_reader :score
@@ -19,6 +20,8 @@ module MagicMaze
 
     START_MANA = 100
     START_LIFE = 100
+
+    attr_reader :game_config
 
     def initialize( map, game_config, *args )
       super( map, map.start_x, map.start_y, *args )
