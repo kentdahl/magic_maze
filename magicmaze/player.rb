@@ -21,6 +21,9 @@ module MagicMaze
     START_MANA = 100
     START_LIFE = 100
 
+    GAIN_MANA_DELAY = 24
+    LOOSE_HEALTH_DELAY = 256
+
     attr_reader :game_config
 
     def initialize( map, game_config, *args )
@@ -38,6 +41,10 @@ module MagicMaze
 
       @impulses = Hash.new
       @last_action = nil
+
+      @gain_mana_delay = GAIN_MANA_DELAY
+      @loose_health_delay = LOOSE_HEALTH_DELAY
+
     end
 
     def reset( map, saved = nil )
@@ -105,6 +112,7 @@ module MagicMaze
       follow_impulses      
       check_floor
       check_nearby_monsters
+      check_counters
     end
     
     def follow_impulses
@@ -166,6 +174,21 @@ module MagicMaze
       }
     end
 
+    def check_counters
+
+      @gain_mana_delay -= 1
+      if( @gain_mana_delay < 0 )
+        add_mana( 1 )
+        @gain_mana_delay = GAIN_MANA_DELAY
+      end
+
+      @loose_health_delay -= 1
+      if( @loose_health_delay < 0 )
+        loose_health( 1 )
+        @loose_health_delay = LOOSE_HEALTH_DELAY
+      end
+
+    end
 
 
     def increase_score( diff )
