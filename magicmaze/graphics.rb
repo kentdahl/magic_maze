@@ -69,7 +69,7 @@ module MagicMaze
           SDL::Surface.load( GFX_PATH+filename ) 
       }
       #sprite_images = SDL::Surface.load( GFX_PATH+'sprites.pcx' )
-      @sprite_images = load_new_sprites || load_old_sprites
+      @sprite_images = load_new_sprites || load_old_sprites 
 
       ## Fonts
       SDL::TTF.init
@@ -482,6 +482,9 @@ module MagicMaze
     end
 
 
+    ##
+    # Prepare a large sprite containing the scrolltext
+    #
     def prepare_scrolltext( text )
       font = @font32
       textsize = font.text_size( text )
@@ -493,12 +496,14 @@ module MagicMaze
       @scrolltext.setColorKey( SDL::SRCCOLORKEY || SDL::RLEACCEL ,0)
 
 
-      font.drawSolidUTF8( @scrolltext, text, 0, 0,  255, 255, 255 )
+      font.drawBlendedUTF8( @scrolltext, text, 0, 0,  255, 255, 255 )
       @scrolltext_index = - @xsize
     end
 
 
-
+    ##
+    # Update the scrolltext area at the bottom of the screen.
+    #
     def update_scrolltext
       
       @screen.fillRect( 0, 200, @xsize, 40, 0 )
