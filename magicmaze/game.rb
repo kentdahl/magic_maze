@@ -92,6 +92,7 @@ module MagicMaze
       @caster = caster
       @direction = @caster.direction.dup
       @active = true
+      @movements = 10 # How far the missile goes.
     end
     def action_tick( *args )
       return unless @active
@@ -99,19 +100,26 @@ module MagicMaze
       entity     =  @location.get(:entity)
       if @location.get(:background).blocked?
 	remove_missile
-      elsif entity and entity.kind_of? Monster
-	if entity.add_life( -@tile.damage ) == :died
-	  puts "SMACK! #{entity.alive?}"
-	  @caster.play_sound( :argh ) 
-	  @caster.increase_score( 1 ) # whats the value again?
-	end
-	remove_missile
+      elsif entity and entity != @caster 
+	hit_entity( entity )
       else
-	move_forward || remove_missile
+	@movements -= 1
+	remove_missile if not move_forward or @movements < 1 
       end
-     end
+     
+    end
+
+    def hit_entity( entity )
+      if entity.kind_of?(Monster) && entity.add_life( -@tile.damage ) == :died
+	puts "SMACK! #{entity.alive?}"
+	@caster.play_sound( :argh ) 
+	@caster.increase_score( 1 ) # whats the value again?
+      end
+      remove_missile
+    end
 
     def remove_missile
+      @caster.missile_removed( self )
       @active = false
       @location.remove_old_entity
     end

@@ -255,7 +255,7 @@ module MagicMaze
         ]
       end
       def primary_spell
-        spell( :primary )
+	spell( :primary )
       end
       def secondary_spell
         spell( :secondary )
@@ -282,6 +282,12 @@ module MagicMaze
         nil
       end
       private :bound_index!
+
+
+      # callback from missiles.
+      def missile_removed( missile )
+
+      end
       
 
     end

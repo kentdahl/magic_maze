@@ -240,7 +240,8 @@ module MagicMaze
     end
     def do_magic 
       location = @caster.location
-      puts "Caster",location.map, location.x, location.y
+      # puts "Caster",location.map, location.x, location.y
+      @caster.play_sound( :zap )
       missile = Missile.new( @caster, location.map, location.x, location.y, self  )
       # location.map.spiritual.set(  location.x, location.y, missile )
       location.map.add_active_entity( missile )
