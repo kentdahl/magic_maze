@@ -7,6 +7,26 @@ module MagicMaze
   # module for handling input from the user.
   module Input
 
+    ##
+    # Callback for implementing states where 
+    # keys can only be used to break out of a loop or similar
+    #
+    class BreakCallback
+      def initialize( block )
+        @block = block
+      end
+      def callback
+        @block.call
+      end
+      alias :break :callback
+      def self.make_control( key_mode = :break, &block )
+        Control.new( self.new( block ), key_mode )
+      end
+    end
+
+    ##
+    # Control input.
+    #
     class Control
       DEFAULT_KEY_MAP = {
         SDL::Key::F1     => :helpscreen,
@@ -67,6 +87,8 @@ module MagicMaze
             SDL::Key::F1     => :test_helpscreen,
             SDL::Key::F4     => :select_game_checkpoint,
             SDL::Key::F6     => :test_fade,
+            SDL::Key::F7     => :test_endgame,
+
             SDL::Key::F12    => :toogle_fullscreen,
             SDL::Key::ESCAPE => :exit_game,
             SDL::Key::Q      => :exit_game,
@@ -75,7 +97,19 @@ module MagicMaze
           },
           :action_keys => { },
           :modifier_keys => EMPTY_KEY_MAP,
-        }
+        },
+        :break => {
+          :normal_keys => {
+            SDL::Key::ESCAPE => :break,
+            SDL::Key::Q      => :break,
+            SDL::Key::RETURN => :break,
+            SDL::Key::SPACE  => :break,
+          },
+          :action_keys => EMPTY_KEY_MAP,
+          :modifier_keys => EMPTY_KEY_MAP,
+        },
+        
+      
       }
       
       attr_accessor :callback

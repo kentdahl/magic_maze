@@ -482,6 +482,41 @@ module MagicMaze
     end
 
 
+    def prepare_scrolltext( text )
+      font = @font32
+      textsize = font.text_size( text )
+
+      @scrolltext = SDL::Surface.new(SDL::HWSURFACE, #|SDL::SRCCOLORKEY,
+                                    textsize.first, textsize.last, @screen)
+
+      @scrolltext.set_palette( SDL::LOGPAL|SDL::PHYSPAL, @sprite_palette, 0 )
+      @scrolltext.setColorKey( SDL::SRCCOLORKEY || SDL::RLEACCEL ,0)
+
+
+      font.drawSolidUTF8( @scrolltext, text, 0, 0,  255, 255, 255 )
+      @scrolltext_index = - @xsize
+    end
+
+
+
+    def update_scrolltext
+      
+      @screen.fillRect( 0, 200, @xsize, 40, 0 )
+
+      SDL.blit_surface( @scrolltext, 
+                       @scrolltext_index, 0, @xsize, @scrolltext.h,
+                       @screen, 0, 200 )
+
+      @scrolltext_index += 1
+
+      if @scrolltext_index > @scrolltext.w + @xsize
+        @scrolltext_index = - @xsize
+      end
+
+    end
+
+
+
   end # Graphics
 
 end

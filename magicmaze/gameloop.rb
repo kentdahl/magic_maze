@@ -258,6 +258,9 @@ module MagicMaze
         case @state
         when :next_level  
           @level += 1 
+          unless @game_config.check_level( @level ) 
+            @state = :endgame
+          end
 	when :restart_level
 	  @restart_status = @saved_player_status
         when :player_died 

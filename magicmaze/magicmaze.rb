@@ -21,6 +21,8 @@ module MagicMaze
   #
   class Game
 
+    NUM_LEVELS = 10
+
     attr_reader :graphics, :sound
     def initialize( options )
       @options = options
@@ -72,6 +74,10 @@ module MagicMaze
       end
     end
     
+    def test_endgame
+      show_end_game
+    end
+
     def test_helpscreen
       @graphics.show_help
       @title_input.get_key_press
@@ -110,9 +116,59 @@ module MagicMaze
 	@graphics.put_screen( :titlescreen, true )
       end
       @state = :starting_game
+
       @current_game = GameLoop.new( self, level || @options[ :start_level] || 1, player_status )
       @current_game.start
+      show_end_game if @state == :endgame
       @state = :stopped_game
+    end
+
+
+    END_GAME_TEXT =       
+      "LuciPer escapes into the dimension " +
+      "bettter known as...." +
+      " HELL ...    " +
+      "The world is once again safe...   " + 
+      " FOR NOW!   " + 
+      "Thank you for playing Magic Maze. " + 
+      "Hope you enjoyed it!    " +
+      "   ..Good Bye..     " + 
+      ""
+    
+
+    def show_end_game
+      @graphics.fade_in do 
+        @graphics.put_screen( :endscreen)
+        SDL.delay(10)
+      end
+      
+      puts "Looping end game."
+      loop_active = true
+
+      input = Input::BreakCallback.make_control{ loop_active = false }
+
+      @graphics.prepare_scrolltext( END_GAME_TEXT )
+
+      
+      # Cycle some of the colours.
+      while loop_active do
+        SDL.delay(10)
+        @graphics.update_scrolltext
+        
+        @graphics.flip
+        input.check_input
+      end
+
+      @sound.play_sound( :zap )
+
+      puts "Fade out end game."
+      @graphics.fade_out do 
+        @graphics.put_screen( :endscreen )
+        SDL.delay(10)
+      end
+
+      @state = :stopped_game
+      
     end
 
 
@@ -121,6 +177,19 @@ module MagicMaze
       start_game( level, status )      
     end
 
+
+
+    ##
+    # Check whether we have hit a "special" level, such as the end.
+    #
+    def check_level( level )
+      if level > NUM_LEVELS
+        @state = :endgame
+        false
+      else
+        true
+      end
+    end
 
 
     ##
