@@ -69,7 +69,7 @@ module MagicMaze
           SDL::Surface.load( GFX_PATH+filename ) 
       }
       #sprite_images = SDL::Surface.load( GFX_PATH+'sprites.pcx' )
-      @sprite_images = load_old_sprites
+      @sprite_images = load_new_sprites || load_old_sprites
 
       ## Fonts
       SDL::TTF.init
@@ -79,8 +79,9 @@ module MagicMaze
       @font = @font16
     end
 
-
-    # reads in the old sprites from the "undocumented" format I used
+    ##
+    # reads in the old sprites from the "undocumented" format I used.
+    #
     def load_old_sprites
       sprite_images = []
       File.open( GFX_PATH+'sprites.dat', 'rb'){|file|
@@ -125,6 +126,72 @@ module MagicMaze
       }
       sprite_images
     end
+
+
+
+    ##
+    # Load sprites from a large bitmap. Easier to edit.
+    #
+    def load_new_sprites
+      sprite_images = []
+      begin
+	spritemap = SDL::Surface.load( GFX_PATH + 'sprites.pcx' ) 
+      rescue
+	return nil
+      end
+
+      palette = spritemap.get_palette
+
+      lines = ( spritemap.h / 32 + 1)
+
+      @screen.set_palette( SDL::LOGPAL|SDL::PHYSPAL, palette, 0 )
+
+
+      (0...lines).each do|line|	
+	(0...10).each do|column|
+	  sprite = SDL::Surface.new(SDL::HWSURFACE, #|SDL::SRCCOLORKEY,
+                                    32,32,@screen)
+          mode =  SDL::LOGPAL|SDL::PHYSPAL
+
+	  x =  column * 32
+	  y = line * 32
+	  w = h = 32
+
+	  sprite.set_palette( mode, palette, 0 )
+	  sprite.setColorKey( SDL::SRCCOLORKEY || SDL::RLEACCEL ,0)
+
+	  SDL.blitSurface(spritemap,x,y,w,h,sprite,0,0)
+
+	  sprite_images << sprite.display_format
+	end
+      end
+
+      @sprite_palette = palette 
+
+      sprite_images
+    end
+
+
+
+    ##
+    # save sprites out to bitmap
+    #
+    def save_old_sprites( filename = "tmpgfx" )
+
+      height = ( (@sprite_images.size / 10) + 1 ) * 32
+
+      spritemap = SDL::Surface.new( SDL::SRCCOLORKEY, @xsize, height, @screen )
+      spritemap.set_palette( SDL::LOGPAL, @sprite_palette, 0 )
+
+      @sprite_images.each_with_index do|sprite, index|
+	y = (index / 10)  * 32
+	x = (index % 10 ) * 32
+	spritemap.put( sprite, x, y )
+      end
+
+      spritemap.save_bmp( filename + ".bmp" )      
+    end
+
 
 
     ######################################################
@@ -412,9 +479,6 @@ module MagicMaze
       @screen.unlock
 
       @screen.flip
-
-
-      # TODO!
     end
 
 
@@ -426,5 +490,21 @@ end
 
 # For testing
 if $0 == __FILE__
-  MagicMaze::Graphics.new
+  g = MagicMaze::Graphics.new
+
+  command = ARGV.first
+
+  case command
+  when 'save_sprites'
+    g.save_old_sprites 
+  when 'load_spritemap'
+    g.load_new_sprites
+    pal = g.instance_eval{ @sprite_palette }
+    p pal.class, pal.size
+    pal.each{|line|
+      puts
+      line.each{|i| printf( "%02x ", i) if i.kind_of?(Numeric) }
+    }
+  end
+
 end
