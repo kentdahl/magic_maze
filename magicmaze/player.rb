@@ -198,6 +198,12 @@ module MagicMaze
       end
     end
 
+    # callback from missiles.
+    def missile_removed( missile )
+      
+    end
+
+
 
     def sprite_id
       ( @override_sprite || @direction.value )
@@ -282,14 +288,7 @@ module MagicMaze
         nil
       end
       private :bound_index!
-
-
-      # callback from missiles.
-      def missile_removed( missile )
-
-      end
       
-
     end
 
   end # Player

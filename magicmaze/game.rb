@@ -111,7 +111,7 @@ module MagicMaze
 
     def hit_entity( entity )
       if entity.kind_of?(Monster) && entity.add_life( -@tile.damage ) == :died
-	puts "SMACK! #{entity.alive?}"
+	# puts "SMACK! #{entity.alive?}"
 	@caster.play_sound( :argh ) 
 	@caster.increase_score( 1 ) # whats the value again?
       end
