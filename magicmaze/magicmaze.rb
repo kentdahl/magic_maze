@@ -4,6 +4,8 @@ require 'magicmaze/graphics'
 require 'magicmaze/input'
 require 'magicmaze/sound'
 
+require 'yaml'
+
 # necessary for pthreads/sound problem?
 require 'rbconfig'
 if RUBY_PLATFORM =~ /linux/
@@ -26,6 +28,7 @@ module MagicMaze
       @sound = if @options[:sound] then SDLSound.new else NoSound.new end
       @title_input = Input::Control.new( self, :titlescreen )    
       @quit = false
+
     end
     
 
@@ -94,9 +97,11 @@ module MagicMaze
 
     def loop
       puts "Starting..."
+      load_checkpoints
       while not @quit
         title_loop
       end
+      save_checkpoints
       puts "Exiting..."
     end
 
@@ -110,8 +115,49 @@ module MagicMaze
       @state = :stopped_game
     end
 
+
+
+    ##
+    # Update the player checkpoint status for this level
+    # if the score is higher than previous value.
+    #
+    def update_checkpoint( level, status )
+      checkpoint = @saved_checkpoints[ level ]
+      if (not checkpoint) || (checkpoint[:score] <= status[:score])
+	puts "Updating checkpoint for level #{level}."
+	@saved_checkpoints[ level ] = status
+      end      
+    end
+
+
+    def load_checkpoints
+      checkpoints = Hash.new 
+      begin
+	File.open('data/progress.dat','r') do|file|
+	  obj = YAML.load( file )	  
+	  checkpoints = obj if obj.kind_of? Hash 
+	end
+      rescue Exception => e
+	puts "Error reading checkpoints: " + e.inspect	
+      end      
+      @saved_checkpoints = checkpoints
+    end
+
+    def save_checkpoints
+      begin
+	File.open('data/progress.dat','w') do|file|
+	  puts "Saving checkpoints..."
+	  file.puts @saved_checkpoints.to_yaml
+	end
+      rescue Exception => e
+	puts "Error saving checkpoints: " + e.inspect	
+      end            
+    end
+
+
       
   end
+
   
 end
 

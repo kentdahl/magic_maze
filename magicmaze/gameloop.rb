@@ -20,6 +20,7 @@ module MagicMaze
     end
     
     def load_map( level = 1, saved = nil )
+      puts "Loading level: #{level}"
       filename = level
       filename = sprintf("data/maps/mm_map.%03d",level
                          ) if level.kind_of? Numeric
@@ -35,6 +36,7 @@ module MagicMaze
         @player = Player.new( @map, self ) # @game_config )
       end
       @saved_player_status = @player.get_saved
+      @game_config.update_checkpoint( level, @saved_player_status )
 
       GC.start
     end
