@@ -86,6 +86,9 @@ module MagicMaze
               #((i<<2) | 3) + 3 }
           }
         end
+
+	@sprite_palette = palette
+
         # Loop over 1030 byte segments, which each is a sprite.
         begin
           sprite = SDL::Surface.new(SDL::HWSURFACE, # SDL::SRCCOLORKEY,
@@ -121,7 +124,7 @@ module MagicMaze
     # general graphics methods
 
     ## put up a background screen
-    def put_screen( screen, center = false )
+    def put_screen( screen, center = false, flip = true )
       @screen.fillRect(0,0,@xsize,@ysize,0)
       image = @background_images[ screen ]
       x,y=0,0
@@ -130,7 +133,7 @@ module MagicMaze
         y = (@ysize - image.h)/2        
       end
       @screen.put( image, x,y )
-      @screen.flip 
+      @screen.flip if flip
     end
 
     def put_background( sprite, x, y )
@@ -238,6 +241,48 @@ module MagicMaze
     def update_view_block( sprite_id )
       put_sprite( sprite_id, @curr_view_x, @curr_view_y )
     end
+
+
+    ####################################
+    #
+
+    def set_palette( pal, start_color = 0 )
+      @screen.set_palette( SDL::PHYSPAL|SDL::LOGPAL, pal, start_color )
+    end
+
+    def fade_out( tr = 0, tg = 0, tb = 0 )
+      mypal = @sprite_palette.dup
+      @old_palette = mypal
+      range = 127
+      (0..range).each {|i|
+	factor = (range-i).to_f / range
+	set_palette( mypal.map {|r,g,b| 
+		      [ ( r - tr ) * factor + tr,
+			( g - tg ) * factor + tg, 
+			( b - tb ) * factor + tb ]
+		    } )
+	yield i, range
+      }
+      @fade_color = [ tr, tg, tb ]
+    end
+
+    def fade_in
+      mypal = @old_palette || @sprite_palette
+      tr, tg, tb = *(@fade_color || [0,0,0])
+      range = 127
+      (0..range).each {|i|
+	factor = i.to_f / range
+	set_palette( mypal.map {|r,g,b| 
+		      [ ( r - tr ) * factor + tr,
+			( g - tg ) * factor + tg, 
+			( b - tb ) * factor + tb ]
+		    } )
+	yield i, range
+      }
+      set_palette( mypal )
+    end
+
+
 
 
   end # Graphics

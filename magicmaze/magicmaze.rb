@@ -58,10 +58,24 @@ module MagicMaze
       @sound.play_sound( :bonus )
     end
 
+    def test_fade
+      puts "hullo"
+      @graphics.fade_out do 
+	@graphics.put_screen( :titlescreen, true )
+      end
+      @graphics.fade_in do 
+	@graphics.put_screen( :titlescreen, true )
+      end
+
+    end
+
 
     def title_loop
       puts "Title loop..."
-      @graphics.put_screen( :titlescreen, true )
+      @graphics.fade_in do 
+	@graphics.put_screen( :titlescreen, true )
+	SDL.delay(1)
+      end
       @state = :title_loop
       while @state == :title_loop
         @title_input.check_input
@@ -77,6 +91,9 @@ module MagicMaze
     end
 
     def start_game
+      @graphics.fade_out do 
+	@graphics.put_screen( :titlescreen, true )
+      end
       @state = :starting_game
       @current_game = GameLoop.new( self )
       @current_game.start

@@ -12,6 +12,7 @@ module MagicMaze
         SDL::Key::F1     => :helpscreen,
         SDL::Key::F4     => :load_game,
         SDL::Key::F5     => :save_game,
+	SDL::Key::F9     => :restart_level,
 
         SDL::Key::F12    => :toogle_fullscreen,
         SDL::Key::ESCAPE => :escape,
@@ -22,8 +23,7 @@ module MagicMaze
         SDL::Key::A      => :previous_secondary_spell,
 	SDL::Key::P      => :pause_game,
 	SDL::Key::R      => :restart_level,
-	SDL::Key::F9     => :restart_level,
-        
+       
       }
       DEFAULT_ACTION_KEY_MAP = {
         SDL::Key::SPACE  => :cast_alternative_spell,
@@ -56,6 +56,7 @@ module MagicMaze
         },
         :titlescreen => {
           :normal_keys => {
+            SDL::Key::F6     => :test_fade,
             SDL::Key::F12    => :toogle_fullscreen,
             SDL::Key::ESCAPE => :exit_game,
             SDL::Key::Q      => :exit_game,

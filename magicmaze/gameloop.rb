@@ -146,8 +146,11 @@ module MagicMaze
 
 
     def game_loop
-      puts "Game loop"      
-      @graphics.put_screen( :background )
+      puts "Game loop"  
+      @graphics.fade_in do 
+	@graphics.put_screen( :background, false, false )
+	draw_now
+      end    
 
       @state = :game_loop
       while @state == :game_loop
@@ -171,6 +174,10 @@ module MagicMaze
         SDL.delay(delay) if delay > 0 
 	# puts delay
       end
+      @graphics.fade_out do  
+	@graphics.put_screen( :background, false, false )
+	draw_now
+      end    
       @state
     end # loop
     protected :game_loop
