@@ -137,7 +137,7 @@ module MagicMaze
   ###############################
   # Monsters
   #
-  class Monster < Being
+  class DumbMonster < Being
     def initialize( map, x, y, tile )
       super( map, x, y, tile )
       @life = tile.start_health
@@ -162,6 +162,93 @@ module MagicMaze
     end # action_tick
 
   end
+
+
+  ##
+  # Monster moving fairly close to the original Magic Maze monsters.
+  # Translated the Pascal code almost directly.
+  #
+  class OriginalMotionMonster < Being
+    def initialize( map, x, y, tile )
+      super( map, x, y, tile )
+      @life = tile.start_health
+      @sleep = 8
+    end
+
+    def action_tick( *args )           
+      @sleep -= 1
+      if @sleep < 0    
+	attempt_movement( *args )
+      end
+    end
+
+    def attempt_movement( game_data = {}, *args )
+
+      # Monster location
+      mx = @location.x
+      my = @location.y
+
+      # Player location
+      ploc = game_data[:player_location] || @location
+      px = ploc.x
+      py = ploc.y
+
+      jp = Direction::COMPASS_DIRECTIONS.collect{|i| rand(35) + 175 }  #  FOR j:=0 TO 3 DO jp[j]:=0+Random(35)+175;
+
+      if ( py < my ) 
+	jp[0] += 1000
+	jp[2] -= 200
+      end
+      if ( py > my ) 
+	jp[2] += 1000
+	jp[0] -= 200
+      end
+      if ( px > mx ) 
+	jp[1] += 1000
+	jp[3] -= 200
+      end
+      if ( px < mx ) 
+	jp[3] += 1000
+	jp[1] -= 200
+      end
+
+      mp = -3000
+      m = -1
+      jp.each_with_index {|desire, curr_direction|
+	if direction == @direction.value 
+	  desire += 15 # Prefer to go straight
+	end
+
+	# if blocked, set desire = 0
+	location = @location.to_maplocation + Direction.get_constant( curr_direction )
+	if location and not @location.allowed_access_to?( location.x, location.y )
+	  desire = 0
+	end
+	if not location
+	  puts "Orig Location(#{@location.x}, #{@location.y}) - #{direction}"
+	end
+
+
+	if desire > mp # Store the direction we desire the most.
+	  mp = desire
+	  m = curr_direction	  
+	end
+      }
+
+      if mp > 0
+	@direction = Direction.get_constant( m )
+	was_moved = move_forward
+	if was_moved
+	  @sleep = 8
+	end
+      end #
+
+    end 
+
+  end # OriginalMotionMonster 
+
+
+  Monster = OriginalMotionMonster
 
 
 end

@@ -165,7 +165,10 @@ module MagicMaze
 
         @state = catch( :state_change ) do 
           alive = @player.action_tick
-          @map.active_entities.each_tick
+	  game_data = { 
+	    :player_location => @player.location
+	  }
+          @map.active_entities.each_tick( game_data )
           @state
         end
 

@@ -35,7 +35,9 @@ module MagicMaze
     end
 
     def +( diff )
-      self.dup.add!(diff)
+      ret = self.dup
+      ret.add!(diff)
+      ret   # add! should ret self anyway?
     end
 
     def to_a
@@ -267,7 +269,11 @@ module MagicMaze
     W = WEST  = constant(W_ID)
       
     COMPASS_DIRECTIONS = [ N, E, S, W ]
-      
+
+    def self.get_constant( id )
+      COMPASS_DIRECTIONS[ id & MASK ]
+    end
+
   end # Direction
 
 end
