@@ -1,0 +1,199 @@
+require 'magicmaze/map'
+
+module MagicMaze
+  ## 
+  # Old style filemap.
+  # Basically just loads in the binary data as 8-byte strings.
+  class FileMap 
+    MAP_HEADER_SIZE = 256
+    MAP_SIZE = 32768
+    MAP_FILE_SIGNATURE = 'MagicMazeMap'
+    MAP_ROW_SIZE = 256
+    MONSTER_NUMBER_BEGIN = 40
+    MONSTER_NUMBER_END   = MONSTER_NUMBER_BEGIN + 20 - 1
+    EMPTY_ROW = []
+
+
+    attr_reader :startx, :starty
+
+    ##
+    # Open an old-style filemap for Magic Maze.
+    # Filename must point to a valid map file.
+    def initialize( filename, monster_maker = nil )
+      File.open(filename, 'rb'){|file|
+        header_data = file.read(MAP_HEADER_SIZE)
+        unless MAP_FILE_SIGNATURE == header_data[0,MAP_FILE_SIGNATURE.size]
+          raise ArgumentError, "Map file is invalid: "+filename
+        end
+
+        extract_from_header( header_data )
+
+        @real_checksum = 0
+        @map_rows = []
+        begin
+          row = file.read(MAP_ROW_SIZE)
+          extract_from_row( row ) if row
+        end while row     
+        @real_checksum &= 0xFFFF
+        unless @checksum == @real_checksum 
+          raise ArgumentError, "Map file checksum failed: "+
+            "Excpected #@checksum, found #@real_checksum."
+        end
+      }
+    end
+
+    ##
+    # Extract various data from the header part of the map.
+    def extract_from_header( header_data )
+      @checksum = header_data[16] + (header_data[17]<<8)
+      @startx =   header_data[24]
+      @starty =   header_data[25]
+      @default_wall_tile = header_data[30]
+      @last_level = header_data[32]&128==128
+
+      @title = ""
+      index = 128        
+      begin
+        char = header_data[index]
+        char = nil if char<32 or index>166
+        @title << char if char
+        index += 1
+      end while char 
+      @title.chop
+    end
+    private :extract_from_header
+
+    ##
+    # Extract map structure from rows.
+    def extract_from_row( row_data )
+      # calculate checksum
+      row_data.each_byte{|byte|
+        @real_checksum += byte
+      }
+      # what if the row is less than 256 bytes? Pad it.
+      unless row_data.size >= MAP_ROW_SIZE
+        row_data << "\000"*(MAP_ROW_SIZE-row_data.size)
+      end     
+      # store the raw data
+      @map_rows << row_data
+    end
+    private :extract_from_row
+
+
+    ##
+    # remove monsters from the map data and add them to the live
+    # monster list.
+    def extract_monsters( monster_maker )
+      each_row{|row, y|  # @map_rows.each_with_index{|row,y|
+        each_column{|x|  # (0...MAP_ROW_SIZE/2).each{|x|
+          object = row[x*2+1]
+          puts "#{x}, #{y}" unless object
+          if object >= MONSTER_NUMBER_BEGIN and object <= MONSTER_NUMBER_END
+            monster_maker.add_monster( object, x, y )
+            row[x*2+1]=0
+          end
+        }
+      }
+    end
+
+    # Iterate over every row (or y value)
+    def each_row( &block )
+      @map_rows.each_with_index{|row,y| yield row, y }
+    end
+
+    def each_column( &block )
+      (0...MAP_ROW_SIZE/2).each{|x| yield x }
+    end
+
+    ##
+    # return background code for the position given.
+    # If the most significant bit is set, it is blocked.
+    # If the coordinate is outside the map, a default block is returned.
+    def get_background_data( x, y )
+      row = @map_rows[y]
+      row ||= EMPTY_ROW
+      index = x*2
+      if (index<0||index>=row.size) then
+        @default_wall_tile 
+      else
+        row[index]
+      end
+    end
+
+    ##
+    # return background tile, without the blocked bit.
+    def get_background_tile( x, y )
+      get_background_data( x, y ) & 127
+    end
+    
+
+    ##
+    # return object code for the position given.
+    def get_object( x, y )
+      object = @map_rows[y][x*2+1]
+    end
+    alias :get_object_data :get_object
+
+    ##
+    # place an object.
+    def set_object( x, y, object )
+      @map_rows[y][x*2+1] = object
+    end
+
+    ##
+    # is that position blocked?
+    def is_blocked?( x, y )
+      get_background_data( x, y ) & 128 == 128
+    end
+
+
+    def to_gamemap
+      @tilehash = {
+        :object=>DEFAULT_TILES_ID_LOOKUP.dup,
+        :background=>{}
+      }
+      wall_id = @default_wall_tile
+      wall_id = 10 if wall_id==0
+      background_tile = BackgroundTile.new(0, false)
+      wall_tile       = BackgroundTile.new(wall_id, true)
+      @tilehash[:background][0] = background_tile
+      @tilehash[:background][wall_id] = wall_tile
+
+
+      gamemap = GameMap.new(background_tile, wall_tile,
+                            startx, starty)
+      each_row{|row, y|  
+        each_column{|x|  
+          # background tiles.
+          tile_id =  self.get_background_data( x, y )
+          tile = fetch_or_create_tile( tile_id, :background ) {|tile_id| 
+            BackgroundTile.new( tile_id&127, tile_id&128==128 )
+          }
+          gamemap.set_background( x, y, tile )
+          # object tiles
+          tile_id = self.get_object_data( x, y )
+          tile = fetch_or_create_tile( tile_id, :object ) {|tile_id| 
+            ObjectTile.new( tile_id )
+          }
+          gamemap.set_any_object( x, y, tile ) if tile_id>0 
+        }
+      }
+      gamemap
+    end # to_gamemap
+
+    
+    ##
+    # tries to fetch similar tile from the tilehash, 
+    # constructs new using block if not.
+    def fetch_or_create_tile( tile_id, hashtype)
+      tilehash = @tilehash[hashtype]
+      tile = tilehash[ tile_id ]
+      unless tile
+        tile = yield tile_id
+        tilehash[tile_id] = tile
+      end
+      tile
+    end
+
+  end # FileMap
+end

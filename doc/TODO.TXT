@@ -1,0 +1,39 @@
+TO DO
+- ideas, suggestions, plans etc for Magic Maze.
+
+
+
+MOVEMENT
+
+* fine-grained movement
+  - slide toward opening when crashing into single blocks
+
+* mouse-aim
+
+* transform sprite (rotate) along movement/aim direction.
+
+
+GAMEPLAY
+
+* enemies shoot back
+  - using spells
+
+* enemy energy and stamina affecting their decisions
+
+* different modes of enemy perception (some smell, some see, some hear)
+  - change when/how they react to the player
+
+
+MULTIPLAYER
+
+* several players on one machine
+  - Gauntlet style?
+  - 4 tiled gameviews?
+  - coop/deathmatch?
+
+* Internet play
+  - Separate game server which OKs requests
+    ("Can I move here? Can I shoot?") and
+    and distributes diffs of the gameplay
+    (Change tile X,Y from A to B etc)
+
