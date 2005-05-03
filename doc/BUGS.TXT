@@ -1,0 +1,41 @@
+
+
+__________
+2005-03-13
+
+Coming to level 3, from level 2.
+
+Was firing lowest attack spell (lightning) while exiting level 2. 
+Suddenly I could no longer fire lightning. All others were OK, just not lightning.
+Tried to restart level, same problem.
+
+Looks like the list of active spells aren't being emptied when we change levels.
+
+Same as from 2004-10-27?
+
+
+__________
+2005-01-30
+
+Level 2 - A fake wall blocks. Ditto level 9.
+
+
+__________
+2004-10-27
+
+Level 3 - suddenly lowest missile spell stops working.
+Upon exit, I get :
+./magicmaze/movement.rb:157:in `warn_could_not_find_old_entity': Moved entity not found on point of origin. (ArgumentError)
+        from ./magicmaze/movement.rb:125:in `set_coords!'
+        from ./magicmaze/movement.rb:34:in `add!'
+        from ./magicmaze/game.rb:24:in `move_forward'
+        from ./magicmaze/player.rb:73:in `move_forward'
+        from ./magicmaze/player.rb:127:in `send'
+        from ./magicmaze/player.rb:127:in `follow_impulses'
+        from ./magicmaze/player.rb:124:in `each'
+        from ./magicmaze/player.rb:124:in `follow_impulses'
+         ... 9 levels...
+        from ./magicmaze/input.rb:97:in `check_input'
+        from ./magicmaze/magicmaze.rb:81:in `title_loop'
+        from ./magicmaze/magicmaze.rb:88:in `loop'
+        from ./mm.rb:20
