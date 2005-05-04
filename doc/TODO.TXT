@@ -53,3 +53,14 @@ MULTIPLAYER
     and distributes diffs of the gameplay
     (Change tile X,Y from A to B etc)
 
+
+
+JOYSTICK SUPPORT
+- should be easy, since SDL already provides it.
+
+- In Linux on my home system, as root:
+        modprobe emu10k1-gp
+        modprobe analog
+        modprobe joydev
+        chmod a+rx /dev/input/js0
+

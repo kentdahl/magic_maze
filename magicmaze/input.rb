@@ -7,6 +7,7 @@ module MagicMaze
   # module for handling input from the user.
   module Input
 
+
     ##
     # Callback for implementing states where 
     # keys can only be used to break out of a loop or similar
@@ -65,6 +66,30 @@ module MagicMaze
         SDL::Key::MOD_LALT   => :cast_alternative_spell,
 
       }
+      DEFAULT_JOYSTICK_MAP = {
+        :hat => {
+          SDL::Joystick::HAT_UP    => :move_up,
+          SDL::Joystick::HAT_DOWN  => :move_down,
+          SDL::Joystick::HAT_LEFT  => :move_left,
+          SDL::Joystick::HAT_RIGHT => :move_right,
+        },
+        :button => {
+          0 => :cast_primary_spell,
+          1 => :cast_alternative_spell,
+          2 => :next_primary_spell,
+          3 => :previous_primary_spell,
+          4 => :next_secondary_spell,
+          5 => :previous_secondary_spell,
+        },
+        :axis => {
+          0 => [:move_left, :move_right],
+          1 => [:move_up, :move_down],
+          2 => [:previous_secondary_spell, nil],
+          3 => [:next_secondary_spell, nil],
+        }
+        
+      }
+
       EMPTY_KEY_MAP = {}
 
 
@@ -81,6 +106,7 @@ module MagicMaze
           :normal_keys => DEFAULT_KEY_MAP, 
           :action_keys => DEFAULT_ACTION_KEY_MAP,
           :modifier_keys => DEFAULT_MODIFIER_KEY_MAP,
+          :joystick => DEFAULT_JOYSTICK_MAP,
         },
         :titlescreen => {
           :normal_keys => {
@@ -97,6 +123,7 @@ module MagicMaze
           },
           :action_keys => { },
           :modifier_keys => EMPTY_KEY_MAP,
+          :joystick => DEFAULT_JOYSTICK_MAP,
         },
         :break => {
           :normal_keys => {
@@ -111,12 +138,25 @@ module MagicMaze
         
       
       }
+
+
+      @@joystick = nil
+      puts "Checking for joystick"
+      SDL.init( SDL::INIT_JOYSTICK )
+      if SDL::Joystick.num.nonzero? then
+        puts "Enabling joystick"
+        @@joystick = SDL::Joystick.open( 0 )
+        puts "Joystick: " + SDL::Joystick.indexName( @@joystick.index )
+      end
+
+
       
       attr_accessor :callback
       def initialize( callback, key_mode = :titlescreen )
         SDL::Key.enable_key_repeat( 10, 10 )
         @callback = callback
         set_key_mode( key_mode )
+
       end
 
       ##
@@ -159,6 +199,7 @@ module MagicMaze
         end
         check_key_hold
         check_modifier_keys
+        check_joystick
       end
       
       ##
@@ -195,6 +236,41 @@ module MagicMaze
           end
         end
       end
+
+      ##
+      # Check for joystick movement
+      def check_joystick
+        return unless @@joystick
+        SDL::Joystick.updateAll
+        joymap = @keymap[:joystick]
+        
+        # Check hat state...
+        joy_hat_state = @@joystick.hat(0)
+        joymap[:hat].each do |hat, action|
+          if (joy_hat_state & hat) != 0 then
+            call_callback( action )
+          end
+        end if joymap[:hat]
+        
+        # Check buttons...
+        joymap[:button].each do |button, action|
+          if( @@joystick.button( button ) )
+             call_callback( action )
+           end
+        end if joymap[:button]
+
+        # Check axis
+        joymap[:axis].each do |axis, action_list|
+          axis_value = @@joystick.axis( axis )
+          action = nil
+          action = action_list.first if axis_value < -(1<<8)
+          action = action_list.last  if axis_value > (1<<8)
+          call_callback( action ) if action
+        end
+
+      end
+
+
     end # Control
     
   end # Input
