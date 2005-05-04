@@ -28,6 +28,9 @@ module MagicMaze
       @options = options
       @graphics = Graphics.new
       @sound = if @options[:sound] then SDLSound.new else NoSound.new end
+
+      if @options[:joystick] then Input::Control.init_joystick( @options[:joystick] ) end
+
       @title_input = Input::Control.new( self, :titlescreen )    
       @quit = false
 

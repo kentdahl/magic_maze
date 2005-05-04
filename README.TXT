@@ -81,7 +81,8 @@ The following command-line options are available:
 
 --nosound	Disables sound
 --level [#]	Assign a start level (1-10)
-
+--joystick [#]  Enable joystick support.
+--help          Show command line options
 
 ___________________________________________________
 *** Requirements ***

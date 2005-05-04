@@ -123,7 +123,11 @@ module MagicMaze
           },
           :action_keys => { },
           :modifier_keys => EMPTY_KEY_MAP,
-          :joystick => DEFAULT_JOYSTICK_MAP,
+          :joystick => {
+            :button => {
+              0 => :start_game,
+            }
+          }
         },
         :break => {
           :normal_keys => {
@@ -134,6 +138,12 @@ module MagicMaze
           },
           :action_keys => EMPTY_KEY_MAP,
           :modifier_keys => EMPTY_KEY_MAP,
+          :joystick => {
+            :button => {
+              0 => :break,
+            }
+          }
+
         },
         
       
@@ -141,14 +151,16 @@ module MagicMaze
 
 
       @@joystick = nil
-      puts "Checking for joystick"
-      SDL.init( SDL::INIT_JOYSTICK )
-      if SDL::Joystick.num.nonzero? then
-        puts "Enabling joystick"
-        @@joystick = SDL::Joystick.open( 0 )
-        puts "Joystick: " + SDL::Joystick.indexName( @@joystick.index )
-      end
 
+      def self.init_joystick( joy_num = 0)
+        puts "Checking for joystick"
+        SDL.init( SDL::INIT_JOYSTICK )
+        if SDL::Joystick.num > joy_num then
+          puts "Enabling joystick"
+          @@joystick = SDL::Joystick.open( joy_num )
+          puts "Joystick: " + SDL::Joystick.indexName( @@joystick.index )
+        end
+      end
 
       
       attr_accessor :callback
@@ -266,7 +278,7 @@ module MagicMaze
           action = action_list.first if axis_value < -(1<<8)
           action = action_list.last  if axis_value > (1<<8)
           call_callback( action ) if action
-        end
+        end if joymap[:axis]
 
       end
 
