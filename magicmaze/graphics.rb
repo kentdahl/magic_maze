@@ -7,6 +7,8 @@ module MagicMaze
   ################################################
   #
   class Graphics
+    DEBUG = true
+
     GFX_PATH = 'data/gfx/'
     SCREEN_IMAGES = {
       :titlescreen => 'title.pcx',
@@ -14,7 +16,7 @@ module MagicMaze
       :endscreen   => 'end.pcx',
     }
 
-    SCALE_FACTOR = 1
+    SCALE_FACTOR = 2
 
     BACKGROUND_TILES_BEGIN = BackgroundTile::BACKGROUND_TILES_BEGIN
 
@@ -52,6 +54,7 @@ module MagicMaze
 
 
     def initialize
+      puts "Setting up graphics..." if DEBUG
       @xsize = FULLSCREEN[2]
       @ysize = FULLSCREEN[3]
       @bpp = 8 # 16 wont work
@@ -75,9 +78,8 @@ module MagicMaze
                                           @screen)
           scaled_image.set_palette( SDL::LOGPAL|SDL::PHYSPAL, 
                                     source_image.get_palette, 0 )
-          scaled_image.fillRect(0,0,5,5,555)
-        SDL.transform(source_image, scaled_image, 0,
-                      SCALE_FACTOR, SCALE_FACTOR, 0,0, 0,0, 1)
+          SDL.transform(source_image, scaled_image, 0,
+                        SCALE_FACTOR, SCALE_FACTOR, 0,0, 0,0, 1)
         else
           scaled_image = source_image
         end
@@ -93,6 +95,8 @@ module MagicMaze
       @font16 = SDL::TTF.open( "data/gfx/fraktmod.ttf", 16 * SCALE_FACTOR )
       @font32 = SDL::TTF.open( "data/gfx/fraktmod.ttf", 32 * SCALE_FACTOR )
       @font = @font16
+
+      puts "Graphics initialized." if DEBUG
     end
 
     ##
@@ -128,7 +132,7 @@ module MagicMaze
             # The first six bytes is garbage?
             sprite_data[6,1024].each_byte{|pixel|
               sprite.put_pixel(x,y,pixel)
-              x += 1*SCALE_FACTOR
+              x += 1 # *SCALE_FACTOR
               if x>31
                 x = 0
                 y += 1
@@ -149,6 +153,7 @@ module MagicMaze
     # Load sprites from a large bitmap. Easier to edit.
     #
     def load_new_sprites
+      puts "Loading sprites..." if DEBUG
       sprite_images = []
       begin
 	spritemap = SDL::Surface.load( GFX_PATH + 'sprites.pcx' ) 
@@ -158,7 +163,7 @@ module MagicMaze
 
       palette = spritemap.get_palette
 
-      lines = ( spritemap.h / 32 + 1)
+      lines = ( spritemap.h + 15 ) / 32 
 
       @screen.set_palette( SDL::LOGPAL|SDL::PHYSPAL, palette, 0 )
 
@@ -175,19 +180,23 @@ module MagicMaze
 
 	  sprite.set_palette( mode, palette, 0 )
 	  sprite.setColorKey( SDL::SRCCOLORKEY || SDL::RLEACCEL ,0)
+          sprite.fillRect(0,0,SPRITE_WIDTH,SPRITE_HEIGHT,3)
 
           if SCALE_FACTOR == 1 then
             SDL.blitSurface(spritemap,x,y,w,h,sprite, 0,0 )
           else
-            SDL.transform(spritemap,sprite,0,
-                          SCALE_FACTOR,SCALE_FACTOR, x,y, 0,0,1)
+            linear_scale_image(spritemap,x,y, sprite )
           end
+
+	  sprite.set_palette( mode, palette, 0 )
+	  sprite.setColorKey( SDL::SRCCOLORKEY || SDL::RLEACCEL ,0)
 
 	  sprite_images << sprite.display_format
 	end
       end
 
       @sprite_palette = palette 
+      puts "Sprites loaded: #{sprite_images.size}." if DEBUG
 
       sprite_images
     end
@@ -214,6 +223,30 @@ module MagicMaze
     end
 
 
+    # Slow, but blocky.
+    def linear_scale_image( source_image, sx,sy, scaled_image, factor = SCALE_FACTOR )
+      sw = scaled_image.w / factor
+      sh = scaled_image.h / factor
+
+      source_image.lock
+      scaled_image.lock
+
+      sh.times do |sdy|
+        sw.times do |sdx|
+          pixel = source_image.get_pixel(sx+sdx, sy+sdy)
+          factor.times{|fy| 
+            factor.times{|fx|
+              scaled_image.put_pixel(sdx*factor+fx, sdy*factor+fy, pixel)
+            } 
+          }
+        end
+      end
+
+      source_image.unlock
+      scaled_image.unlock
+
+      scaled_image
+    end
 
     ######################################################
     # general graphics methods
@@ -402,7 +435,7 @@ module MagicMaze
     def fade_out( tr = 0, tg = 0, tb = 0 )
       mypal = @sprite_palette.dup
       @old_palette = mypal
-      range = 63 # 127
+      range = 31 # 63
       (0..range).each {|i|
 	factor = (range-i).to_f / range
 	set_palette( mypal.map {|r,g,b| 
@@ -418,7 +451,7 @@ module MagicMaze
     def fade_in
       mypal = @old_palette || @sprite_palette
       tr, tg, tb = *(@fade_color || [0,0,0])
-      range = 63 # 127
+      range = 31 # 63
       (0..range).each {|i|
 	factor = i.to_f / range
 	set_palette( mypal.map {|r,g,b| 
@@ -431,7 +464,7 @@ module MagicMaze
       set_palette( mypal )
     end
 
-    def fade_in_and_out( sleep_ms = 1000, &block )
+    def fade_in_and_out( sleep_ms = 500, &block )
       fade_in( &block )
       SDL.delay( sleep_ms )
       fade_out( &block )      
