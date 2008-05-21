@@ -78,8 +78,7 @@ module MagicMaze
                                           @screen)
           scaled_image.set_palette( SDL::LOGPAL|SDL::PHYSPAL, 
                                     source_image.get_palette, 0 )
-          SDL.transform(source_image, scaled_image, 0,
-                        SCALE_FACTOR, SCALE_FACTOR, 0,0, 0,0, 1)
+          linear_scale_image(source_image,0,0, scaled_image )
         else
           scaled_image = source_image
         end

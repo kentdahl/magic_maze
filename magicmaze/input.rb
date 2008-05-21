@@ -51,7 +51,9 @@ module MagicMaze
 	SDL::Key::KP_PLUS   => :increase_speed,
 	SDL::Key::KP_MINUS  => :decrease_speed,
 
-
+        # For OLPC 
+        SDL::Key::KP3   => :next_primary_spell,     # X
+        SDL::Key::KP7   => :next_secondary_spell,   # []
        
       }
       DEFAULT_ACTION_KEY_MAP = {
@@ -59,7 +61,20 @@ module MagicMaze
         SDL::Key::UP     => :move_up,
         SDL::Key::DOWN   => :move_down,
         SDL::Key::LEFT   => :move_left,
-        SDL::Key::RIGHT  => :move_right,        
+        SDL::Key::RIGHT  => :move_right,   
+        
+        # For OLPC 
+        SDL::Key::KP8   => :move_up,
+        SDL::Key::KP2   => :move_down,
+        SDL::Key::KP4   => :move_left,
+        SDL::Key::KP6   => :move_right,      
+
+        # For OLPC 
+        SDL::Key::KP1   => :cast_primary_spell,     # V
+        SDL::Key::KP9   => :cast_alternative_spell, # O
+
+  
+
       }
       DEFAULT_MODIFIER_KEY_MAP = {
         SDL::Key::MOD_LCTRL  => :cast_primary_spell,
