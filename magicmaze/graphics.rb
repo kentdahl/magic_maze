@@ -223,7 +223,9 @@ module MagicMaze
     end
 
 
-    # Slow, but blocky.
+    ##
+    # Slow, but blocky and non-SGE.
+    #
     def linear_scale_image( source_image, sx,sy, scaled_image, factor = SCALE_FACTOR )
       sw = scaled_image.w / factor
       sh = scaled_image.h / factor
@@ -231,14 +233,10 @@ module MagicMaze
       source_image.lock
       scaled_image.lock
 
-      sh.times do |sdy|
+      sh.times do |sdy|        
         sw.times do |sdx|
           pixel = source_image.get_pixel(sx+sdx, sy+sdy)
-          factor.times{|fy| 
-            factor.times{|fx|
-              scaled_image.put_pixel(sdx*factor+fx, sdy*factor+fy, pixel)
-            } 
-          }
+          scaled_image.fill_rect(sdx*factor, sdy*factor, factor, factor, pixel)
         end
       end
 
