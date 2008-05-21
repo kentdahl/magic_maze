@@ -26,8 +26,11 @@ module MagicMaze
     attr_reader :graphics, :sound
     def initialize( options )
       @options = options
-      @graphics = Graphics.new
-      @sound = if @options[:sound] then SDLSound.new else NoSound.new end
+      @graphics = Graphics.new( options )
+      @sound = if @options[:sound] 
+               then SDLSound.new(options) 
+               else NoSound.new 
+               end
 
       if @options[:joystick] then Input::Control.init_joystick( @options[:joystick] ) end
 

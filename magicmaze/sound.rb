@@ -10,7 +10,7 @@ module MagicMaze
   #
   class SDLSound
     ALL_CHANNELS = -1
-    def initialize
+    def initialize(options={})
       SDL::Mixer.open
       @sounds = {}
       (1..4).each{|sound_no|
@@ -18,7 +18,8 @@ module MagicMaze
 	sound = SDL::Mixer::Wave.load( filename )
 	@sounds[sound_no] = sound
       }
-      SDL::Mixer.set_volume( ALL_CHANNELS, 64 )
+      volume = options[:volume] || 8
+      SDL::Mixer.set_volume( ALL_CHANNELS, 64*volume/10 )
     end
     
     def play_sound( sound_no )

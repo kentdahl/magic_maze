@@ -4,7 +4,7 @@ TO DO
 
 MISSING FROM OLD MAGIC MAZE
 
-* Default background tiles differ to show motion.
+* Default background tiles differ to show motion. DONE.
 * Lookahead spell
 * Map spell
 * End game sequence

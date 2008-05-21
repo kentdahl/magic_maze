@@ -16,7 +16,7 @@ module MagicMaze
       :endscreen   => 'end.pcx',
     }
 
-    SCALE_FACTOR = 2
+    SCALE_FACTOR = (self.constants.include?("OVERRIDE_GRAPHICS_SCALE_FACTOR") ? OVERRIDE_GRAPHICS_SCALE_FACTOR : 2)
 
     BACKGROUND_TILES_BEGIN = BackgroundTile::BACKGROUND_TILES_BEGIN
 
@@ -32,8 +32,8 @@ module MagicMaze
     VIEW_AREA_MAP_HEIGHT_CENTER = VIEW_AREA_MAP_HEIGHT / 2
 
 
-    VIEW_AREA_UPPER_LEFT_X = 2
-    VIEW_AREA_UPPER_LEFT_Y = 2
+    VIEW_AREA_UPPER_LEFT_X = 2 * SCALE_FACTOR
+    VIEW_AREA_UPPER_LEFT_Y = 2 * SCALE_FACTOR
 
     # rectangles on the display. [startx, starty, width, height, colour]  
     FULLSCREEN          = [ 0, 0, 320, 240,0].collect{|i| i*SCALE_FACTOR}
@@ -53,7 +53,7 @@ module MagicMaze
       2 + SPRITE_WIDTH * VIEW_AREA_MAP_HEIGHT_CENTER ]
 
 
-    def initialize
+    def initialize(options={})
       puts "Setting up graphics..." if DEBUG
       @xsize = FULLSCREEN[2]
       @ysize = FULLSCREEN[3]
@@ -63,11 +63,37 @@ module MagicMaze
       SDL::WM.set_caption( "Magic Maze","" )
       SDL::WM.icon=( SDL::Surface.load("data/gfx/icon.png") )
 
-      @screen = SDL::setVideoMode(@xsize,@ysize, @bpp,
-                                  #SDL::FULLSCREEN + 
-                                  SDL::HWSURFACE +
-                                  SDL::DOUBLEBUF
-                                  ) #& SDL::SWSURFACE)
+      screen_mode = SDL::HWSURFACE + SDL::DOUBLEBUF
+      screen_mode += SDL::FULLSCREEN if options[:fullscreen] 
+
+      @screen = SDL::setVideoMode(@xsize,@ysize, @bpp, screen_mode)
+
+      font_init
+
+      show_message("Summoning...")
+
+      load_background_images
+
+      show_message("Magic Maze...")
+
+      @sprite_images = load_new_sprites || load_old_sprites 
+
+      # show_message("Enter!")
+
+      puts "Graphics initialized." if DEBUG
+    end
+
+
+    def font_init
+      ## Fonts
+      SDL::TTF.init
+      # Free font found at: http://www.squaregear.net/fonts/ 
+      @font16 = SDL::TTF.open( "data/gfx/fraktmod.ttf", 16 * SCALE_FACTOR )
+      @font32 = SDL::TTF.open( "data/gfx/fraktmod.ttf", 32 * SCALE_FACTOR )
+      @font = @font16
+    end
+
+    def load_background_images
       @background_images = {}
       SCREEN_IMAGES.each{|key, filename|
         source_image = SDL::Surface.load( GFX_PATH+filename ) 
@@ -85,18 +111,9 @@ module MagicMaze
         
         @background_images[key] = scaled_image
       }
-      #sprite_images = SDL::Surface.load( GFX_PATH+'sprites.pcx' )
-      @sprite_images = load_new_sprites || load_old_sprites 
-
-      ## Fonts
-      SDL::TTF.init
-      # Free font found at: http://www.squaregear.net/fonts/ 
-      @font16 = SDL::TTF.open( "data/gfx/fraktmod.ttf", 16 * SCALE_FACTOR )
-      @font32 = SDL::TTF.open( "data/gfx/fraktmod.ttf", 32 * SCALE_FACTOR )
-      @font = @font16
-
-      puts "Graphics initialized." if DEBUG
     end
+
+
 
     ##
     # reads in the old sprites from the "undocumented" format I used.
