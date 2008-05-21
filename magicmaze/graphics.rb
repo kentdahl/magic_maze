@@ -14,12 +14,14 @@ module MagicMaze
       :endscreen   => 'end.pcx',
     }
 
+    SCALE_FACTOR = 1
+
     BACKGROUND_TILES_BEGIN = BackgroundTile::BACKGROUND_TILES_BEGIN
 
     COL_WHITE=10;   COL_RED = 20;   COL_GREEN = 30;  COL_BLUE = 40; 
     COL_YELLOW = 50;
 
-    SPRITE_WIDTH = 32; SPRITE_HEIGHT = 32;
+    SPRITE_WIDTH = 32 * SCALE_FACTOR; SPRITE_HEIGHT = 32 * SCALE_FACTOR;
 
     # the *_AREA_MAP_* variables are map coordinate related, not screen coordinate.
     VIEW_AREA_MAP_WIDTH  = 7
@@ -32,12 +34,12 @@ module MagicMaze
     VIEW_AREA_UPPER_LEFT_Y = 2
 
     # rectangles on the display. [startx, starty, width, height, colour]  
-    FULLSCREEN          = [ 0, 0, 320, 240,0]
-    INVENTORY_RECTANGLE = [230, 16, 87,32, 0] 
-    LIFE_MANA_RECTANGLE = [230, 63, 87,16, 0] 
-    SCORE_RECTANGLE     = [230, 93, 87,14, 0] 
-    SPELL_RECTANGLE     = [230,126, 32,32, 0] 
-    ALT_SPELL_RECTANGLE = [285,126, 32,32, 0] 
+    FULLSCREEN          = [ 0, 0, 320, 240,0].collect{|i| i*SCALE_FACTOR}
+    INVENTORY_RECTANGLE = [230, 16, 87,32, 0].collect{|i| i*SCALE_FACTOR} 
+    LIFE_MANA_RECTANGLE = [230, 63, 87,16, 0].collect{|i| i*SCALE_FACTOR}
+    SCORE_RECTANGLE     = [230, 93, 87,14, 0].collect{|i| i*SCALE_FACTOR}
+    SPELL_RECTANGLE     = [230,126, 32,32, 0].collect{|i| i*SCALE_FACTOR} 
+    ALT_SPELL_RECTANGLE = [285,126, 32,32, 0].collect{|i| i*SCALE_FACTOR} 
     MAZE_VIEW_RECTANGLE = [
       VIEW_AREA_UPPER_LEFT_X, VIEW_AREA_UPPER_LEFT_Y, 
       SPRITE_WIDTH*VIEW_AREA_MAP_WIDTH, SPRITE_HEIGHT*VIEW_AREA_MAP_HEIGHT, 0
@@ -65,8 +67,18 @@ module MagicMaze
                                   ) #& SDL::SWSURFACE)
       @background_images = {}
       SCREEN_IMAGES.each{|key, filename|
-        @background_images[key] = 
-          SDL::Surface.load( GFX_PATH+filename ) 
+        source_image = SDL::Surface.load( GFX_PATH+filename ) 
+        scaled_image = SDL::Surface.new(SDL::SWSURFACE, 
+                                        source_image.w * SCALE_FACTOR, 
+                                        source_image.h * SCALE_FACTOR,
+                                        @screen)
+        scaled_image.set_palette( SDL::LOGPAL|SDL::PHYSPAL, 
+                                  source_image.get_palette, 0 )
+        scaled_image.fillRect(0,0,5,5,555)
+        SDL.transform(source_image, scaled_image, 0,
+                      SCALE_FACTOR, SCALE_FACTOR, 0,0, 0,0, 1)
+        
+        @background_images[key] = scaled_image
       }
       #sprite_images = SDL::Surface.load( GFX_PATH+'sprites.pcx' )
       @sprite_images = load_new_sprites || load_old_sprites 
@@ -74,8 +86,8 @@ module MagicMaze
       ## Fonts
       SDL::TTF.init
       # Free font found at: http://www.squaregear.net/fonts/ 
-      @font16 = SDL::TTF.open( "data/gfx/fraktmod.ttf", 16 )
-      @font32 = SDL::TTF.open( "data/gfx/fraktmod.ttf", 32 )
+      @font16 = SDL::TTF.open( "data/gfx/fraktmod.ttf", 16 * SCALE_FACTOR )
+      @font32 = SDL::TTF.open( "data/gfx/fraktmod.ttf", 32 * SCALE_FACTOR )
       @font = @font16
     end
 
@@ -100,7 +112,7 @@ module MagicMaze
         # Loop over 1030 byte segments, which each is a sprite.
         begin
           sprite = SDL::Surface.new(SDL::HWSURFACE, # SDL::SRCCOLORKEY,
-                                    32,32,@screen)
+                                    SPRITE_WIDTH,SPRITE_HEIGHT,@screen)
           mode =  SDL::LOGPAL|SDL::PHYSPAL
           sprite.set_palette( mode, palette, 0 )
           @screen.set_palette(mode, palette, 0 )
@@ -112,7 +124,7 @@ module MagicMaze
             # The first six bytes is garbage?
             sprite_data[6,1024].each_byte{|pixel|
               sprite.put_pixel(x,y,pixel)
-              x += 1
+              x += 1*SCALE_FACTOR
               if x>31
                 x = 0
                 y += 1
@@ -150,7 +162,7 @@ module MagicMaze
       (0...lines).each do|line|	
 	(0...10).each do|column|
 	  sprite = SDL::Surface.new(SDL::HWSURFACE, #|SDL::SRCCOLORKEY,
-                                    32,32,@screen)
+                                    SPRITE_WIDTH, SPRITE_HEIGHT, @screen)
           mode =  SDL::LOGPAL|SDL::PHYSPAL
 
 	  x =  column * 32
@@ -160,7 +172,9 @@ module MagicMaze
 	  sprite.set_palette( mode, palette, 0 )
 	  sprite.setColorKey( SDL::SRCCOLORKEY || SDL::RLEACCEL ,0)
 
-	  SDL.blitSurface(spritemap,x,y,w,h,sprite,0,0)
+	  #SDL.blitSurface(spritemap,x,y,w,h,sprite,16,16)
+          SDL.transform(spritemap,sprite,0,
+                        SCALE_FACTOR,SCALE_FACTOR, x,y, 0,0,1)
 
 	  sprite_images << sprite.display_format
 	end
