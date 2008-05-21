@@ -135,6 +135,12 @@ module MagicMaze
             SDL::Key::Q      => :exit_game,
             SDL::Key::RETURN => :start_game,
             SDL::Key::SPACE  => :start_game,
+
+            # For OLPC:
+            SDL::Key::KP3   => :exit_game,     # X
+            SDL::Key::KP1   => :start_game,     # V
+
+
           },
           :action_keys => { },
           :modifier_keys => EMPTY_KEY_MAP,
@@ -150,6 +156,8 @@ module MagicMaze
             SDL::Key::Q      => :break,
             SDL::Key::RETURN => :break,
             SDL::Key::SPACE  => :break,
+            SDL::Key::KP3    => :break,     # X
+
           },
           :action_keys => EMPTY_KEY_MAP,
           :modifier_keys => EMPTY_KEY_MAP,
