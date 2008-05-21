@@ -68,15 +68,19 @@ module MagicMaze
       @background_images = {}
       SCREEN_IMAGES.each{|key, filename|
         source_image = SDL::Surface.load( GFX_PATH+filename ) 
-        scaled_image = SDL::Surface.new(SDL::SWSURFACE, 
+        if SCALE_FACTOR != 1 then
+          scaled_image = SDL::Surface.new(SDL::SWSURFACE, 
                                         source_image.w * SCALE_FACTOR, 
                                         source_image.h * SCALE_FACTOR,
-                                        @screen)
-        scaled_image.set_palette( SDL::LOGPAL|SDL::PHYSPAL, 
-                                  source_image.get_palette, 0 )
-        scaled_image.fillRect(0,0,5,5,555)
+                                          @screen)
+          scaled_image.set_palette( SDL::LOGPAL|SDL::PHYSPAL, 
+                                    source_image.get_palette, 0 )
+          scaled_image.fillRect(0,0,5,5,555)
         SDL.transform(source_image, scaled_image, 0,
                       SCALE_FACTOR, SCALE_FACTOR, 0,0, 0,0, 1)
+        else
+          scaled_image = source_image
+        end
         
         @background_images[key] = scaled_image
       }
@@ -172,9 +176,12 @@ module MagicMaze
 	  sprite.set_palette( mode, palette, 0 )
 	  sprite.setColorKey( SDL::SRCCOLORKEY || SDL::RLEACCEL ,0)
 
-	  #SDL.blitSurface(spritemap,x,y,w,h,sprite,16,16)
-          SDL.transform(spritemap,sprite,0,
-                        SCALE_FACTOR,SCALE_FACTOR, x,y, 0,0,1)
+          if SCALE_FACTOR == 1 then
+            SDL.blitSurface(spritemap,x,y,w,h,sprite, 0,0 )
+          else
+            SDL.transform(spritemap,sprite,0,
+                          SCALE_FACTOR,SCALE_FACTOR, x,y, 0,0,1)
+          end
 
 	  sprite_images << sprite.display_format
 	end
