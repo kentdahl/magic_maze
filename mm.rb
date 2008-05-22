@@ -24,6 +24,9 @@ Magic Maze, a Ruby/SDL game.
     -j --joystick     Enable joystick support 
     -l --level 	      Assign a start level (1-10)
     -S --nosound      Disables sound
+    -v --volume       Set volume (1-10)
+    -f --fullscreen   Start in fullscreen mode
+    -s --scale        Scale the graphics and resolution up (1-5)
     
     USAGE
 end

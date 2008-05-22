@@ -10,7 +10,8 @@
  
         (1995-1996) Version  1.2
 	(1999)      Version  1.22
-        (2004)      Versions 1.4.x
+        (2004)      Version  1.4.1
+        (2008)      Version  1.4.2
 
      This game is FREEWARE.
 
@@ -83,6 +84,10 @@ The following command-line options are available:
 --level [#]	Assign a start level (1-10)
 --joystick [#]  Enable joystick support.
 --help          Show command line options
+--volume        Set volume (1-10)
+--fullscreen    Start in fullscreen mode
+--scale         Scale the graphics and resolution up (1-5)
+
 
 ___________________________________________________
 *** Requirements ***
