@@ -61,6 +61,12 @@ options.each do |option, argument|
     end
     opt_hash[:scale] = scale    
     OVERRIDE_GRAPHICS_SCALE_FACTOR = scale 
+    module MagicMaze
+      class Graphics
+        OVERRIDE_GRAPHICS_SCALE_FACTOR = OVERRIDE_GRAPHICS_SCALE_FACTOR
+      end
+    end
+
   end
 end			 
 
