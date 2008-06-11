@@ -16,7 +16,6 @@
      This game is FREEWARE.
 
  E-mail me at:
-   MenThal<AT>bigfoot<DOT>com
    kentda<AT>pvv<DOT>org
 
 ___________________________________________________
