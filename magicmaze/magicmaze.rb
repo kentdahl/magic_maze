@@ -72,11 +72,14 @@ module MagicMaze
 
     def test_fade
       puts "hullo"
+      @graphics.put_screen( :titlescreen, true )
+
       @graphics.fade_out do 
-	@graphics.put_screen( :titlescreen, true )
+        SDL.delay(1)
       end
+      put_titlescreen
       @graphics.fade_in do 
-	put_titlescreen
+        SDL.delay(1)
       end
     end
     
@@ -97,8 +100,8 @@ module MagicMaze
     
     def title_loop
       puts "Title loop..."
+      put_titlescreen
       @graphics.fade_in do 
-	put_titlescreen
 	SDL.delay(1)
       end
       @state = :title_loop
@@ -118,8 +121,9 @@ module MagicMaze
     end
 
     def start_game( level = nil, player_status = nil )
+      @graphics.put_screen( :titlescreen, true )
       @graphics.fade_out do 
-	@graphics.put_screen( :titlescreen, true )
+	SDL.delay(1)
       end
       @state = :starting_game
 
@@ -145,8 +149,8 @@ module MagicMaze
     def show_end_game
       @graphics.setup_rotating_palette( 193..255, :endscreen )
 
+      @graphics.put_screen( :endscreen)
       @graphics.fade_in do 
-        @graphics.put_screen( :endscreen)
         SDL.delay(10)
         # @graphics.rotate_palette
       end
@@ -171,8 +175,8 @@ module MagicMaze
       @sound.play_sound( :zap )
 
       puts "Fade out end game."
+      @graphics.put_screen( :endscreen )
       @graphics.fade_out do 
-        @graphics.put_screen( :endscreen )
         SDL.delay(10)
         # @graphics.rotate_palette
 

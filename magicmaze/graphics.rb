@@ -53,6 +53,8 @@ module MagicMaze
       2 + SPRITE_WIDTH * VIEW_AREA_MAP_HEIGHT_CENTER ]
 
 
+    FADE_DURATION = 64
+
     def initialize(options={})
       puts "Setting up graphics..." if DEBUG
       @xsize = FULLSCREEN[2]
@@ -449,8 +451,8 @@ module MagicMaze
     def fade_out( tr = 0, tg = 0, tb = 0 )
       mypal = @sprite_palette.dup
       @old_palette = mypal
-      range = 31 # 63
-      (0..range).each {|i|
+      range = FADE_DURATION
+      (0...range).each {|i|
 	factor = (range-i).to_f / range
 	set_palette( mypal.map {|r,g,b| 
 		      [ ( r - tr ) * factor + tr,
@@ -465,7 +467,7 @@ module MagicMaze
     def fade_in
       mypal = @old_palette || @sprite_palette
       tr, tg, tb = *(@fade_color || [0,0,0])
-      range = 31 # 63
+      range = FADE_DURATION
       (0..range).each {|i|
 	factor = i.to_f / range
 	set_palette( mypal.map {|r,g,b| 
