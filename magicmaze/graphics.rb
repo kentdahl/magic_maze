@@ -53,7 +53,7 @@ module MagicMaze
       2 + SPRITE_WIDTH * VIEW_AREA_MAP_HEIGHT_CENTER ]
 
 
-    FADE_DURATION = 64
+    FADE_DURATION = 16
 
     def initialize(options={})
       puts "Setting up graphics..." if DEBUG

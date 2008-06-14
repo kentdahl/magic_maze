@@ -71,7 +71,7 @@ module MagicMaze
     end
 
     def test_fade
-      puts "hullo"
+      @graphics.fade_out {}
       @graphics.put_screen( :titlescreen, true )
 
       @graphics.fade_out do 
