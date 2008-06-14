@@ -71,6 +71,7 @@ module MagicMaze
     end
 
     def test_fade
+      # THIS IS FOR TESTING!
       @graphics.fade_out {}
       @graphics.put_screen( :titlescreen, true )
 
@@ -100,6 +101,7 @@ module MagicMaze
     
     def title_loop
       puts "Title loop..."
+      @graphics.fade_out {}
       put_titlescreen
       @graphics.fade_in do 
 	SDL.delay(1)
