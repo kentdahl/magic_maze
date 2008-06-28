@@ -31,9 +31,11 @@ module MagicMaze
     class Control
       DEFAULT_KEY_MAP = {
         SDL::Key::F1     => :helpscreen,
+        SDL::Key::H      => :helpscreen,
         SDL::Key::F4     => :load_game,
         SDL::Key::F5     => :save_game,
 	SDL::Key::F9     => :restart_level,
+	SDL::Key::R      => :restart_level,
 
         SDL::Key::F12    => :toogle_fullscreen,
         SDL::Key::ESCAPE => :escape,
