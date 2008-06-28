@@ -154,7 +154,7 @@ module MagicMaze
       @graphics.put_screen( :endscreen)
       @graphics.fade_in do 
         SDL.delay(10)
-        # @graphics.rotate_palette
+        @graphics.rotate_palette
       end
       
       puts "Looping end game."
@@ -169,7 +169,7 @@ module MagicMaze
       while loop_active do
         SDL.delay(10)
         @graphics.update_scrolltext
-        # @graphics.rotate_palette
+        @graphics.rotate_palette
         @graphics.flip
         input.check_input
       end
@@ -180,9 +180,11 @@ module MagicMaze
       @graphics.put_screen( :endscreen )
       @graphics.fade_out do 
         SDL.delay(10)
-        # @graphics.rotate_palette
+        @graphics.rotate_palette
 
       end
+      @graphics.clear_screen
+      @graphics.flip
 
       @graphics.set_palette( nil )
 

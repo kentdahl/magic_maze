@@ -577,11 +577,11 @@ module MagicMaze
     #
     def update_scrolltext
       
-      @screen.fillRect( 0, 200, @xsize, 40, 0 )
+      @screen.fillRect( 0, 200 * SCALE_FACTOR, @xsize, 40 * SCALE_FACTOR, 0 )
 
       SDL.blit_surface( @scrolltext, 
                        @scrolltext_index, 0, @xsize, @scrolltext.h,
-                       @screen, 0, 200 )
+                       @screen, 0, 200 * SCALE_FACTOR )
 
       @scrolltext_index += 1
 
@@ -604,6 +604,9 @@ module MagicMaze
     ##
     #
     def rotate_palette
+      # DISABLED
+    end
+    def rotate_palette_DISABLED
       pal = @rotating_palette 
       col = pal.shift
       pal.push col
