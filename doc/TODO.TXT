@@ -26,6 +26,18 @@ MOVEMENT
 
 GAMEPLAY
 
+* Boss end-game
+- Luciper moving left and right, firing off monsters.
+- Control wizard at bottom, shooting spells upwards.
+
+* Dynamic GOO
+- The goo left by dead monsters have effects:
+-- Green  - Sticky   - 50% chance of movement failing (rotation and direction)
+-- Red    - Yucky    - 80% chance of loosing health point.
+-- Blue   - Slippery - 60% chance of continuing a directional movement impulse.
+-- Yellow - Stinky   - 40% chance of random rotational movement?
+
+
 * enemies shoot back
   - using spells
 
@@ -38,6 +50,12 @@ GAMEPLAY
 * triggers
   - on positions (such as hints about key use before hitting doors)
   - on events (specific monsters attacked)
+
+* Auto-play
+- Demo recording/replay?
+
+* Map editor
+- Educational; sharing maps?
 
 
 MULTIPLAYER
