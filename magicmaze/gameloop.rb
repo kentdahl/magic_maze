@@ -234,10 +234,17 @@ module MagicMaze
         SDL.delay(delay) if delay > 0 
 	# puts delay
       end
+
+      # Fade out.
+      @graphics.put_screen( :background, false, false )
       @graphics.fade_out do  
-	@graphics.put_screen( :background, false, false )
 	draw_now
-      end    
+      end
+      
+      # Clear screen for returning to the title loop
+      @graphics.clear_screen
+      @graphics.flip
+
       @state
     end # loop
     protected :game_loop
