@@ -528,9 +528,12 @@ module MagicMaze
 
       rect = MAZE_VIEW_RECTANGLE
       @screen.fillRect(*rect)
+      
+      @screen.flip
+      @screen.fillRect(*rect)
 
-      ox = rect[0] + (rect[2] - map.max_x - 2 )/2
-      oy = rect[1] + (rect[3] - map.max_y - 2 )/2
+      ox = rect[0] + (rect[2] - (map.max_x+2) * SCALE_FACTOR )/2
+      oy = rect[1] + (rect[3] - (map.max_y+2) * SCALE_FACTOR )/2
 
       @screen.lock
 
