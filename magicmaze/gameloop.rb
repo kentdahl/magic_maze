@@ -18,10 +18,13 @@ module MagicMaze
       @game_delay  = 50
       @level = level
       @restart_status = player_status
+
+      @map = nil
+      @player = nil
     end
     
     def load_map( level = 1, saved = nil )
-      puts "Loading level: #{level}"
+      puts "Loading level: %s" % level
       filename = level
       filename = sprintf("data/maps/mm_map.%03d",level
                          ) if level.kind_of? Numeric
@@ -99,14 +102,14 @@ module MagicMaze
     # Refactored block form for all actions that require verification. 
     #
     def really_do?( message )
-      @graphics.show_long_message( message + "\n[Y/N]" )
+      @graphics.show_long_message( message + "\n" + _("[Y/N]") )
       if @game_input.get_yes_no_answer
 	yield
       end
     end
 
     def escape
-      really_do?("Quit game?") do
+      really_do?(_("Quit game?")) do
 	@state = :stopped_game
       end
     end
@@ -116,7 +119,7 @@ module MagicMaze
     end
 
     def pause_game
-      @graphics.show_long_message( "Paused!\n\nPress any key\nto resume game." )
+      @graphics.show_long_message( _("Paused!\n\nPress any key\nto resume game.") )
       @game_input.get_key_press
     end
 
@@ -148,7 +151,7 @@ module MagicMaze
     end
 
     def restart_level
-      really_do?("Restart level?") do
+      really_do?(_("Restart level?")) do
 	@state = :restart_level
       end
     end
@@ -254,8 +257,8 @@ module MagicMaze
         load_map( @level )
 
 	# Loading message
-	loading_message = "Entering level " + 
-	  @level.to_s + "\n#@map_title\nGet ready!"
+	loading_message = _("Entering level %s") % @level.to_s + 
+          "\n" + _(@map_title) + "\n"+ _("Get ready!")
 	@graphics.fade_in_and_out do
 	  @graphics.clear_screen
 	  @graphics.show_long_message(loading_message, false, :fullscreen )

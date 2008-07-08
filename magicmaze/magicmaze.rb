@@ -13,6 +13,27 @@ if RUBY_PLATFORM =~ /linux/
 #  trap('EXIT','EXIT')
 end
 
+# Try to enable translations.
+begin
+  # raise LoadError # Testing fallback...
+  require 'gettext'
+rescue LoadError
+  # Dummy fall-through to english.
+  module GetText
+    def bindtextdomain(s)
+    end
+    def _(s)
+      s
+    end
+  end
+end
+
+# For translation...
+include GetText
+bindtextdomain("magicmaze")
+
+
+
 ################################################
 #
 module MagicMaze
@@ -132,7 +153,7 @@ module MagicMaze
       @state = :starting_game
 
       start_level = level || @options[:start_level] || 1
-      if @loadgame then
+      if @loadgame && ! @saved_checkpoints.empty? then
         start_level, player_status = @saved_checkpoints.max
       end
 

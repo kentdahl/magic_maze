@@ -62,7 +62,7 @@ module MagicMaze
       @bpp = 8 # 16 wont work
       SDL.init( SDL::INIT_VIDEO )
       SDL::Mouse.hide
-      SDL::WM.set_caption( "Magic Maze","" )
+      SDL::WM.set_caption( _("Magic Maze"),"" )
       SDL::WM.icon=( SDL::Surface.load("data/gfx/icon.png") )
 
       screen_mode = SDL::HWSURFACE + SDL::DOUBLEBUF
@@ -72,11 +72,11 @@ module MagicMaze
 
       font_init
 
-      show_message("Summoning...")
+      show_message(_("Summoning..."))
 
       load_background_images
 
-      show_message("Magic Maze...")
+      show_message(_("Magic Maze"))
 
       @sprite_images = load_new_sprites || load_old_sprites 
 
