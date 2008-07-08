@@ -105,6 +105,7 @@ module MagicMaze
     def initialize( entity_type, entity, *args)
       @entity = entity
       @entity_type = entity_type
+      @x = @y = nil  # Due to set_coords! implementation below.
       super(*args)
     end
 

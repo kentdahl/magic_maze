@@ -45,6 +45,8 @@ module MagicMaze
       @gain_mana_delay = GAIN_MANA_DELAY
       @loose_health_delay = LOOSE_HEALTH_DELAY
 
+      @override_sprite = nil
+
     end
 
     def reset( map, saved = nil )
