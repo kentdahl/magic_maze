@@ -300,9 +300,9 @@ module MagicMaze
           @spell_list[ spell_name ] = tiles[spell_name] 
         }
         tiles = primary_spells
-        SPELL_NAMES[:primary].each &insertion
+        SPELL_NAMES[:primary].each(&insertion)
         tiles = secondary_spells
-        SPELL_NAMES[:secondary].each &insertion
+        SPELL_NAMES[:secondary].each(&insertion)
         #:primary => primary_spells,
         #  :secondary => secondary_spells
         #}
