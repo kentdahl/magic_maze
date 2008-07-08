@@ -9,7 +9,8 @@ options = GetoptLong.new(["--help",     "-h", GetoptLong::NO_ARGUMENT ],
                          ["--scale",    "-s", GetoptLong::REQUIRED_ARGUMENT ],
                          ["--level",    "-l", GetoptLong::REQUIRED_ARGUMENT ],
                          ["--volume",   "-v", GetoptLong::REQUIRED_ARGUMENT ],
-                         ["--joystick", "-j", GetoptLong::OPTIONAL_ARGUMENT ]
+                         ["--joystick", "-j", GetoptLong::OPTIONAL_ARGUMENT ],
+                         ["--savedir",  "-D", GetoptLong::REQUIRED_ARGUMENT ]
 
  )
 
@@ -54,6 +55,8 @@ options.each do |option, argument|
     opt_hash[:debug] = true
   when "--fullscreen"
     opt_hash[:fullscreen] = true
+  when "--savedir"
+    opt_hash[:savedir] = argument
   when "--scale"
     scale = (argument || 1).to_i
     unless ((1..5).include? scale) then 

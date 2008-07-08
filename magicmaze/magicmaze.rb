@@ -35,6 +35,7 @@ module MagicMaze
       if @options[:joystick] then Input::Control.init_joystick( @options[:joystick] ) end
 
       @title_input = Input::Control.new( self, :titlescreen )    
+      @savegame_filename = (options[:savedir] || "data") + "/progress.dat"
       @quit = false
 
     end
@@ -229,7 +230,7 @@ module MagicMaze
     def load_checkpoints
       checkpoints = Hash.new 
       begin
-	File.open('data/progress.dat','r') do|file|
+	File.open(@savegame_filename,'r') do|file|
 	  obj = YAML.load( file )	  
 	  checkpoints = obj if obj.kind_of? Hash 
 	end
@@ -241,7 +242,7 @@ module MagicMaze
 
     def save_checkpoints
       begin
-	File.open('data/progress.dat','w') do|file|
+	File.open(@savegame_filename,'w') do|file|
 	  puts "Saving checkpoints..."
 	  file.puts @saved_checkpoints.to_yaml
 	end
