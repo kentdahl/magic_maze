@@ -215,7 +215,8 @@ module MagicMaze
 	SDL::Key::ESCAPE => false,
 	SDL::Key::Q => false,
 	SDL::Key::N => false,
-	SDL::Key::Y => true,	  
+	SDL::Key::Y => true,
+	SDL::Key::J => true,
       }
 
       def get_yes_no_answer
