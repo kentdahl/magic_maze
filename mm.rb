@@ -8,6 +8,7 @@ options = GetoptLong.new(["--help",     "-h", GetoptLong::NO_ARGUMENT ],
                          ["--fullscreen",    "-f", GetoptLong::NO_ARGUMENT ],
                          ["--scale",    "-s", GetoptLong::REQUIRED_ARGUMENT ],
                          ["--level",    "-l", GetoptLong::REQUIRED_ARGUMENT ],
+                         ["--loadgame", "-L", GetoptLong::NO_ARGUMENT ],
                          ["--volume",   "-v", GetoptLong::REQUIRED_ARGUMENT ],
                          ["--joystick", "-j", GetoptLong::OPTIONAL_ARGUMENT ],
                          ["--savedir",  "-D", GetoptLong::REQUIRED_ARGUMENT ]
@@ -24,6 +25,8 @@ Magic Maze, a Ruby/SDL game.
     -h --help         Show this message
     -j --joystick     Enable joystick support 
     -l --level 	      Assign a start level (1-10)
+    -L --loadgame     Load savegame automatically
+    -D --savedir      Specify savegame directory
     -S --nosound      Disables sound
     -v --volume       Set volume (1-10)
     -f --fullscreen   Start in fullscreen mode
@@ -48,7 +51,9 @@ options.each do |option, argument|
   when "--volume"
     opt_hash[ :volume ] = (argument || 5).to_i
   when "--level"
-    opt_hash[ :start_level ] = argument.to_i
+    opt_hash[ :start_level ] = Integer(argument)
+  when "--loadgame"
+    opt_hash[:loadgame] = true
   when "--joystick"
     opt_hash[ :joystick ] = (argument || 0).to_i
   when "--debug"

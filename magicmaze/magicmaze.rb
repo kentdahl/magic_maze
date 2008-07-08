@@ -36,6 +36,7 @@ module MagicMaze
 
       @title_input = Input::Control.new( self, :titlescreen )    
       @savegame_filename = (options[:savedir] || "data") + "/progress.dat"
+      @loadgame = (options[:loadgame] || false)
       @quit = false
 
     end
@@ -130,7 +131,12 @@ module MagicMaze
       end
       @state = :starting_game
 
-      @current_game = GameLoop.new( self, level || @options[ :start_level] || 1, player_status )
+      start_level = level || @options[:start_level] || 1
+      if @loadgame then
+        start_level, player_status = @saved_checkpoints.max
+      end
+
+      @current_game = GameLoop.new( self, start_level, player_status )
       @current_game.start
       show_end_game if @state == :endgame
       @state = :stopped_game
