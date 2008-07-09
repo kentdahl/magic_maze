@@ -55,8 +55,11 @@ module MagicMaze
 
       if @options[:joystick] then Input::Control.init_joystick( @options[:joystick] ) end
 
-      @title_input = Input::Control.new( self, :titlescreen )    
-      @savegame_filename = (options[:savedir] || "data") + "/progress.dat"
+      @title_input = Input::Control.new( self, :titlescreen )
+      savedir = (options[:savedir] ||
+                 (ENV.include?("HOME") ? (ENV['HOME'] + '/.magicmaze') : nil) ||                  "data" )
+
+      @savegame_filename = savedir + "/progress.dat"
       @loadgame = (options[:loadgame] || false)
       @quit = false
 
@@ -267,14 +270,29 @@ module MagicMaze
       @saved_checkpoints = checkpoints
     end
 
+    ##
+    # Save the list of checkpoints to file.
+    # I.e. the savegames.
     def save_checkpoints
+      failures = 0 # To avoid loops
       begin
 	File.open(@savegame_filename,'w') do|file|
 	  puts "Saving checkpoints..."
 	  file.puts @saved_checkpoints.to_yaml
 	end
-      rescue Exception => e
+      rescue Errno::ENOENT => e
 	puts "Error saving checkpoints: " + e.inspect	
+        basedir = File.dirname(@savegame_filename)
+        if Dir[basedir].empty? and failures.zero? then
+          puts "Directory seems missing, trying to create: #{basedir}"
+          Dir.mkdir(basedir)
+          puts "Retry saving checkpoints..."
+          failures+=1 
+          retry
+        end
+      rescue Exception => e
+	puts "Error saving checkpoints: " + e.inspect
+        failures+=1	
       end            
     end
 
