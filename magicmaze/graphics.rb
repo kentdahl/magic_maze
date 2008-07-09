@@ -312,10 +312,10 @@ module MagicMaze
 
 
     def write_score( score )
-      text = sprintf "%09d", score
+      text = sprintf "%9d", score
       rect = SCORE_RECTANGLE
       @screen.fillRect(*rect) 
-      write_text( text, rect[0]+4, rect[1]-3 ) 
+      write_text( text, rect[0]+2*SCALE_FACTOR, rect[1]-2*SCALE_FACTOR ) 
     end
 
 
