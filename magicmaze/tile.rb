@@ -261,7 +261,8 @@ module MagicMaze
     include SuperInit
     def do_magic 
       @caster.game_config.graphics.draw_map( @caster )
-      @caster.game_config.input.get_key_press
+      @caster.game_config.input.get_key_press # Release of trigger...
+      @caster.game_config.input.get_key_press # And another push to return.
       true
     end
   end
