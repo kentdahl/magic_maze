@@ -22,6 +22,7 @@ module MagicMaze
 
     COL_WHITE=10;   COL_RED = 20;   COL_GREEN = 30;  COL_BLUE = 40; 
     COL_YELLOW = 50;
+    COL_DARKGRAY=3;    COL_GRAY=5;  COL_LIGHTGRAY=7;
 
     SPRITE_WIDTH = 32 * SCALE_FACTOR; SPRITE_HEIGHT = 32 * SCALE_FACTOR;
 
@@ -521,6 +522,7 @@ module MagicMaze
       flip
     end
 
+
     ####################################
     #
     def draw_map( player )
@@ -532,27 +534,58 @@ module MagicMaze
       @screen.flip
       @screen.fillRect(*rect)
 
-      ox = rect[0] + (rect[2] - (map.max_x+2) * SCALE_FACTOR )/2
-      oy = rect[1] + (rect[3] - (map.max_y+2) * SCALE_FACTOR )/2
+      map_zoom_factor = 4
 
-      @screen.lock
+      map_block_size = SPRITE_WIDTH / map_zoom_factor
+      map_height = VIEW_AREA_MAP_HEIGHT * map_zoom_factor
+      map_width  = VIEW_AREA_MAP_WIDTH  * map_zoom_factor
 
-      # @screen.draw_rect( ox-1, oy-1, ox+map.max_x+1, oy+map.max_y+1, COL_WHITE )
-      map.iterate_all_cells(1) do |x,y, background, object, entity, spiritual|
-	col = nil
-	col = COL_WHITE   if background.blocked? 
-	col = COL_YELLOW  if entity.kind_of?( DoorTile )
-	col = COL_RED     if entity.kind_of?( Monster )
-	if col
-	  @screen.put_pixel( x + ox, y + oy, col )
+      (0...map_height).each do |ay|
+        my = ay + player.location.y - map_height/2
+        (0...map_width).each do |ax|
+
+          mx = ax + player.location.x - map_width/2
+
+          col = nil
+          map.all_tiles_at( mx, my ) do |background, o, entity, s|
+            col = nil
+            col = COL_LIGHTGRAY   if background.blocked? 
+            col = COL_YELLOW      if entity.kind_of?( DoorTile )
+            col = COL_RED         if entity.kind_of?( Monster )            
+          end
+          if col then
+            draw_immediately_twice {
+              @screen.fill_rect(rect[0] + ax*map_block_size,
+                                rect[1] + ay*map_block_size,
+                                map_block_size,
+                                map_block_size,
+                                col)
+            }
+          end
+
 	end	
       end
 
-      @screen.put_pixel( ox + player.location.x, oy + player.location.y, COL_BLUE )
-
-      @screen.unlock
-
+      # The player
+      @screen.fill_rect(rect[0] + map_width/2,
+                        rect[1] + map_height/2,
+                        map_block_size,
+                        map_block_size,
+                        COL_BLUE)
       @screen.flip
+    end
+
+
+
+    ##
+    # Helper for doing gradual buildup of image.
+    # Draws the same thing twice, once for immediate viewing,
+    # and on the offscreen buffer for next round.
+    #
+    def draw_immediately_twice
+      yield
+      @screen.flip
+      yield
     end
 
 
