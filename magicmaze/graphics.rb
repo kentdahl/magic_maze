@@ -540,8 +540,17 @@ module MagicMaze
       map_height = VIEW_AREA_MAP_HEIGHT * map_zoom_factor
       map_width  = VIEW_AREA_MAP_WIDTH  * map_zoom_factor
 
+      # The player
+      @screen.fill_rect(rect[0] + map_width/2  * map_block_size,
+                        rect[1] + map_height/2 * map_block_size,
+                        map_block_size,
+                        map_block_size,
+                        COL_BLUE)
+
       (0...map_height).each do |ay|
         my = ay + player.location.y - map_height/2
+        draw_y = rect[1] + ay*map_block_size
+
         (0...map_width).each do |ax|
 
           mx = ax + player.location.x - map_width/2
@@ -554,25 +563,18 @@ module MagicMaze
             col = COL_RED         if entity.kind_of?( Monster )            
           end
           if col then
-            draw_immediately_twice {
-              @screen.fill_rect(rect[0] + ax*map_block_size,
-                                rect[1] + ay*map_block_size,
-                                map_block_size,
-                                map_block_size,
-                                col)
-            }
-          end
+            @screen.fill_rect(rect[0] + ax*map_block_size,
+                              draw_y,
+                              map_block_size,
+                              map_block_size,
+                              col)
+          end	
 
-	end	
+        end
+        flip
+
       end
 
-      # The player
-      @screen.fill_rect(rect[0] + map_width/2,
-                        rect[1] + map_height/2,
-                        map_block_size,
-                        map_block_size,
-                        COL_BLUE)
-      @screen.flip
     end
 
 
