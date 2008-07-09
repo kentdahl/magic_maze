@@ -59,7 +59,7 @@ F4             - load savegame
 
 Arrow keys - movement of the little blue wizard.
 Ctrl       - cast missile spell (not implemented yet)
-Space      - cast secondary spell (only heal and summon mana so far)
+Space      - cast secondary spell (also "Alt" key)
 Z and X    - leaf through missile spells in book
 A and S    - leaf through secondary spells in book
 Esc / Q    - exit game 
@@ -86,6 +86,8 @@ The following command-line options are available:
 --volume        Set volume (1-10)
 --fullscreen    Start in fullscreen mode
 --scale         Scale the graphics and resolution up (1-5)
+--savedir       Directory to put savegame.
+--loadgame      Automatically load the savegame.
 
 
 ___________________________________________________
