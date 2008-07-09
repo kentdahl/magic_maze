@@ -217,6 +217,19 @@ module MagicMaze
       end
     end
 
+    def iterate_all_rows( offset = 0, &block )
+      (0-offset...MAP_Y_SIZE+offset).each do |y|
+        yield y, offset
+      end
+    end
+
+    def iterate_all_columns( offset = 0, &block )
+      (0-offset...MAP_X_SIZE+offset).each do |x|
+        yield x, offset
+      end
+    end
+
+
 
   end
 
