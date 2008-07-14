@@ -49,8 +49,15 @@ module MagicMaze
       @options = options
       @graphics = Graphics.new( options )
       @sound = if @options[:sound] 
-               then SDLSound.new(options) 
-               else NoSound.new 
+               then 
+		 begin
+		   SDLSound.new(options) 
+		 rescue SDL::Error => sound_error
+		   puts "ERROR: Could not initialize sound! Proceeding muted." 
+		   NoSound.new
+		 end
+               else 
+		 NoSound.new 
                end
 
       if @options[:joystick] then Input::Control.init_joystick( @options[:joystick] ) end
