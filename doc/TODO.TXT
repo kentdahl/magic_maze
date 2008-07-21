@@ -4,12 +4,10 @@ TO DO
 
 MISSING FROM OLD MAGIC MAZE
 
-* Default background tiles differ to show motion. DONE.
 * Lookahead spell
-* Map spell
-* End game sequence
-* Load/save game
-* Train level
+* End game sequence (colour cycling)
+* Load/save game menu
+* Train level menu 
 	
 
 
@@ -19,9 +17,12 @@ MOVEMENT
 * fine-grained movement
   - slide toward opening when crashing into single blocks
 
+* filter diagonal input for OLPC rocker game pad.
+
 * mouse-aim
 
 * transform sprite (rotate) along movement/aim direction.
+- realtime would require SGE...
 
 
 GAMEPLAY
@@ -56,6 +57,12 @@ GAMEPLAY
 
 * Map editor
 - Educational; sharing maps?
+
+
+* Training level
+- all monsters locked
+- plenty of keys
+- long hallways with rooms for training. 
 
 
 MULTIPLAYER
