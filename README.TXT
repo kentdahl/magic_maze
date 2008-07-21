@@ -11,9 +11,10 @@
         (1995-1996) Version  1.2
 	(1999)      Version  1.22
         (2004)      Version  1.4.1
-        (2008)      Version  1.4.2
+        (2008)      Version  1.4.3
 
-     This game is FREEWARE.
+ This game is FREE as in both BEER and SPEECH.
+      (Ruby and GPL dual-licenced.)
 
  E-mail me at:
    kentda<AT>pvv<DOT>org
@@ -125,7 +126,8 @@ Level design:           Daniel Dahl
                         MenThal
 
 Game testing:           Per Ejnar Thomsen   (original)
-                        Daniel Dahl         (original)
+                        Daniel Dahl         (original and Ruby port)
+			Randi Roervik	    (Ruby port)
 
 Other:
 - Free font found at: http://www.squaregear.net/fonts/ 
