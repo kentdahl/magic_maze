@@ -312,7 +312,8 @@ module MagicMaze
 
 
     def write_score( score )
-      text = sprintf "%9d", score
+      # text = sprintf "%9d", score   # fails on EeePC
+      text = sprintf "%09d", score
       rect = SCORE_RECTANGLE
       @screen.fillRect(*rect) 
       write_text( text, rect[0]+2*SCALE_FACTOR, rect[1]-2*SCALE_FACTOR ) 
@@ -641,10 +642,10 @@ module MagicMaze
 
     ##
     #
-    def rotate_palette
+    def rotate_palette_ENABLED
       # DISABLED
     end
-    def rotate_palette_DISABLED
+    def rotate_palette # _DISABLED
       pal = @rotating_palette 
       col = pal.shift
       pal.push col
@@ -652,7 +653,14 @@ module MagicMaze
       @screen.set_palette( SDL::PHYSPAL|SDL::LOGPAL, pal, @rotating_palette_range.first )
     end
 
+    def setup_menu( entries, chosen = nil)
+      @menu_items = entries
+    end
 
+    def draw_menu
+      @menu.items.each do
+      end
+    end
 
   end # Graphics
 
