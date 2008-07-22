@@ -327,8 +327,8 @@ module MagicMaze
 
 
     def write_score( score )
-      # text = sprintf "%9d", score   # fails on EeePC
-      text = sprintf "%09d", score
+      text = sprintf "%9d", score   # fails on EeePC
+      # text = sprintf "%09d", score # old safe one.
       rect = SCORE_RECTANGLE
       @screen.fillRect(*rect) 
       write_text( text, rect[0]+2*SCALE_FACTOR, rect[1]-2*SCALE_FACTOR ) 
