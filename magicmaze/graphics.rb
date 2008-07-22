@@ -622,7 +622,7 @@ module MagicMaze
                        @scrolltext_index, 0, @xsize, @scrolltext.h,
                        @screen, 0, 200 * SCALE_FACTOR )
 
-      @scrolltext_index += 1
+      @scrolltext_index += 1 * SCALE_FACTOR
 
       if @scrolltext_index > @scrolltext.w + @xsize
         @scrolltext_index = - @xsize
@@ -642,10 +642,10 @@ module MagicMaze
 
     ##
     #
-    def rotate_palette_ENABLED
+    def rotate_palette # _ENABLED
       # DISABLED
     end
-    def rotate_palette # _DISABLED
+    def rotate_palette_DISABLED
       pal = @rotating_palette 
       col = pal.shift
       pal.push col
