@@ -91,7 +91,7 @@ module MagicMaze
       ## Fonts
       SDL::TTF.init
       # Free font found at: http://www.squaregear.net/fonts/ 
-      fontfile = "data/gfx/fraktmodXXX.ttf"
+      fontfile = "data/gfx/fraktmod.ttf"
       fontsize = [16, 32]
       tries = 0
       begin
