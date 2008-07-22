@@ -40,7 +40,7 @@ module MagicMaze
     FULLSCREEN          = [ 0, 0, 320, 240,0].collect{|i| i*SCALE_FACTOR}
     INVENTORY_RECTANGLE = [230, 16, 87,32, 0].collect{|i| i*SCALE_FACTOR} 
     LIFE_MANA_RECTANGLE = [230, 63, 87,16, 0].collect{|i| i*SCALE_FACTOR}
-    SCORE_RECTANGLE     = [230, 93, 87,14, 0].collect{|i| i*SCALE_FACTOR}
+    SCORE_RECTANGLE     = [230+8, 93, 87-8,14, 0].collect{|i| i*SCALE_FACTOR}
     SPELL_RECTANGLE     = [230,126, 32,32, 0].collect{|i| i*SCALE_FACTOR} 
     ALT_SPELL_RECTANGLE = [285,126, 32,32, 0].collect{|i| i*SCALE_FACTOR} 
     MAZE_VIEW_RECTANGLE = [
@@ -91,8 +91,23 @@ module MagicMaze
       ## Fonts
       SDL::TTF.init
       # Free font found at: http://www.squaregear.net/fonts/ 
-      @font16 = SDL::TTF.open( "data/gfx/fraktmod.ttf", 16 * SCALE_FACTOR )
-      @font32 = SDL::TTF.open( "data/gfx/fraktmod.ttf", 32 * SCALE_FACTOR )
+      fontfile = "data/gfx/fraktmodXXX.ttf"
+      fontsize = [16, 32]
+      tries = 0
+      begin
+	@font16 = SDL::TTF.open( fontfile, fontsize.first * SCALE_FACTOR )
+	@font32 = SDL::TTF.open( fontfile, fontsize.last  * SCALE_FACTOR )
+      rescue SDL::Error => err
+	# Debian font
+	fontfile = "/usr/share/fonts/truetype/Isabella.ttf"
+	fontsize = [12, 28]
+	if tries < 1 then 
+	  tries += 1 # to avoid loop.
+	  retry 
+	else 
+	  raise err 
+	end
+      end
       @font = @font16
     end
 
