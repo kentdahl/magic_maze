@@ -683,7 +683,7 @@ module MagicMaze
       end
       @menu_width = max_width
       @menu_height = total_height
-      @menu_chosen_item = chosen
+      @menu_chosen_item = chosen || @menu_items.first
 
     end
 
@@ -705,17 +705,34 @@ module MagicMaze
 			  topx + 4*SCALE_FACTOR, 
 			  y_offset + 4*SCALE_FACTOR, 
 			  font )
-	y_offset+= font.height + 4*SCALE_FACTOR
 	if text == @menu_chosen_item then
-	  @screen.drawRect( topx + 2*SCALE_FACTOR, y_offset + 2*SCALE_FACTOR,
-			   @menu_width - 4*SCALE_FACTOR, font.height-2*SCALE_FACTOR ,
+	  @screen.drawRect( topx + 2*SCALE_FACTOR, 
+			   y_offset + 2*SCALE_FACTOR,
+			   @menu_width - 4*SCALE_FACTOR, 
+			   font.height - 2*SCALE_FACTOR,
 			   COL_WHITE )
-
 	end
-
+	y_offset+= font.height + 4*SCALE_FACTOR
       end
       flip
     end
+
+    def chosen_menu_item=(item)
+      @menu_chosen_item = item
+    end
+
+    def previous_menu_item
+      @menu_chosen_item = 
+	@menu_items[@menu_items.index(@menu_chosen_item)-1] ||
+	@menu_chosen_item
+    end
+
+    def next_menu_item
+      @menu_chosen_item = 
+	@menu_items[@menu_items.index(@menu_chosen_item)+1] ||
+	@menu_chosen_item
+    end
+
 
     ##
     # Erase the menu.

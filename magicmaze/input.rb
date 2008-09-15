@@ -228,6 +228,27 @@ module MagicMaze
 	return answers[ key ]
       end
 
+
+      MENU_NAVIGATION = {
+	SDL::Key::ESCAPE => :exit_menu,
+	SDL::Key::Q      => :exit_menu,
+        SDL::Key::UP     => :previous_menu_item,
+        SDL::Key::DOWN   => :next_menu_item,
+	SDL::Key::RETURN => :select_menu_item,
+	SDL::Key::SPACE  => :select_menu_item,
+      }
+
+      def get_menu_item_navigation_event
+	answers = MENU_NAVIGATION
+	begin
+	  key = get_key_press.sym
+	end until answers.has_key?( key )
+	return answers[ key ]
+      end
+
+
+
+
       
       def check_input      
         event = SDL::Event2.poll
