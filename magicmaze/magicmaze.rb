@@ -123,6 +123,7 @@ module MagicMaze
         SDL.delay(1)
       end
       put_titlescreen
+      
       @graphics.fade_in do 
         SDL.delay(1)
       end
@@ -130,6 +131,14 @@ module MagicMaze
     
     def test_endgame
       show_end_game
+    end
+
+    def test_menu
+      @graphics.setup_menu(%w{Foo Bar Snafu}, "Bar")
+      @graphics.draw_menu
+      @title_input.get_key_press
+      @graphics.erase_menu
+      put_titlescreen
     end
 
     def test_helpscreen

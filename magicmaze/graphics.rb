@@ -668,13 +668,59 @@ module MagicMaze
       @screen.set_palette( SDL::PHYSPAL|SDL::LOGPAL, pal, @rotating_palette_range.first )
     end
 
+    ##
+    # Prepare menu for rendering.
+    #
     def setup_menu( entries, chosen = nil)
       @menu_items = entries
+
+      max_width = 0
+      total_height = 0
+      @menu_items.each do |text|
+	tw, th = @font32.text_size( text )
+	max_width = [max_width,tw+8*SCALE_FACTOR].max
+	total_height += th + 4*SCALE_FACTOR
+      end
+      @menu_width = max_width
+      @menu_height = total_height
+      @menu_chosen_item = chosen
+
     end
 
+    ##
+    # Draw an updated menu.
     def draw_menu
-      @menu.items.each do
+      topx = 160 * SCALE_FACTOR - @menu_width  / (2)
+      topy = 100 * SCALE_FACTOR - @menu_height / (2)
+
+      #TODO: Save the old background.
+
+      @screen.fillRect( topx, topy, @menu_width,@menu_height,0 )
+      @screen.drawRect( topx, topy, @menu_width,@menu_height, COL_GRAY )
+      y_offset = topy
+      font = @font32
+      @menu_items.each do |text|
+	tw, th = font.text_size( text )
+	write_smooth_text(text, 
+			  topx + 4*SCALE_FACTOR, 
+			  y_offset + 4*SCALE_FACTOR, 
+			  font )
+	y_offset+= font.height + 4*SCALE_FACTOR
+	if text == @menu_chosen_item then
+	  @screen.drawRect( topx + 2*SCALE_FACTOR, y_offset + 2*SCALE_FACTOR,
+			   @menu_width - 4*SCALE_FACTOR, font.height-2*SCALE_FACTOR ,
+			   COL_WHITE )
+
+	end
+
       end
+      flip
+    end
+
+    ##
+    # Erase the menu.
+    def erase_menu
+      # TODO: Restore background
     end
 
   end # Graphics

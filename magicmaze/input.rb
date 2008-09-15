@@ -131,6 +131,7 @@ module MagicMaze
             SDL::Key::F4     => :select_game_checkpoint,
             SDL::Key::F6     => :test_fade,
             SDL::Key::F7     => :test_endgame,
+            SDL::Key::F8     => :test_menu,
 
             SDL::Key::F12    => :toogle_fullscreen,
             SDL::Key::ESCAPE => :exit_game,
