@@ -317,8 +317,8 @@ module MagicMaze
       font.drawSolidUTF8(@screen,text,x,y,255,255,255)
     end
 
-    def write_smooth_text( text, x, y, font = @font16 )
-      font.drawBlendedUTF8(@screen,text,x,y,255,255,255)
+    def write_smooth_text( text, x, y, font = @font16,r=255,g=255,b=255 )
+      font.drawBlendedUTF8(@screen, text, x,y, r,g,b)
     end
 
 
@@ -702,17 +702,22 @@ module MagicMaze
       font = @font32
       @menu_items.each do |text|
 	tw, th = font.text_size( text )
+	color_intensity = 127
+	if text == @menu_chosen_item then
+	  rect = [ 
+	    topx + 4*SCALE_FACTOR, 
+	    y_offset + 4*SCALE_FACTOR,
+	    @menu_width - 8*SCALE_FACTOR, 
+	    font.height - 4*SCALE_FACTOR,
+	    COL_WHITE
+	  ]
+	  @screen.drawRect( *rect )
+	  color_intensity = 255
+	end
 	write_smooth_text(text, 
 			  topx + (@menu_width-tw)/2, 
-			  y_offset + 4*SCALE_FACTOR, 
-			  font )
-	if text == @menu_chosen_item then
-	  @screen.drawRect( topx + 2*SCALE_FACTOR, 
-			   y_offset + 2*SCALE_FACTOR,
-			   @menu_width - 4*SCALE_FACTOR, 
-			   font.height - 2*SCALE_FACTOR,
-			   COL_WHITE )
-	end
+			  y_offset + 2*SCALE_FACTOR, 
+			  font, *[color_intensity]*3 )
 	y_offset+= font.height + 4*SCALE_FACTOR
       end
       flip
