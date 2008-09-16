@@ -134,7 +134,7 @@ module MagicMaze
     end
 
     def test_menu
-      menu_items = %w{NewGame LoadGame Exit}
+      menu_items = %w{Continue NewGame LoadGame Training Exit}
       @graphics.setup_menu(menu_items)
       begin
 	@graphics.draw_menu
@@ -172,6 +172,9 @@ module MagicMaze
       while @state == :title_loop
         @title_input.check_input
       end
+      @graphics.fade_out { SDL.delay(1)}
+      @graphics.clear_screen
+      @graphics.fade_in {}
     end
 
     def loop
@@ -200,6 +203,40 @@ module MagicMaze
       @current_game.start
       show_end_game if @state == :endgame
       @state = :stopped_game
+    end
+
+    def open_game_menu
+      menu_items = [
+	"Start new game",
+	# "Training",
+	"Quit Magic Maze"
+      ]
+      menu_items.unshift("Continue game") if not @saved_checkpoints.empty?
+      @graphics.setup_menu(menu_items)
+
+      begin
+	@graphics.draw_menu
+	menu_event = @title_input.get_menu_item_navigation_event
+	if [:previous_menu_item, :next_menu_item].include?(menu_event) then
+	  @graphics.send(menu_event)
+	end
+      end until [:exit_menu, :select_menu_item].include?(menu_event)
+
+      @graphics.erase_menu
+      put_titlescreen
+
+      if menu_event == :select_menu_item then
+	case @graphics.menu_chosen_item
+	when /Continue/, /Load/
+	  select_game_checkpoint
+	when /New/, /Start/
+	  start_game
+	when /Exit/, /Quit/
+	  exit_game
+	end
+      else
+	put_titlescreen
+      end	
     end
 
 

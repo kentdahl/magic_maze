@@ -136,12 +136,13 @@ module MagicMaze
             SDL::Key::F12    => :toogle_fullscreen,
             SDL::Key::ESCAPE => :exit_game,
             SDL::Key::Q      => :exit_game,
-            SDL::Key::RETURN => :start_game,
-            SDL::Key::SPACE  => :start_game,
+            SDL::Key::RETURN => :open_game_menu,
+            SDL::Key::SPACE  => :open_game_menu,
 
             # For OLPC:
-            SDL::Key::KP3   => :exit_game,     # X
-            SDL::Key::KP1   => :start_game,     # V
+            SDL::Key::KP3   => :exit_game,      # X
+            SDL::Key::KP1   => :open_game_menu, # V
+            SDL::Key::KP7   => :start_game,     # 
 
 
           },
@@ -218,6 +219,9 @@ module MagicMaze
 	SDL::Key::N => false,
 	SDL::Key::Y => true,
 	SDL::Key::J => true,
+	# For OLPC:
+	SDL::Key::KP3   => false,    # X
+	SDL::Key::KP1   => true,     # V
       }
 
       def get_yes_no_answer
@@ -236,6 +240,11 @@ module MagicMaze
         SDL::Key::DOWN   => :next_menu_item,
 	SDL::Key::RETURN => :select_menu_item,
 	SDL::Key::SPACE  => :select_menu_item,
+	# For OLPC:
+	SDL::Key::KP3   => :exit_menu,         # X
+	SDL::Key::KP1   => :select_menu_item,  # V
+        SDL::Key::KP8   => :previous_menu_item,
+        SDL::Key::KP2   => :next_menu_item,
       }
 
       def get_menu_item_navigation_event

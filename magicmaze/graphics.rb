@@ -676,9 +676,10 @@ module MagicMaze
 
       max_width = 0
       total_height = 0
+      font = @font32
       @menu_items.each do |text|
-	tw, th = @font32.text_size( text )
-	max_width = [max_width,tw+8*SCALE_FACTOR].max
+	tw, th = font.text_size( text )
+	max_width = [max_width,tw+16*SCALE_FACTOR].max
 	total_height += th + 4*SCALE_FACTOR
       end
       @menu_width = max_width
@@ -691,7 +692,7 @@ module MagicMaze
     # Draw an updated menu.
     def draw_menu
       topx = 160 * SCALE_FACTOR - @menu_width  / (2)
-      topy = 100 * SCALE_FACTOR - @menu_height / (2)
+      topy = 120 * SCALE_FACTOR - @menu_height / (2)
 
       #TODO: Save the old background.
 
@@ -702,7 +703,7 @@ module MagicMaze
       @menu_items.each do |text|
 	tw, th = font.text_size( text )
 	write_smooth_text(text, 
-			  topx + 4*SCALE_FACTOR, 
+			  topx + (@menu_width-tw)/2, 
 			  y_offset + 4*SCALE_FACTOR, 
 			  font )
 	if text == @menu_chosen_item then
@@ -717,20 +718,18 @@ module MagicMaze
       flip
     end
 
-    def chosen_menu_item=(item)
-      @menu_chosen_item = item
-    end
+    attr_reader :menu_chosen_item
 
     def previous_menu_item
       @menu_chosen_item = 
 	@menu_items[@menu_items.index(@menu_chosen_item)-1] ||
-	@menu_chosen_item
+	@menu_items.last
     end
 
     def next_menu_item
       @menu_chosen_item = 
 	@menu_items[@menu_items.index(@menu_chosen_item)+1] ||
-	@menu_chosen_item
+	@menu_items.first
     end
 
 
