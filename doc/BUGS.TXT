@@ -1,4 +1,30 @@
 
+__________
+2008-09-21
+
+
+Title loop...
+Loading level: 7
+init: Player#location: 0 0
+Updating checkpoint for level 7.
+Game loop
+./magicmaze/movement.rb:168:in `warn_could_not_find_old_entity': Moved entity not found on point of origin. (ArgumentError)
+	from ./magicmaze/movement.rb:128:in `set_coords!'
+	from ./magicmaze/movement.rb:34:in `add!'
+	from ./magicmaze/game.rb:35:in `move_forward'
+	from ./magicmaze/player.rb:90:in `move_forward'
+	from ./magicmaze/player.rb:145:in `send'
+	from ./magicmaze/player.rb:145:in `follow_impulses'
+	from ./magicmaze/player.rb:142:in `each'
+	from ./magicmaze/player.rb:142:in `follow_impulses'
+	 ... 11 levels...
+	from ./magicmaze/input.rb:278:in `check_input'
+	from ./magicmaze/magicmaze.rb:156:in `title_loop'
+	from ./magicmaze/magicmaze.rb:167:in `loop'
+
+
+
+
 
 __________
 2005-03-13
