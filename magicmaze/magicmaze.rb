@@ -133,23 +133,6 @@ module MagicMaze
       show_end_game
     end
 
-    def test_menu
-      menu_items = %w{Continue NewGame LoadGame Training Exit}
-      @graphics.setup_menu(menu_items)
-      begin
-	@graphics.draw_menu
-	menu_event = @title_input.get_menu_item_navigation_event
-	case menu_event
-	when :previous_menu_item
-	  @graphics.previous_menu_item
-	when :next_menu_item
-	  @graphics.next_menu_item
-	end
-      end until [:exit_menu,:select_menu_item].include?(menu_event)
-      @graphics.erase_menu
-      put_titlescreen
-    end
-
     def test_helpscreen
       @graphics.show_help
       @title_input.get_key_press
@@ -219,7 +202,7 @@ module MagicMaze
     def open_game_menu
       menu_items = [
 	"Start new game",
-	"Training",
+	# "Training",
 	"Quit Magic Maze"
       ]
       menu_items.unshift("Continue game") if not @saved_checkpoints.empty?
