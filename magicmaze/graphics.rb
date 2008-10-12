@@ -694,9 +694,17 @@ module MagicMaze
 	total_height += th + 4*SCALE_FACTOR
       end
       @menu_width = max_width
-      @menu_height = total_height
       @menu_chosen_item = chosen || @menu_items.first
-
+      
+      # Truncate if the items can fit on screen.
+      scr_height = 200 * SCALE_FACTOR
+      if total_height > scr_height then
+	@menu_height = scr_height
+	@menu_truncate_size = (@menu_items.size * scr_height / (total_height)).to_i
+      else
+	@menu_height = total_height
+	@menu_truncate_size = false 
+      end
     end
 
     ##
@@ -707,11 +715,30 @@ module MagicMaze
 
       #TODO: Save the old background.
 
+      # Handle the case of truncated menu. Not too nice.
+      if @menu_truncate_size then
+	chosen_index = @menu_items.index(@menu_chosen_item)
+	if chosen_index then
+	  half_trunc = @menu_truncate_size / 2
+	  first_item = [chosen_index-half_trunc, 0].max
+	  if first_item.zero?
+	    half_trunc += half_trunc - chosen_index
+	  end
+	  last_item  = [chosen_index+half_trunc, @menu_items.size].min
+
+	  curr_menu_items = @menu_items[first_item..last_item]
+	else
+	  curr_menu_items = @menu_items[0..@menu_truncate_size]
+	end
+      else
+	curr_menu_items = @menu_items
+      end
+
       @screen.fillRect( topx, topy, @menu_width,@menu_height,0 )
       @screen.drawRect( topx, topy, @menu_width,@menu_height, COL_GRAY )
       y_offset = topy
       font = @font32
-      @menu_items.each do |text|
+      curr_menu_items.each do |text|
 	tw, th = font.text_size( text )
 	color_intensity = 127
 	if text == @menu_chosen_item then
