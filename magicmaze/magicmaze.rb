@@ -193,7 +193,7 @@ module MagicMaze
 
     def start_replay_level_game( start_level = 1 )
       pregame_preparation
-      player_status = nil
+      player_status = @saved_checkpoints[ start_level ]
       @current_game = GameLoop.new( self, start_level, player_status )
       @current_game.start
       @state = :stopped_game
@@ -254,7 +254,7 @@ module MagicMaze
 
       case choose_from_menu( menu_items )
       when /(\d+)/
-	start_replay_game( $1.to_i )
+	start_replay_level_game( $1.to_i )
       when /Back/, /Exit/
 	# Just fall out of the loop
       end
