@@ -185,8 +185,7 @@ module MagicMaze
 
     def start_training_game( start_level = 1 )
       pregame_preparation
-      player_status = nil
-      @current_game = GameLoop.new( self, start_level, player_status )
+      @current_game = GameLoop.new( self, start_level, :training )
       @current_game.start
       @state = :stopped_game
     end
@@ -216,7 +215,7 @@ module MagicMaze
 	menu_items.unshift("Continue game") 
 	menu_items.push("Replay level") if @saved_checkpoints.size>1
       end
-      menu_items.push "Quit Magic Maze" # S
+      menu_items.push "Quit Magic Maze"
 
       case choose_from_menu( menu_items )
       when /Continue/, /Load/
@@ -229,7 +228,7 @@ module MagicMaze
 	open_training_menu
       when /Replay/
 	open_replay_menu
-      end	
+      end
     end
 
     def open_training_menu

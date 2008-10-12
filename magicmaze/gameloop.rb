@@ -28,6 +28,11 @@ module MagicMaze
       @input = @game_input  = Input::Control.new( self, :in_game )
       @game_delay  = 50
       @level = level
+      if player_status == :training then
+	puts "Entering training mode..."
+	@training_mode = true
+	player_status = nil
+      end
       @restart_status = player_status
 
       @map = nil
@@ -52,9 +57,10 @@ module MagicMaze
       @player.reset( @map, @restart_status )  if should_reset
       @restart_status = nil
 
-
-      @saved_player_status = @player.get_saved
-      @game_config.update_checkpoint( level, @saved_player_status )
+      unless @training_mode then
+	@saved_player_status = @player.get_saved
+	@game_config.update_checkpoint( level, @saved_player_status )
+      end
 
       GC.start
     end
