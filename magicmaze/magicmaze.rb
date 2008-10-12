@@ -171,12 +171,7 @@ module MagicMaze
     end
 
     def start_game( level = nil, player_status = nil )
-      @graphics.put_screen( :titlescreen, true )
-      @graphics.fade_out do 
-	SDL.delay(1)
-      end
-      @state = :starting_game
-
+      pregame_preparation
       start_level = level || @options[:start_level] || 1
       if @loadgame && ! @saved_checkpoints.empty? then
         start_level, player_status = @saved_checkpoints.max
@@ -189,23 +184,39 @@ module MagicMaze
     end
 
     def start_training_game( start_level = 1 )
-      @graphics.put_screen( :titlescreen, true )
-      @graphics.fade_out{ SDL.delay(1) }
-      @state = :starting_game
-
+      pregame_preparation
       player_status = nil
       @current_game = GameLoop.new( self, start_level, player_status )
       @current_game.start
       @state = :stopped_game
     end
 
+    def start_replay_level_game( start_level = 1 )
+      pregame_preparation
+      player_status = nil
+      @current_game = GameLoop.new( self, start_level, player_status )
+      @current_game.start
+      @state = :stopped_game
+    end
+
+    # The fade before starting the game.
+    def pregame_preparation
+      @graphics.put_screen( :titlescreen, true )
+      @graphics.fade_out{ SDL.delay(1) }
+      @state = :starting_game
+    end
+
+
     def open_game_menu
       menu_items = [
 	"Start new game",
-	# "Training",
-	"Quit Magic Maze"
+	"Training",
       ]
-      menu_items.unshift("Continue game") if not @saved_checkpoints.empty?
+      if not @saved_checkpoints.empty? then
+	menu_items.unshift("Continue game") 
+	menu_items.push("Replay level") if @saved_checkpoints.size>1
+      end
+      menu_items.push "Quit Magic Maze" # S
 
       case choose_from_menu( menu_items )
       when /Continue/, /Load/
@@ -216,11 +227,13 @@ module MagicMaze
 	exit_game
       when /Training/
 	open_training_menu
+      when /Replay/
+	open_replay_menu
       end	
     end
 
     def open_training_menu
-      menu_items = (1..5).collect{|i| "Level #{i}" }
+      menu_items = (1..NUM_LEVELS).collect{|i| "Level #{i}" }
       menu_items.push "Back"
 
       case choose_from_menu( menu_items )
@@ -231,6 +244,23 @@ module MagicMaze
       end
       put_titlescreen
     end
+
+    def open_replay_menu
+      menu_items = @saved_checkpoints.keys.sort.collect{
+	|i,j| 
+	"Replay level #{i}" 
+      }
+      menu_items.push "Back"
+
+      case choose_from_menu( menu_items )
+      when /(\d+)/
+	start_replay_game( $1.to_i )
+      when /Back/, /Exit/
+	# Just fall out of the loop
+      end
+      put_titlescreen
+    end
+
 
     ##
     # This does a generic menu event loop
