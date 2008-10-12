@@ -11,6 +11,7 @@
 
 require 'sdl'
 
+require 'magicmaze/images'
 require 'magicmaze/tile'
 
 module MagicMaze
@@ -18,6 +19,7 @@ module MagicMaze
   ################################################
   #
   class Graphics
+    include Images # Generic GFX.
     DEBUG = true
 
     GFX_PATH = 'data/gfx/'
@@ -141,8 +143,6 @@ module MagicMaze
         @background_images[key] = scaled_image
       }
     end
-
-
 
     ##
     # reads in the old sprites from the "undocumented" format I used.

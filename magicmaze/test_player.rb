@@ -1,11 +1,11 @@
 require 'test/unit'
 
-require 'magicmaze/player'
+require 'magicmaze/spellbook'
 
 class TestSpellBook < Test::Unit::TestCase
   include MagicMaze
   def setup
-    @spellbook = Player::SpellBook.new
+    @spellbook = SpellBook.new
   end
 
   def test_lookup
