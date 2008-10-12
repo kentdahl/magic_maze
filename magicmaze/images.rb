@@ -1,3 +1,14 @@
+############################################################
+# Magic Maze - a simple and low-tech monster-bashing maze game.
+# Copyright (C) 2004-2008 Kent Dahl
+#
+# This game is FREE as in both BEER and SPEECH. 
+# It is available and can be distributed under the terms of 
+# the GPL license (version 2) or alternatively 
+# the dual-licensing terms of Ruby itself.
+# Please see README.txt and COPYING_GPL.txt for details.
+############################################################
+
 require 'sdl'
 
 require 'magicmaze/tile'
@@ -9,146 +20,118 @@ module MagicMaze
   # 
   module Images
 
-    def load_background_images
-      @background_images = {}
-      SCREEN_IMAGES.each{|key, filename|
-        source_image = SDL::Surface.load( GFX_PATH+filename ) 
-        if SCALE_FACTOR != 1 then
-          scaled_image = SDL::Surface.new(SDL::SWSURFACE, 
-                                        source_image.w * SCALE_FACTOR, 
-                                        source_image.h * SCALE_FACTOR,
-                                          @screen)
-          scaled_image.set_palette( SDL::LOGPAL|SDL::PHYSPAL, 
-                                    source_image.get_palette, 0 )
-          linear_scale_image(source_image,0,0, scaled_image )
-        else
-          scaled_image = source_image
+    ##
+    # Slow, but blocky and non-SGE scaling of image.
+    #
+    def linear_scale_image( source_image, sx,sy, scaled_image, factor = 1 )
+      sw = scaled_image.w / factor
+      sh = scaled_image.h / factor
+
+      source_image.lock
+      scaled_image.lock
+
+      sh.times do |sdy|        
+        sw.times do |sdx|
+          pixel = source_image.get_pixel(sx+sdx, sy+sdy)
+          scaled_image.fill_rect(sdx*factor, sdy*factor, factor, factor, pixel)
         end
-        
-        @background_images[key] = scaled_image
+      end
+
+      source_image.unlock
+      scaled_image.unlock
+
+      scaled_image
+    end
+
+
+    ######################################################
+    # general graphics methods
+
+    ## put up a background screen
+    def put_screen( screen, center = false, flip = true )
+      @screen.fillRect(0,0,@xsize,@ysize,0)
+      image = @background_images[ screen ]
+      x,y=0,0
+      if center
+        x = (@xsize - image.w)/2
+        y = (@ysize - image.h)/2        
+      end
+      @screen.put( image, x,y )
+      @screen.flip if flip
+    end
+
+    def put_background( sprite, x, y )
+      put_sprite( sprite, x, y )
+    end
+
+    def put_sprite( sprite, x, y )
+      image = @sprite_images[sprite]
+      @screen.put( image, x, y ) if image   
+    end    
+
+    def flip
+      @screen.flip
+    end
+
+    def toogle_fullscreen
+      @screen.toggle_fullscreen
+    end
+
+    def write_text( text, x, y, font = @font16 )
+      font.drawSolidUTF8(@screen,text,x,y,255,255,255)
+    end
+
+    def write_smooth_text( text, x, y, font = @font16,r=255,g=255,b=255 )
+      font.drawBlendedUTF8(@screen, text, x,y, r,g,b)
+    end
+
+    def set_palette( pal, start_color = 0 )
+      pal ||= @sprite_palette
+      @screen.set_palette( SDL::PHYSPAL, pal, start_color )
+    end
+
+    FADE_DURATION = 16
+
+    def fade_out( tr = 0, tg = 0, tb = 0, fade_duration = FADE_DURATION )
+      mypal = @sprite_palette.dup
+      @old_palette = mypal
+      range = fade_duration
+      (0...range).each {|i|
+	factor = (range-i).to_f / range
+	set_palette( mypal.map {|r,g,b| 
+		      [ ( r - tr ) * factor + tr,
+			( g - tg ) * factor + tg, 
+			( b - tb ) * factor + tb ]
+		    } )
+	yield i, range
       }
+      @fade_color = [ tr, tg, tb ]
     end
 
-    ##
-    # reads in the old sprites from the "undocumented" format I used.
-    #
-    def load_old_sprites
-      sprite_images = []
-      File.open( GFX_PATH+'sprites.dat', 'rb'){|file|
-        # First 3*256 bytes is the palette, with values ranged (0...64).
-        palette_data = file.read(768) 
-        if palette_data.size == 768 then
-          palette = (0..255).collect{|colour|
-            data = palette_data[colour*3,3]
-            [data[0], data[1], data[2]].collect{|i| i*255/63}
-              #((i<<2) | 3) + 3 }
-          }
-        end
-
-	@sprite_palette = palette
-
-        # Loop over 1030 byte segments, which each is a sprite.
-        begin
-          sprite = SDL::Surface.new(SDL::HWSURFACE, # SDL::SRCCOLORKEY,
-                                    SPRITE_WIDTH,SPRITE_HEIGHT,@screen)
-          mode =  SDL::LOGPAL|SDL::PHYSPAL
-          sprite.set_palette( mode, palette, 0 )
-          @screen.set_palette(mode, palette, 0 )
-          sprite_data = file.read(1030)
-          if sprite_data && sprite_data.size==1030 then
-            x = 0
-            y = 0
-            sprite.lock
-            # The first six bytes is garbage?
-            sprite_data[6,1024].each_byte{|pixel|
-              sprite.put_pixel(x,y,pixel)
-              x += 1 # *SCALE_FACTOR
-              if x>31
-                x = 0
-                y += 1
-              end              
-            }
-            sprite.unlock
-            sprite.setColorKey( SDL::SRCCOLORKEY || SDL::RLEACCEL ,0)
-            sprite_images << sprite.display_format
-          end
-        end while sprite_data
+    def fade_in( fade_duration = FADE_DURATION )
+      mypal = @old_palette || @sprite_palette
+      tr, tg, tb = *(@fade_color || [0,0,0])
+      range = fade_duration
+      (0..range).each {|i|
+	factor = i.to_f / range
+	set_palette( mypal.map {|r,g,b| 
+		      [ ( r - tr ) * factor + tr,
+			( g - tg ) * factor + tg, 
+			( b - tb ) * factor + tb ]
+		    } )
+	yield i, range
       }
-      sprite_images
+      set_palette( mypal )
     end
 
-
-
-    ##
-    # Load sprites from a large bitmap. Easier to edit.
-    #
-    def load_new_sprites
-      puts "Loading sprites..." if DEBUG
-      sprite_images = []
-      begin
-	spritemap = SDL::Surface.load( GFX_PATH + 'sprites.pcx' ) 
-      rescue
-	return nil
-      end
-
-      palette = spritemap.get_palette
-
-      lines = ( spritemap.h + 15 ) / 32 
-
-      @screen.set_palette( SDL::LOGPAL|SDL::PHYSPAL, palette, 0 )
-
-
-      (0...lines).each do|line|	
-	(0...10).each do|column|
-	  sprite = SDL::Surface.new(SDL::HWSURFACE, #|SDL::SRCCOLORKEY,
-                                    SPRITE_WIDTH, SPRITE_HEIGHT, @screen)
-          mode =  SDL::LOGPAL|SDL::PHYSPAL
-
-	  x =  column * 32
-	  y = line * 32
-	  w = h = 32
-
-	  sprite.set_palette( mode, palette, 0 )
-	  sprite.setColorKey( SDL::SRCCOLORKEY || SDL::RLEACCEL ,0)
-          sprite.fillRect(0,0,SPRITE_WIDTH,SPRITE_HEIGHT,3)
-
-          if SCALE_FACTOR == 1 then
-            SDL.blitSurface(spritemap,x,y,w,h,sprite, 0,0 )
-          else
-            linear_scale_image(spritemap,x,y, sprite )
-          end
-
-	  sprite.set_palette( mode, palette, 0 )
-	  sprite.setColorKey( SDL::SRCCOLORKEY || SDL::RLEACCEL ,0)
-
-	  sprite_images << sprite.display_format
-	end
-      end
-
-      @sprite_palette = palette 
-      puts "Sprites loaded: #{sprite_images.size}." if DEBUG
-
-      sprite_images
+    def fade_in_and_out( sleep_ms = 500, &block )
+      fade_in( &block )
+      SDL.delay( sleep_ms )
+      fade_out( &block )      
     end
 
-
-
-    ##
-    # save sprites out to bitmap
-    #
-    def save_old_sprites( filename = "tmpgfx" )
-      height = ( (@sprite_images.size / 10) + 1 ) * 32
-
-      spritemap = SDL::Surface.new( SDL::SRCCOLORKEY, @xsize, height, @screen )
-      spritemap.set_palette( SDL::LOGPAL, @sprite_palette, 0 )
-
-      @sprite_images.each_with_index do|sprite, index|
-	y = (index / 10)  * 32
-	x = (index % 10 ) * 32
-	spritemap.put( sprite, x, y )
-      end
-
-      spritemap.save_bmp( filename + ".bmp" )      
+    def clear_screen
+      @screen.fillRect( 0, 0, @xsize, @ysize, 0 )
     end
 
   end # Images

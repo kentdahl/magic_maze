@@ -135,7 +135,7 @@ module MagicMaze
                                           @screen)
           scaled_image.set_palette( SDL::LOGPAL|SDL::PHYSPAL, 
                                     source_image.get_palette, 0 )
-          linear_scale_image(source_image,0,0, scaled_image )
+          linear_scale_image(source_image,0,0, scaled_image, SCALE_FACTOR )
         else
           scaled_image = source_image
         end
@@ -230,7 +230,7 @@ module MagicMaze
           if SCALE_FACTOR == 1 then
             SDL.blitSurface(spritemap,x,y,w,h,sprite, 0,0 )
           else
-            linear_scale_image(spritemap,x,y, sprite )
+            linear_scale_image(spritemap,x,y, sprite, SCALE_FACTOR )
           end
 
 	  sprite.set_palette( mode, palette, 0 )
@@ -267,70 +267,6 @@ module MagicMaze
       spritemap.save_bmp( filename + ".bmp" )      
     end
 
-
-    ##
-    # Slow, but blocky and non-SGE.
-    #
-    def linear_scale_image( source_image, sx,sy, scaled_image, factor = SCALE_FACTOR )
-      sw = scaled_image.w / factor
-      sh = scaled_image.h / factor
-
-      source_image.lock
-      scaled_image.lock
-
-      sh.times do |sdy|        
-        sw.times do |sdx|
-          pixel = source_image.get_pixel(sx+sdx, sy+sdy)
-          scaled_image.fill_rect(sdx*factor, sdy*factor, factor, factor, pixel)
-        end
-      end
-
-      source_image.unlock
-      scaled_image.unlock
-
-      scaled_image
-    end
-
-    ######################################################
-    # general graphics methods
-
-    ## put up a background screen
-    def put_screen( screen, center = false, flip = true )
-      @screen.fillRect(0,0,@xsize,@ysize,0)
-      image = @background_images[ screen ]
-      x,y=0,0
-      if center
-        x = (@xsize - image.w)/2
-        y = (@ysize - image.h)/2        
-      end
-      @screen.put( image, x,y )
-      @screen.flip if flip
-    end
-
-    def put_background( sprite, x, y )
-      put_sprite( sprite, x, y )
-    end
-
-    def put_sprite( sprite, x, y )
-      image = @sprite_images[sprite]
-      @screen.put( image, x, y ) if image   
-    end    
-
-    def flip
-      @screen.flip
-    end
-
-    def toogle_fullscreen
-      @screen.toggle_fullscreen
-    end
-
-    def write_text( text, x, y, font = @font16 )
-      font.drawSolidUTF8(@screen,text,x,y,255,255,255)
-    end
-
-    def write_smooth_text( text, x, y, font = @font16,r=255,g=255,b=255 )
-      font.drawBlendedUTF8(@screen, text, x,y, r,g,b)
-    end
 
 
     #################################################
@@ -467,56 +403,6 @@ module MagicMaze
       put_sprite( sprite_id, @curr_view_x, @curr_view_y )
     end
 
-
-    ####################################
-    #
-
-    def set_palette( pal, start_color = 0 )
-      pal ||= @sprite_palette
-      @screen.set_palette( SDL::PHYSPAL, pal, start_color )
-    end
-
-    def fade_out( tr = 0, tg = 0, tb = 0 )
-      mypal = @sprite_palette.dup
-      @old_palette = mypal
-      range = FADE_DURATION
-      (0...range).each {|i|
-	factor = (range-i).to_f / range
-	set_palette( mypal.map {|r,g,b| 
-		      [ ( r - tr ) * factor + tr,
-			( g - tg ) * factor + tg, 
-			( b - tb ) * factor + tb ]
-		    } )
-	yield i, range
-      }
-      @fade_color = [ tr, tg, tb ]
-    end
-
-    def fade_in
-      mypal = @old_palette || @sprite_palette
-      tr, tg, tb = *(@fade_color || [0,0,0])
-      range = FADE_DURATION
-      (0..range).each {|i|
-	factor = i.to_f / range
-	set_palette( mypal.map {|r,g,b| 
-		      [ ( r - tr ) * factor + tr,
-			( g - tg ) * factor + tg, 
-			( b - tb ) * factor + tb ]
-		    } )
-	yield i, range
-      }
-      set_palette( mypal )
-    end
-
-    def fade_in_and_out( sleep_ms = 500, &block )
-      fade_in( &block )
-      SDL.delay( sleep_ms )
-      fade_out( &block )      
-    end
-
-    def clear_screen
-      @screen.fillRect( 0, 0, @xsize, @ysize, 0 )
-    end
 
     ####################################
     #
