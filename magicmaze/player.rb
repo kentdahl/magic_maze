@@ -1,6 +1,8 @@
 require 'magicmaze/movement'
 require 'magicmaze/game'
-require 'magicmaze/tile'
+require 'magicmaze/spellbook'
+require 'magicmaze/inventory'
+
 
 module MagicMaze
 
@@ -46,7 +48,6 @@ module MagicMaze
       @loose_health_delay = LOOSE_HEALTH_DELAY
 
       @override_sprite = nil
-
     end
 
     def reset( map, saved = nil )
@@ -70,7 +71,6 @@ module MagicMaze
       @last_action = nil 
 
       @override_sprite = nil
-    
     end
 
     ##
@@ -98,7 +98,6 @@ module MagicMaze
           opened = @inventory.open_door?( entity.color )
           location.set(:entity,nil) if opened
         end
-        
       end
     end
 
@@ -137,7 +136,6 @@ module MagicMaze
             @impulses[:turn_around] = nil
           end
         end
-          
       end
       IMPULSES.each{|key|
         value = @impulses[key]
@@ -177,21 +175,17 @@ module MagicMaze
     end
 
     def check_counters
-
       @gain_mana_delay -= 1
       if( @gain_mana_delay < 0 )
         add_mana( 1 )
         @gain_mana_delay = GAIN_MANA_DELAY
       end
-
       @loose_health_delay -= 1
       if( @loose_health_delay < 0 )
         loose_health( 1 )
         @loose_health_delay = LOOSE_HEALTH_DELAY
       end
-
     end
-
 
     def increase_score( diff )
       @score += diff
@@ -207,12 +201,9 @@ module MagicMaze
       end
     end
 
-
     def die( vale )
       request_state_change( :player_died )
     end
-
-
 
     def heal( diff )
       if @life + diff <= MAX_LIFE
@@ -232,30 +223,10 @@ module MagicMaze
     end
 
 
-    def deprecated_use_mana( diff )
-      if @mana >= diff
-        add_mana( -diff )
-        true
-      else
-        false
-      end
-    end
-
-    def deprecated_restore_mana( diff )
-      if @mana + diff <= MAX_MANA then
-        add_mana( diff )
-        true
-      else
-        false
-      end
-    end
-
     # callback from missiles.
     def missile_removed( missile )
       # @num_missiles -= 1
     end
-
-
 
     def sprite_id
       ( @override_sprite || @direction.value )
@@ -281,118 +252,6 @@ module MagicMaze
       throw :state_change, state
     end
 
-
-    ##################################################
-    #
-    class SpellBook
-      SPELL_NAMES = {
-        :primary => [:spell_lightning, :spell_bigball, :spell_coolcube],
-        :secondary => [:spell_heal, :spell_summon_mana, :spell_magic_map, :spell_spy_eye]
-      }
-        
-      ##
-      # takes two hashes containing spell tiles.
-      def initialize( primary_spells  = DEFAULT_ATTACK_SPELL_TILES, 
-                     secondary_spells = DEFAULT_OTHER_SPELL_TILES )
-        @spell_list = Hash.new
-        tiles = nil
-        insertion = proc {|spell_name| 
-          @spell_list[ spell_name ] = tiles[spell_name] 
-        }
-        tiles = primary_spells
-        SPELL_NAMES[:primary].each(&insertion)
-        tiles = secondary_spells
-        SPELL_NAMES[:secondary].each(&insertion)
-        #:primary => primary_spells,
-        #  :secondary => secondary_spells
-        #}
-        @spell_index = Hash.new(0)
-      end
-
-      def spell( spell_type = :primary )
-        @spell_list[
-          SPELL_NAMES[spell_type][ @spell_index[spell_type]] 
-        ]
-      end
-      def primary_spell
-	spell( :primary )
-      end
-      def secondary_spell
-        spell( :secondary )
-      end
-
-      def page_spell( spell_type = :primary, diff = 1 )
-        @spell_index[ spell_type ] += diff
-        bound_index!( spell_type )
-      end
-
-      def bound_index!( spell_type = :primary )
-        index = @spell_index[ spell_type ]
-        max = SPELL_NAMES[ spell_type ].size
-        index = if index<0
-                  max + index
-                else
-                  if index>= max
-                    index - max
-                  else
-                    index
-                  end
-                end
-        @spell_index[ spell_type ] = index
-        nil
-      end
-      private :bound_index!
-      
-    end # SpellBook
-
   end # Player
-
-
-
-
-
-  ##
-  # the backpack of our ol' wizard.
-  class Inventory
-    MAX_KEYS = 3
-    tiles = DEFAULT_KEY_TILES
-    KEY_TILES = Hash.new
-    tiles.each{|hashkey, keytile|
-      KEY_TILES[keytile.color] = keytile
-    }
-    #  :red =>    tiles[:red_key],
-    #  :blue =>   tiles[:blue_key], 
-    #  :yellow => tiles[:yellow_key]
-    #}
-    def initialize
-      @keys = Hash.new(0)
-    end
-    def add_key( color )
-      have = @keys[color]
-      if have<MAX_KEYS
-        @keys[color]+=1
-      else
-        nil
-      end
-    end
-
-    def each
-      KEY_TILES.each{|key, tile|
-        @keys[key].times{
-          yield tile.sprite_id
-        }
-      }
-    end
-
-    def open_door?( color )
-      if @keys[color]>0
-        @keys[color]-=1
-        true
-      else
-        false
-      end
-    end
-
-  end # Inventory
 
 end

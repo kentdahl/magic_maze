@@ -101,19 +101,6 @@ module MagicMaze
       @graphics.toogle_fullscreen
     end
 
-    def test_1
-      @sound.play_sound( :argh )
-    end
-    def test_2
-      @sound.play_sound( :zap  )
-    end
-    def test_3
-      @sound.play_sound( :punch )
-    end
-    def test_4
-      @sound.play_sound( :bonus )
-    end
-
     def test_fade
       # THIS IS FOR TESTING!
       @graphics.fade_out {}

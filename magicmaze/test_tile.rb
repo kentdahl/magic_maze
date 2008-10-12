@@ -1,6 +1,7 @@
 require 'test/unit'
 
 require 'magicmaze/tile'
+require 'magicmaze/spelltile'
 
 
 class TestBackgroundTile < Test::Unit::TestCase
