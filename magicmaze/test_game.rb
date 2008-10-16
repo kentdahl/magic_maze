@@ -18,6 +18,9 @@ class TestMagicMazeGame < Test::Unit::TestCase
     def init_graphics
       @graphics = DummyGraphics.new( @options )
     end
+    def init_graphics
+      @graphics = DummyGraphics.new( @options )
+    end
   end
 
 
