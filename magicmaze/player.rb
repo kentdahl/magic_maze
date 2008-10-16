@@ -10,7 +10,7 @@
 ############################################################
 
 require 'magicmaze/movement'
-require 'magicmaze/game'
+require 'magicmaze/entity'
 require 'magicmaze/spellbook'
 require 'magicmaze/inventory'
 

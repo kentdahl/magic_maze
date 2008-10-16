@@ -69,6 +69,18 @@ module MagicMaze
 
     FADE_DURATION = 16
 
+    ##
+    # Singleton graphics instance.
+    def self.get_graphics(options={})
+      @graphics_instance ||= MagicMaze::Graphics.new(options)
+      @graphics_instance
+    end
+
+    def self.shutdown_graphics
+      @graphics_instance.destroy
+      @graphics_instance = nil
+    end
+
     def initialize(options={})
       puts "Setting up graphics..." if DEBUG
       @xsize = FULLSCREEN[2]
@@ -97,6 +109,10 @@ module MagicMaze
       # show_message("Enter!")
 
       puts "Graphics initialized." if DEBUG
+    end
+
+    def destroy
+      SDL.quit
     end
 
 

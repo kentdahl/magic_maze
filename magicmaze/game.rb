@@ -9,271 +9,387 @@
 # Please see README.txt and COPYING_GPL.txt for details.
 ############################################################
 
-require 'magicmaze/movement'
+require 'magicmaze/gameloop'
+require 'magicmaze/graphics'
+require 'magicmaze/input'
+require 'magicmaze/sound'
 
+require 'yaml'
+
+################################################
+#
 module MagicMaze
 
-  ###############################
-  # Basic game objects.
-
-  class Entity
-    attr_reader :location
-    def initialize( map = nil, x = 0, y = 0, tile = nil )
-      @location = EntityLocation.new( self, map, x, y )
-      @tile = tile
-    end
-    def sprite_id
-      (@tile ? @tile.sprite_id : 0)
-    end
-    def active?
-      true
-    end
-
-    ##
-    # try to move in the facing direction
-    def move_forward(*a)
-      @location.add!( @direction )
-    end
-
-
-    ##
-    # any clean-up.
-    # (remove entity from map, lists etc)
-    #
-    def remove_entity
-      @location.remove_old_entity
-    end
-
-
-  end
-
-  class Being < Entity
-    MAX_LIFE = MAX_MANA = 100
-
-    attr_reader :direction
-    def initialize( *args )
-      super(*args)
-      @direction = Direction.new
-    end
-
-
-    ##
-    # a short method called every chance the Being
-    # may do an action, such as move, turn etc.
-    def action_tick( *args )
-
-    end
-
-
-    def add_life( diff )
-      old_life = @life
-      @life += diff
-      @life = MAX_LIFE if @life > MAX_LIFE
-
-      if @life <= 0
-	@life = 0
-	location.remove_old_entity
-	unless location.get(:object)
-	  location.set(:object,  DEFAULT_TILES[ :BLOOD_SPLAT ])
-	end
-	(old_life > 0 ? :died : :dead) 
-      end
-    end
-
-
-    def add_mana( diff )
-      @mana += diff
-      @mana = 0 if @mana < 0
-      @mana = MAX_MANA if @mana > MAX_MANA
-    end
-
-    def alive?
-      @life > 0
-    end
-
-    def active?
-      alive?
-    end
-
-  end # Being
-
-
-
-  class Door < Entity
-    def initialize( *args )
-      super(*args)
-    end
-  end
-
-  ###############################
-  # Missiles, such as attack spells
-  class Missile < Entity
-
-    def initialize( caster, map = nil, x = 0, y = 0, tile = nil )
-      @location = SpiritualLocation.new( self, map, x, y )
-      @tile = tile
-      @caster = caster
-      @direction = @caster.direction.dup
-      @active = true
-      @movements = 10 # How far the missile goes.
-    end
-
-    def action_tick( *args )
-      return unless @active
-      backgorund =  @location.get(:background)
-      entity     =  @location.get(:entity)
-      if @location.get(:background).blocked?
-	remove_missile
-      elsif entity and entity != @caster 
-	hit_entity( entity )
-      else
-	@movements -= 1
-	remove_missile if not move_forward or @movements < 1 
-      end
-     
-    end
-
-    def hit_entity( entity )
-      if entity.kind_of?(Monster) && entity.add_life( -@tile.damage ) == :died
-	# puts "SMACK! #{entity.alive?}"
-	@caster.play_sound( :argh ) 
-	@caster.increase_score( 10 ) # whats the value again?
-      end
-      remove_missile
-    end
-
-    def remove_missile
-      @tile.remove_missile( self )
-      @active = false
-      @location.remove_old_entity
-    end
-
-    def remove_entity
-      remove_missile
-    end
-
-
-    def active?
-      @active
-    end
-  end
-
-
-  ###############################
-  # Monsters
+  ################################################
   #
-  class DumbMonster < Being
-    def initialize( map, x, y, tile )
-      super( map, x, y, tile )
-      @life = tile.start_health
-      @sleep = 8
+  class Game
+
+    NUM_LEVELS = 10
+
+    attr_reader :graphics, :sound
+    def initialize( options )
+      @options = options
+      init_graphics
+      init_sound
+      init_input
+
+      savedir = (@options[:savedir] ||
+		 (ENV.include?("HOME") ? 
+		  (ENV['HOME'] + '/.magicmaze') : nil) || "data" )
+
+      @savegame_filename = savedir + "/progress.dat"
+      @loadgame = (options[:loadgame] || false)
+      @quit = false
+
     end
 
-    def action_tick( *args )           
-      @sleep -= 1
-      if @sleep < 0    
-        ox = @location.x
-        oy = @location.y
-        was_moved = move_forward
-        if was_moved
-          # puts "Monster#action_tick - #{@location.x-ox}, #{@location.y-oy}"
-          @sleep = 8
-        else
-          @direction.rotate_clockwise
-          @sleep = 4
-        end
-      end
-
-    end # action_tick
-
-  end
-
-
-  ##
-  # Monster moving fairly close to the original Magic Maze monsters.
-  # Translated the Pascal code almost directly.
-  #
-  class OriginalMotionMonster < Being
-    def initialize( map, x, y, tile )
-      super( map, x, y, tile )
-      @life = tile.start_health
-      @sleep = 8
+    def init_graphics
+      @graphics = Graphics.get_graphics( @options )
     end
 
-    def action_tick( *args )           
-      @sleep -= 1
-      if @sleep < 0    
-	attempt_movement( *args )
+    def init_sound
+      @sound = if @options[:sound]
+               then 
+		 begin
+		   SDLSound.new(@options) 
+		 rescue SDL::Error => sound_error
+		   puts "ERROR: Could not initialize sound! Proceeding muted." 
+		   NoSound.new
+		 end
+               else 
+		 NoSound.new 
+               end
+    end
+
+    def init_input
+      if @options[:joystick] then Input::Control.init_joystick( @options[:joystick] ) end
+
+      @title_input = Input::Control.new( self, :titlescreen )
+    end
+
+
+    def destroy
+      @graphics = MagicMaze::Graphics.shutdown_graphics
+    end
+
+    def exit
+      destroy
+      Kernel.exit
+    end
+    def escape
+      puts "Escape"
+      @state = :stopped_game
+    end
+    def exit_game
+      puts "Exit game"
+      @quit = true
+      @state = :exiting_game
+    end
+
+    def toogle_fullscreen
+      @graphics.toogle_fullscreen
+    end
+
+    def test_fade
+      # THIS IS FOR TESTING!
+      @graphics.fade_out {}
+      @graphics.put_screen( :titlescreen, true )
+
+      @graphics.fade_out do 
+        @graphics.sleep_delay(1)
+      end
+      put_titlescreen
+      
+      @graphics.fade_in do 
+        @graphics.sleep_delay(1)
+      end
+    end
+    
+    def test_endgame
+      show_end_game
+    end
+
+    def test_helpscreen
+      @graphics.show_help
+      @title_input.get_key_press
+      put_titlescreen
+    end
+    
+    def put_titlescreen
+      @graphics.put_screen( :titlescreen, true )
+    end
+    
+    
+    def title_loop
+      puts "Title loop..."
+      @graphics.fade_out {}
+      put_titlescreen
+      @graphics.fade_in do 
+	@graphics.sleep_delay(1)
+      end
+      @state = :title_loop
+      while @state == :title_loop
+        @title_input.check_input
+      end
+      @graphics.fade_out { @graphics.sleep_delay(1)}
+      @graphics.clear_screen
+      @graphics.fade_in {}
+    end
+
+    def loop
+      puts "Starting..."
+      load_checkpoints
+      while not @quit
+        title_loop
+      end
+      save_checkpoints
+      puts "Exiting..."
+    end
+
+    def start_game( level = nil, player_status = nil )
+      pregame_preparation
+      start_level = level || @options[:start_level] || 1
+      if @loadgame && ! @saved_checkpoints.empty? then
+        start_level, player_status = @saved_checkpoints.max
+      end
+
+      @current_game = GameLoop.new( self, start_level, player_status )
+      @current_game.start
+      show_end_game if @state == :endgame
+      @state = :stopped_game
+    end
+
+    def start_training_game( start_level = 1 )
+      pregame_preparation
+      @current_game = GameLoop.new( self, start_level, :training )
+      @current_game.start
+      @state = :stopped_game
+    end
+
+    def start_replay_level_game( start_level = 1 )
+      pregame_preparation
+      player_status = @saved_checkpoints[ start_level ]
+      @current_game = GameLoop.new( self, start_level, player_status )
+      @current_game.start
+      @state = :stopped_game
+    end
+
+    # The fade before starting the game.
+    def pregame_preparation
+      @graphics.put_screen( :titlescreen, true )
+      @graphics.fade_out{ @graphics.sleep_delay(1) }
+      @state = :starting_game
+    end
+
+
+    def open_game_menu
+      menu_items = [
+	"Start new game",
+	"Training",
+      ]
+      if not @saved_checkpoints.empty? then
+	menu_items.unshift("Continue game") 
+	menu_items.push("Replay level") if @saved_checkpoints.size>1
+      end
+      menu_items.push "Quit Magic Maze"
+
+      case choose_from_menu( menu_items )
+      when /Continue/, /Load/
+	select_game_checkpoint
+      when /New/, /Start/
+	start_game
+      when /Exit/, /Quit/
+	exit_game
+      when /Training/
+	open_training_menu
+      when /Replay/
+	open_replay_menu
       end
     end
 
-    def attempt_movement( game_data = {}, *args )
+    def open_training_menu
+      menu_items = (1..NUM_LEVELS).collect{|i| "Level #{i}" }
+      menu_items.push "Back"
 
-      # Monster location
-      mx = @location.x
-      my = @location.y
-
-      # Player location
-      ploc = game_data[:player_location] || @location
-      px = ploc.x
-      py = ploc.y
-
-      jp = Direction::COMPASS_DIRECTIONS.collect{|i| rand(35) + 175 }  #  FOR j:=0 TO 3 DO jp[j]:=0+Random(35)+175;
-
-      if ( py < my ) 
-	jp[0] += 1000
-	jp[2] -= 200
+      case choose_from_menu( menu_items )
+      when /(\d+)/
+	start_training_game( $1.to_i )
+      when /Back/, /Exit/
+	# Just fall out of the loop
       end
-      if ( py > my ) 
-	jp[2] += 1000
-	jp[0] -= 200
-      end
-      if ( px > mx ) 
-	jp[1] += 1000
-	jp[3] -= 200
-      end
-      if ( px < mx ) 
-	jp[3] += 1000
-	jp[1] -= 200
-      end
+      put_titlescreen
+    end
 
-      mp = -3000
-      m = -1
-      jp.each_with_index {|desire, curr_direction|
-	if direction == @direction.value 
-	  desire += 15 # Prefer to go straight
-	end
-
-	# if blocked, set desire = 0
-	location = @location.to_maplocation + Direction.get_constant( curr_direction )
-	if location and not @location.allowed_access_to?( location.x, location.y )
-	  desire = 0
-	end
-	if not location
-	  puts "Orig Location(#{@location.x}, #{@location.y}) - #{direction}"
-	end
-
-
-	if desire > mp # Store the direction we desire the most.
-	  mp = desire
-	  m = curr_direction	  
-	end
+    def open_replay_menu
+      menu_items = @saved_checkpoints.keys.sort.collect{
+	|i,j| 
+	"Replay level #{i}" 
       }
+      menu_items.push "Back"
 
-      if mp > 0
-	@direction = Direction.get_constant( m )
-	was_moved = move_forward
-	if was_moved
-	  @sleep = 8
+      case choose_from_menu( menu_items )
+      when /(\d+)/
+	start_replay_level_game( $1.to_i )
+      when /Back/, /Exit/
+	# Just fall out of the loop
+      end
+      put_titlescreen
+    end
+
+
+    ##
+    # This does a generic menu event loop
+    #
+    def choose_from_menu( menu_items = %w{OK Cancel} )
+      @graphics.setup_menu(menu_items)
+      begin
+	@graphics.draw_menu
+	menu_event = @title_input.get_menu_item_navigation_event
+	if [:previous_menu_item, :next_menu_item].include?(menu_event) then
+	  @graphics.send(menu_event)
 	end
-      end #
+      end until [:exit_menu, :select_menu_item].include?(menu_event)
+      @graphics.erase_menu
+      if menu_event == :select_menu_item then
+	return @graphics.menu_chosen_item
+      else
+	return false
+      end
+    end
 
-    end 
-
-  end # OriginalMotionMonster 
 
 
-  Monster = OriginalMotionMonster
+    END_GAME_TEXT =       
+      "LuciPer escapes into the dimension " +
+      "bettter known as...." +
+      " HELL ...    " +
+      "The world is once again safe...   " + 
+      " FOR NOW!   " + 
+      "Thank you for playing Magic Maze. " + 
+      "Hope you enjoyed it!    " +
+      "   ..Good Bye..     " + 
+      ""
+    
+
+    def show_end_game
+      @graphics.setup_rotating_palette( 193..255, :endscreen )
+
+      @graphics.put_screen( :endscreen)
+      @graphics.fade_in do 
+        @graphics.sleep_delay(10)
+        @graphics.rotate_palette
+      end
+      
+      puts "Looping end game."
+      loop_active = true
+
+      input = Input::BreakCallback.make_control{ loop_active = false }
+
+      @graphics.prepare_scrolltext( END_GAME_TEXT )
+
+      
+      # Cycle some of the colours.
+      while loop_active do
+        @graphics.sleep_delay(10)
+        @graphics.update_scrolltext
+        @graphics.rotate_palette
+        @graphics.flip
+        input.check_input
+      end
+
+      @sound.play_sound( :zap )
+
+      puts "Fade out end game."
+      @graphics.put_screen( :endscreen )
+      @graphics.fade_out do 
+        @graphics.sleep_delay(10)
+        @graphics.rotate_palette
+
+      end
+      @graphics.clear_screen
+      @graphics.flip
+
+      @graphics.set_palette( nil )
+
+      @state = :stopped_game
+      
+    end
 
 
-end
+    def select_game_checkpoint
+      level, status = @saved_checkpoints.max
+      start_game( level, status )      
+    end
+
+
+
+    ##
+    # Check whether we have hit a "special" level, such as the end.
+    #
+    def check_level( level )
+      if level > NUM_LEVELS
+        @state = :endgame
+        false
+      else
+        true
+      end
+    end
+
+
+    ##
+    # Update the player checkpoint status for this level
+    # if the score is higher than previous value.
+    #
+    def update_checkpoint( level, status )
+      checkpoint = @saved_checkpoints[ level ]
+      if (not checkpoint) || (checkpoint[:score] <= status[:score])
+	puts "Updating checkpoint for level #{level}."
+	@saved_checkpoints[ level ] = status
+      end      
+    end
+
+
+    def load_checkpoints
+      checkpoints = Hash.new 
+      begin
+	File.open(@savegame_filename,'r') do|file|
+	  obj = YAML.load( file )	  
+	  checkpoints = obj if obj.kind_of? Hash 
+	end
+      rescue Exception => e
+	puts "Error reading checkpoints: " + e.inspect	
+      end      
+      @saved_checkpoints = checkpoints
+    end
+
+    ##
+    # Save the list of checkpoints to file.
+    # I.e. the savegames.
+    def save_checkpoints
+      failures = 0 # To avoid loops
+      begin
+	File.open(@savegame_filename,'w') do|file|
+	  puts "Saving checkpoints..."
+	  file.puts @saved_checkpoints.to_yaml
+	end
+      rescue Errno::ENOENT => e
+	puts "Error saving checkpoints: " + e.inspect	
+        basedir = File.dirname(@savegame_filename)
+        if Dir[basedir].empty? and failures.zero? then
+          puts "Directory seems missing, trying to create: #{basedir}"
+          Dir.mkdir(basedir)
+          puts "Retry saving checkpoints..."
+          failures+=1 
+          retry
+        end
+      rescue Exception => e
+	puts "Error saving checkpoints: " + e.inspect
+        failures+=1	
+      end            
+    end
+      
+  end # Game
+  
+end # MagicMaze
+
+
