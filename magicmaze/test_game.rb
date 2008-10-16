@@ -31,7 +31,7 @@ class TestMagicMazeGame < Test::Unit::TestCase
   def test_initialize
     assert_not_nil( @game.graphics )
     assert_not_nil( @game.sound )
-    assert_equal( MagicMaze::SDLSound, @game.sound.class )
+    assert_equal( MagicMaze::Sound, @game.sound.class )
   end
 
   def disabled_test_initialize_sound

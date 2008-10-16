@@ -19,8 +19,22 @@ module MagicMaze
   ##
   # Use SDL for sound
   #
-  class SDLSound
+  class Sound
     ALL_CHANNELS = -1
+
+    ##
+    # Singleton graphics instance.
+    def self.get_sound(options={})
+      @sound_instance ||= MagicMaze::Sound.new(options)
+      @sound_instance
+    end
+
+    def self.shutdown_graphics
+      @sound_instance.destroy
+      @sound_instance = nil
+    end
+
+
     def initialize(options={})
       SDL::Mixer.open
       @sounds = {}
@@ -33,8 +47,12 @@ module MagicMaze
       SDL::Mixer.set_volume( ALL_CHANNELS, 64*volume/10 )
     end
     
+    def destroy
+      SDL::Mixer.set_volume( ALL_CHANNELS, 0 )
+    end
+
     def play_sound( sound_no )
-        sound_no = SOUNDS[sound_no] unless sound_no.kind_of? Numeric
+      sound_no = SOUNDS[sound_no] unless sound_no.kind_of? Numeric
       wave = @sounds[sound_no]
       SDL::Mixer.playChannel(sound_no,wave,0)
     end

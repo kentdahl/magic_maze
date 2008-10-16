@@ -51,7 +51,7 @@ module MagicMaze
       @sound = if @options[:sound]
                then 
 		 begin
-		   SDLSound.new(@options) 
+		   Sound.get_sound(@options) 
 		 rescue SDL::Error => sound_error
 		   puts "ERROR: Could not initialize sound! Proceeding muted." 
 		   NoSound.new
