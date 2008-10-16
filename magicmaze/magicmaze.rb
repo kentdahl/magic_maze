@@ -58,11 +58,29 @@ module MagicMaze
     attr_reader :graphics, :sound
     def initialize( options )
       @options = options
-      @graphics = Graphics.new( options )
-      @sound = if @options[:sound] 
+      init_graphics
+      init_sound
+      init_input
+
+      savedir = (@options[:savedir] ||
+		 (ENV.include?("HOME") ? 
+		  (ENV['HOME'] + '/.magicmaze') : nil) || "data" )
+
+      @savegame_filename = savedir + "/progress.dat"
+      @loadgame = (options[:loadgame] || false)
+      @quit = false
+
+    end
+
+    def init_graphics
+      @graphics = Graphics.new( @options )
+    end
+
+    def init_sound
+      @sound = if @options[:sound]
                then 
 		 begin
-		   SDLSound.new(options) 
+		   SDLSound.new(@options) 
 		 rescue SDL::Error => sound_error
 		   puts "ERROR: Could not initialize sound! Proceeding muted." 
 		   NoSound.new
@@ -70,17 +88,12 @@ module MagicMaze
                else 
 		 NoSound.new 
                end
+    end
 
+    def init_input
       if @options[:joystick] then Input::Control.init_joystick( @options[:joystick] ) end
 
       @title_input = Input::Control.new( self, :titlescreen )
-      savedir = (options[:savedir] ||
-                 (ENV.include?("HOME") ? (ENV['HOME'] + '/.magicmaze') : nil) ||                  "data" )
-
-      @savegame_filename = savedir + "/progress.dat"
-      @loadgame = (options[:loadgame] || false)
-      @quit = false
-
     end
     
 
@@ -107,12 +120,12 @@ module MagicMaze
       @graphics.put_screen( :titlescreen, true )
 
       @graphics.fade_out do 
-        SDL.delay(1)
+        @graphics.sleep_delay(1)
       end
       put_titlescreen
       
       @graphics.fade_in do 
-        SDL.delay(1)
+        @graphics.sleep_delay(1)
       end
     end
     
@@ -136,13 +149,13 @@ module MagicMaze
       @graphics.fade_out {}
       put_titlescreen
       @graphics.fade_in do 
-	SDL.delay(1)
+	@graphics.sleep_delay(1)
       end
       @state = :title_loop
       while @state == :title_loop
         @title_input.check_input
       end
-      @graphics.fade_out { SDL.delay(1)}
+      @graphics.fade_out { @graphics.sleep_delay(1)}
       @graphics.clear_screen
       @graphics.fade_in {}
     end
@@ -188,7 +201,7 @@ module MagicMaze
     # The fade before starting the game.
     def pregame_preparation
       @graphics.put_screen( :titlescreen, true )
-      @graphics.fade_out{ SDL.delay(1) }
+      @graphics.fade_out{ @graphics.sleep_delay(1) }
       @state = :starting_game
     end
 
@@ -287,7 +300,7 @@ module MagicMaze
 
       @graphics.put_screen( :endscreen)
       @graphics.fade_in do 
-        SDL.delay(10)
+        @graphics.sleep_delay(10)
         @graphics.rotate_palette
       end
       
@@ -301,7 +314,7 @@ module MagicMaze
       
       # Cycle some of the colours.
       while loop_active do
-        SDL.delay(10)
+        @graphics.sleep_delay(10)
         @graphics.update_scrolltext
         @graphics.rotate_palette
         @graphics.flip
@@ -313,7 +326,7 @@ module MagicMaze
       puts "Fade out end game."
       @graphics.put_screen( :endscreen )
       @graphics.fade_out do 
-        SDL.delay(10)
+        @graphics.sleep_delay(10)
         @graphics.rotate_palette
 
       end

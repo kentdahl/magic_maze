@@ -126,12 +126,16 @@ module MagicMaze
 
     def fade_in_and_out( sleep_ms = 500, &block )
       fade_in( &block )
-      SDL.delay( sleep_ms )
+      sleep_delay( sleep_ms )
       fade_out( &block )      
     end
 
     def clear_screen
       @screen.fillRect( 0, 0, @xsize, @ysize, 0 )
+    end
+
+    def sleep_delay( sleep_ms = 1 )
+      SDL.delay( sleep_ms )
     end
 
   end # Images
