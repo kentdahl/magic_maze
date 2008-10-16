@@ -132,4 +132,18 @@ class TestGraphics < Test::Unit::TestCase
     }
   end
 
+  def test_previous_menu_item
+    @g.setup_menu( (30..50).collect{|i| "Choice #{i}"} )
+    21.times {|i| 
+      @g.previous_menu_item
+      assert_equal( "Choice #{50-i}", @g.menu_chosen_item )
+    }
+    21.times {|i| 
+      @g.previous_menu_item
+      assert_equal( "Choice #{50-i}", @g.menu_chosen_item )
+    }
+  end
+
+
+
 end
