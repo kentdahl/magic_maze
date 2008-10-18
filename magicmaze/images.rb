@@ -137,6 +137,19 @@ module MagicMaze
     def sleep_delay( sleep_ms = 1 )
       SDL.delay( sleep_ms )
     end
+    
+    ##
+    # Add delay after action to smooth ticks.
+    # Don't delay if it took too long.
+    # 
+    def time_synchronized( game_delay = 50 )
+      time_start = SDL.get_ticks
+      yield # Do actual work.
+      time_end = SDL.get_ticks
+      delay = game_delay + time_start - time_end
+      sleep_delay(delay) if delay > 0 
+    end
+
 
   end # Images
 

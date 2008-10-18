@@ -27,10 +27,10 @@ module MagicMaze
     end
 
     def use_mana?
-      @caster.use_mana( @mana_cost )
+      @caster.add_mana( - @mana_cost )
     end
     def restore_mana
-      @caster.use_mana( - @mana_cost )
+      @caster.add_mana( @mana_cost )
     end
     protected :use_mana?
     
@@ -122,7 +122,18 @@ module MagicMaze
   class SpyEyeSpellTile < SpellTile
     include SuperInit    
     def do_magic 
-      false # TODO
+      location = @caster.location
+      # puts "Caster",location.map, location.x, location.y
+      @caster.play_sound( :zap )
+      eyeball = Eyeball.new( @caster, location.map, location.x, location.y, self  )
+      # location.map.spiritual.set(  location.x, location.y, missile )
+      location.map.add_active_entity( eyeball )
+      begin
+	use_mana?
+	eyeball.run
+      end while have_mana? and eyeball.active?
+      eyeball.remove_entity
+      true
     end
 
   end

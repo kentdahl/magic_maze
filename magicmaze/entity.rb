@@ -160,6 +160,73 @@ module MagicMaze
 
 
   ###############################
+  # The SpyEye Eyeball spell.
+  class Eyeball < Entity
+    def initialize( caster, map = nil, x = 0, y = 0, tile = nil )
+      @location = SpiritualLocation.new( self, map, x, y )
+      @tile = tile
+      @caster = caster
+      @direction = @caster.direction.dup
+      @active = true
+      @movements = 500 # How far the eye goes.
+      @input = @caster.game_config.input.class.new(self, :in_game)
+    end
+
+    def action_tick( *args )
+      puts "Eye tick..."
+      return unless @active
+      @movements -= 1
+      move_forward if @direction
+      remove_eyeball if @movements < 1
+      puts "Eye tock!"
+      @active
+    end
+
+    def run
+      action_tick
+      @caster.game_config.follow_entity(self)
+      @input.check_input
+    end
+
+    def remove_eyeball
+      @location.remove_old_entity
+      @active = false
+    end
+
+    def remove_entity
+      remove_eyeball
+    end
+
+    def active?
+      @active
+    end
+
+    def move_left
+      @movement = Direction::WEST
+    end
+    def move_right
+      @movement = Direction::EAST
+    end
+    def move_up
+      @movement = Direction::NORTH
+    end
+    def move_down
+      @movement = Direction::SOUTH
+    end
+
+
+    def cancel_spell
+      puts "Cancelled spell."
+      @active = false
+    end
+    alias :cast_primary_spell     :cancel_spell
+    alias :cast_alternative_spell :cancel_spell
+    alias :escape                 :cancel_spell
+
+  end
+
+
+  ###############################
   # Monsters
   #
   class DumbMonster < Being

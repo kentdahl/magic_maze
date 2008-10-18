@@ -232,28 +232,24 @@ module MagicMaze
       @state = :game_loop
       while @state == :game_loop
 
-        time_start = SDL.get_ticks
+        @graphics.time_synchronized(@game_delay) do 
+	  draw_now
 
-        draw_now
-
-        @movement = 0
-        @game_input.check_input
-        calc_movement
-
-        @state = catch( :state_change ) do 
-          alive = @player.action_tick
-	  game_data = { 
-	    :player_location => @player.location
-	  }
-          @map.active_entities.each_tick( game_data )
-          @state
-        end
-
-        time_end = SDL.get_ticks
-        delay = @game_delay + time_start - time_end
-        SDL.delay(delay) if delay > 0 
-	# puts delay
+	  @movement = 0
+	  @game_input.check_input
+	  calc_movement
+	  
+	  @state = catch( :state_change ) do 
+	    alive = @player.action_tick
+	    game_data = { 
+	      :player_location => @player.location
+	    }
+	    @map.active_entities.each_tick( game_data )
+	    @state
+	  end
+	end
       end
+
 
       # Fade out.
       @graphics.put_screen( :background, false, false )
@@ -302,13 +298,25 @@ module MagicMaze
     end
 
 
+
+    def follow_entity(leader)
+      puts "Following #{leader}..."
+      @graphics.time_synchronized(@game_delay) do 
+	draw(leader.location)
+	@graphics.flip
+      end
+      return true
+    end
+
+
+
     def draw_now
       draw ; @graphics.flip
     end
 
 
-    def draw
-      draw_maze( @player.location.x, @player.location.y )
+    def draw(where=@player.location)
+      draw_maze( where.x, where.y )
       # @graphics.update_player( @player.direction.value )
       @graphics.update_spells(primary_spell.sprite_id, 
                               secondary_spell.sprite_id )
