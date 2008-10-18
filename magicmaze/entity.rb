@@ -168,22 +168,24 @@ module MagicMaze
       @caster = caster
       @direction = @caster.direction.dup
       @active = true
-      @movements = 500 # How far the eye goes.
+      @movements = 50 # How far the eye goes.
       @input = @caster.game_config.input.class.new(self, :in_game)
     end
 
     def action_tick( *args )
-      puts "Eye tick..."
+      # puts "Eye tick..."
       return unless @active
       @movements -= 1
-      move_forward if @direction
+      if @direction and @tile.have_mana? then
+	move_forward 
+	@tile.use_mana
+      end
       remove_eyeball if @movements < 1
-      puts "Eye tock!"
+      # puts "Eye tock!"
       @active
     end
-
+    
     def run
-      action_tick
       @caster.game_config.follow_entity(self)
       @input.check_input
     end
@@ -202,18 +204,21 @@ module MagicMaze
     end
 
     def move_left
-      @movement = Direction::WEST
+      @direction = Direction::WEST
+      action_tick
     end
     def move_right
-      @movement = Direction::EAST
+      @direction = Direction::EAST
+      action_tick
     end
     def move_up
-      @movement = Direction::NORTH
+      @direction = Direction::NORTH
+      action_tick
     end
     def move_down
-      @movement = Direction::SOUTH
+      @direction = Direction::SOUTH
+      action_tick
     end
-
 
     def cancel_spell
       puts "Cancelled spell."

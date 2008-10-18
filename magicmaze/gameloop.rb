@@ -300,7 +300,7 @@ module MagicMaze
 
 
     def follow_entity(leader)
-      puts "Following #{leader}..."
+      # puts "Following #{leader}..."
       @graphics.time_synchronized(@game_delay) do 
 	draw(leader.location)
 	@graphics.flip

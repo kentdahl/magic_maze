@@ -26,13 +26,12 @@ module MagicMaze
       @caster.have_mana?( @mana_cost )
     end
 
-    def use_mana?
+    def use_mana
       @caster.add_mana( - @mana_cost )
     end
     def restore_mana
       @caster.add_mana( @mana_cost )
     end
-    protected :use_mana?
     
     ##
     # Cast a spell if there is enough mana.
@@ -63,10 +62,8 @@ module MagicMaze
     def do_magic 
       return false if @missiles.size > 3 
       location = @caster.location
-      # puts "Caster",location.map, location.x, location.y
       @caster.play_sound( :zap )
       missile = Missile.new( @caster, location.map, location.x, location.y, self  )
-      # location.map.spiritual.set(  location.x, location.y, missile )
       location.map.add_active_entity( missile )
       @missiles.push( missile )
       true
@@ -122,16 +119,14 @@ module MagicMaze
   class SpyEyeSpellTile < SpellTile
     include SuperInit    
     def do_magic 
+      @caster.game_config.input.get_key_press # Release of trigger...
       location = @caster.location
-      # puts "Caster",location.map, location.x, location.y
       @caster.play_sound( :zap )
       eyeball = Eyeball.new( @caster, location.map, location.x, location.y, self  )
-      # location.map.spiritual.set(  location.x, location.y, missile )
       location.map.add_active_entity( eyeball )
       begin
-	use_mana?
 	eyeball.run
-      end while have_mana? and eyeball.active?
+      end while eyeball.active?
       eyeball.remove_entity
       true
     end

@@ -4,11 +4,7 @@ TO DO
 
 MISSING FROM OLD MAGIC MAZE
 
-* Lookahead spell
 * End game sequence (colour cycling)
-* Load/save game menu
-* Train level menu 
-	
 
 
 
