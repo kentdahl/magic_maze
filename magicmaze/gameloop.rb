@@ -324,11 +324,17 @@ module MagicMaze
     def draw(where=@player.location)
       draw_maze( where.x, where.y )
       # @graphics.update_player( @player.direction.value )
+      draw_hud
+    end
+
+
+    def draw_hud
       @graphics.update_spells(primary_spell.sprite_id, 
                               secondary_spell.sprite_id )
       @graphics.write_score( get_score ) 
       @graphics.update_life_and_mana( get_life, get_mana )
       @graphics.update_inventory( get_inventory )
+
     end
 
 

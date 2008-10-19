@@ -85,6 +85,7 @@ module MagicMaze
 
     def draw_map_at( location = @caster, flip = true )
       @caster.game_config.graphics.draw_map( location, flip )
+      @caster.game_config.draw_hud
     end
 
     def do_old_magic 
@@ -171,7 +172,7 @@ module MagicMaze
   }
 
   DEFAULT_OTHER_SPELL_TILES = {
-    :spell_magic_map      => MagicMapSpellTile.new( 13, 2 ),
+    :spell_magic_map      => MagicMapSpellTile.new( 13, 1 ),
     :spell_heal           => HealSpellTile.new( 14, 2, 2 ),
     :spell_summon_mana    => SummonManaSpellTile.new( 15, 0, 3, 2 ),
     :spell_spy_eye        => SpyEyeSpellTile.new( 16, 1 ),
