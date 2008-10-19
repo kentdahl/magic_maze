@@ -78,7 +78,11 @@ module MagicMaze
     end
 
     def write_text( text, x, y, font = @font16 )
-      font.drawSolidUTF8(@screen,text,x,y,255,255,255)
+      begin
+        font.drawSolidUTF8(@screen,text,x,y,255,255,255)
+      rescue SDL::Error # Original Asus EEE distro fails here...
+        write_smooth_text(text,x,y,font)
+      end
     end
 
     def write_smooth_text( text, x, y, font = @font16,r=255,g=255,b=255 )
