@@ -83,37 +83,28 @@ module MagicMaze
   class MagicMapSpellTile < SpellTile
     include SuperInit
 
-    def draw_map_at( location = @caster )
-      @caster.game_config.graphics.draw_map( location )
+    def draw_map_at( location = @caster, flip = true )
+      @caster.game_config.graphics.draw_map( location, flip )
     end
 
     def do_old_magic 
-      draw_map_at( @caster )
+      draw_map_at( @caster, true )
       consume_key_press # Release of trigger...
       consume_key_press # And another push to return.
       true
     end
 
     def do_more_magic
-      draw_map_at( @caster )
+      draw_map_at( @caster, true )
       consume_key_press # Release of trigger...
       location = @caster.location
-      eyeball = Eyeball.new( @caster, location.map, location.x, location.y, self  )
-      def eyeball.run
-	@caster.game_config.time_synchronized_drawing do
-	  if @old_loc && @old_loc.to_a != self.location.to_a then
-	    @tile.draw_map_at(self)
-	  end
-	  @old_loc = self.location.dup
-	  @input.check_input
-	end
-      end
+      manifestation = MovableMapManifestation.new( @caster, location.map, location.x, location.y, self  )
 
-      location.map.add_active_entity( eyeball )
+      location.map.add_active_entity( manifestation )
       begin
-	eyeball.run
-      end while eyeball.active?
-      eyeball.remove_entity
+	manifestation.run
+      end while manifestation.active?
+      manifestation.remove_entity
     end
 
     def do_magic

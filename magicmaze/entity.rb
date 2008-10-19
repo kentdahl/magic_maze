@@ -244,7 +244,23 @@ module MagicMaze
 
   ###############################
   # Movable Map spell.
-  class MovableMapManifestation < AstralBody
+  class MovableMapManifestation < AstralBody    
+
+    # Bigger jumps in the map view.
+    def move_forward(*a)
+      5.times{ @location.add!( @direction ) }
+    end
+
+    def run
+      @caster.game_config.time_synchronized_drawing do
+	if @old_loc && @old_loc.to_a != self.location.to_a then
+	  @tile.draw_map_at(self, false)
+	  @caster.game_config.graphics.flip
+	end
+	@old_loc = self.location.dup
+	super # checks input
+      end
+    end
   end
 
 

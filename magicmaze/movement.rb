@@ -278,7 +278,7 @@ module MagicMaze
       end
     end
     include Comparable
-        
+
     def to_2D_vector
       COORDINATE_VECTORS[@direction]
     end

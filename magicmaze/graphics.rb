@@ -454,14 +454,16 @@ module MagicMaze
 
     ####################################
     #
-    def draw_map( player )
+    def draw_map( player, line_by_line = true )
       map = player.location.map
 
       rect = MAZE_VIEW_RECTANGLE
       @screen.fillRect(*rect)
       
-      @screen.flip
-      @screen.fillRect(*rect)
+      if line_by_line then
+	@screen.flip 
+	@screen.fillRect(*rect)
+      end
 
       map_zoom_factor = 4
 
@@ -502,7 +504,7 @@ module MagicMaze
 			  map_block_size,
 			  COL_WHITE)
 
-        flip
+        flip if line_by_line
 
       end
 
