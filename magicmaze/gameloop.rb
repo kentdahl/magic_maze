@@ -301,11 +301,17 @@ module MagicMaze
 
     def follow_entity(leader)
       # puts "Following #{leader}..."
-      @graphics.time_synchronized(@game_delay) do 
+      time_synchronized_drawing do
 	draw(leader.location)
-	@graphics.flip
       end
       return true
+    end
+
+    def time_synchronized_drawing
+      @graphics.time_synchronized(@game_delay) do 
+	yield
+	@graphics.flip
+      end
     end
 
 

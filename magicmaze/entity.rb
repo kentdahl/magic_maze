@@ -160,43 +160,33 @@ module MagicMaze
 
 
   ###############################
-  # The SpyEye Eyeball spell.
-  class Eyeball < Entity
+  # The Astral body - sort of like the spy spell, but generic.
+  class AstralBody < Entity
     def initialize( caster, map = nil, x = 0, y = 0, tile = nil )
       @location = SpiritualLocation.new( self, map, x, y )
       @tile = tile
       @caster = caster
       @direction = @caster.direction.dup
       @active = true
-      @movements = 50 # How far the eye goes.
       @input = @caster.game_config.input.class.new(self, :in_game)
     end
 
     def action_tick( *args )
-      # puts "Eye tick..."
-      return unless @active
-      @movements -= 1
+      return false if !@active
       if @direction and @tile.have_mana? then
 	move_forward 
 	@tile.use_mana
       end
-      remove_eyeball if @movements < 1
-      # puts "Eye tock!"
       @active
     end
     
     def run
-      @caster.game_config.follow_entity(self)
       @input.check_input
     end
 
-    def remove_eyeball
+    def remove_entity
       @location.remove_old_entity
       @active = false
-    end
-
-    def remove_entity
-      remove_eyeball
     end
 
     def active?
@@ -229,6 +219,34 @@ module MagicMaze
     alias :escape                 :cancel_spell
 
   end
+
+  ###############################
+  # The SpyEye Eyeball spell.
+  class Eyeball < AstralBody
+    def initialize( caster, map = nil, x = 0, y = 0, tile = nil )
+      super(caster,map,x,y,tile)
+      @movements = 50 # How far the eye goes.
+    end
+
+    def action_tick( *args )
+      @movements -= 1
+      remove_entity if @movements < 1
+      super(*args)
+    end
+    
+    def run
+      @caster.game_config.follow_entity(self)
+      super
+    end
+
+  end
+
+
+  ###############################
+  # Movable Map spell.
+  class MovableMapManifestation < AstralBody
+  end
+
 
 
   ###############################

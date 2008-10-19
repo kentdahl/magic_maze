@@ -44,6 +44,11 @@ module MagicMaze
       end
     end      
 
+    # Consume release of trigger key...
+    def consume_key_press
+      @caster.game_config.input.get_key_press
+    end
+
     ##
     # Return a true value if magic was done.
     def do_magic
@@ -77,12 +82,44 @@ module MagicMaze
 
   class MagicMapSpellTile < SpellTile
     include SuperInit
-    def do_magic 
-      @caster.game_config.graphics.draw_map( @caster )
-      @caster.game_config.input.get_key_press # Release of trigger...
-      @caster.game_config.input.get_key_press # And another push to return.
+
+    def draw_map_at( location = @caster )
+      @caster.game_config.graphics.draw_map( location )
+    end
+
+    def do_old_magic 
+      draw_map_at( @caster )
+      consume_key_press # Release of trigger...
+      consume_key_press # And another push to return.
       true
     end
+
+    def do_more_magic
+      draw_map_at( @caster )
+      consume_key_press # Release of trigger...
+      location = @caster.location
+      eyeball = Eyeball.new( @caster, location.map, location.x, location.y, self  )
+      def eyeball.run
+	@caster.game_config.time_synchronized_drawing do
+	  if @old_loc && @old_loc.to_a != self.location.to_a then
+	    @tile.draw_map_at(self)
+	  end
+	  @old_loc = self.location.dup
+	  @input.check_input
+	end
+      end
+
+      location.map.add_active_entity( eyeball )
+      begin
+	eyeball.run
+      end while eyeball.active?
+      eyeball.remove_entity
+    end
+
+    def do_magic
+      do_more_magic
+    end
+
   end
   
   class HealSpellTile < SpellTile
@@ -120,8 +157,8 @@ module MagicMaze
     include SuperInit    
     def do_magic 
       @caster.game_config.input.get_key_press # Release of trigger...
-      location = @caster.location
       @caster.play_sound( :zap )
+      location = @caster.location
       eyeball = Eyeball.new( @caster, location.map, location.x, location.y, self  )
       location.map.add_active_entity( eyeball )
       begin

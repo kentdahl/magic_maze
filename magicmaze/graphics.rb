@@ -469,13 +469,6 @@ module MagicMaze
       map_height = VIEW_AREA_MAP_HEIGHT * map_zoom_factor
       map_width  = VIEW_AREA_MAP_WIDTH  * map_zoom_factor
 
-      # The player
-      @screen.fill_rect(rect[0] + map_width/2  * map_block_size,
-                        rect[1] + map_height/2 * map_block_size,
-                        map_block_size,
-                        map_block_size,
-                        COL_BLUE)
-
       (0...map_height).each do |ay|
         my = ay + player.location.y - map_height/2
         draw_y = rect[1] + ay*map_block_size
@@ -489,7 +482,8 @@ module MagicMaze
             col = nil
             col = COL_LIGHTGRAY   if background.blocked? 
             col = COL_YELLOW      if entity.kind_of?( DoorTile )
-            col = COL_RED         if entity.kind_of?( Monster )            
+            col = COL_RED         if entity.kind_of?( Monster )
+            col = COL_BLUE        if entity.kind_of?( Player )
           end
           if col then
             @screen.fill_rect(rect[0] + ax*map_block_size,
@@ -500,6 +494,14 @@ module MagicMaze
           end	
 
         end
+
+	# The center.
+	@screen.draw_rect(rect[0] + map_width/2  * map_block_size,
+			  rect[1] + map_height/2 * map_block_size,
+			  map_block_size,
+			  map_block_size,
+			  COL_WHITE)
+
         flip
 
       end

@@ -55,6 +55,12 @@ module MagicMaze
       [@x, @y]
     end
 
+    def <=>(o)
+      puts "Location<=>"
+      self.to_a.<=>(o.to_a)
+    end
+    include Comparable
+
 
   end # Location
 
