@@ -614,6 +614,27 @@ module MagicMaze
     end
 
     ##
+    # This does a generic menu event loop
+    #
+    def choose_from_menu( menu_items = %w{OK Cancel}, input = nil )
+      setup_menu(menu_items)
+      begin
+	draw_menu
+	menu_event = input ? input.get_menu_item_navigation_event : yield
+	if [:previous_menu_item, :next_menu_item].include?(menu_event) then
+	  self.send(menu_event)
+	end
+      end until [:exit_menu, :select_menu_item].include?(menu_event)
+      erase_menu
+      if menu_event == :select_menu_item then
+	return menu_chosen_item
+      else
+	return false
+      end
+    end
+
+
+    ##
     # Draw an updated menu.
     def draw_menu
       topx = 160 * SCALE_FACTOR - @menu_width  / (2)

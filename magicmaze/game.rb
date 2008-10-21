@@ -33,11 +33,11 @@ module MagicMaze
       init_sound
       init_input
 
-      savedir = (@options[:savedir] ||
+      @savedir = (@options[:savedir] ||
 		 (ENV.include?("HOME") ? 
 		  (ENV['HOME'] + '/.magicmaze') : nil) || "data" )
 
-      @savegame_filename = savedir + "/progress.dat"
+      @savegame_filename = @savedir + "/progress.dat"
       @loadgame = (options[:loadgame] || false)
       @quit = false
 
@@ -190,6 +190,7 @@ module MagicMaze
       if not @saved_checkpoints.empty? then
 	menu_items.unshift("Continue game") 
 	menu_items.push("Replay level") if @saved_checkpoints.size>1
+	# menu_items.push("Map Editor")
       end
       menu_items.push "Quit Magic Maze"
 
@@ -204,7 +205,10 @@ module MagicMaze
 	open_training_menu
       when /Replay/
 	open_replay_menu
+      when /Editor/i
+	start_map_editor
       end
+      put_titlescreen
     end
 
     def open_training_menu
@@ -237,24 +241,19 @@ module MagicMaze
     end
 
 
+    def start_map_editor
+      require 'magicmaze/mapeditor'
+      editor = MagicMaze::MapEditor.new(self, @savedir)
+      editor.start
+      put_titlescreen
+    end
+
+
     ##
     # This does a generic menu event loop
     #
     def choose_from_menu( menu_items = %w{OK Cancel} )
-      @graphics.setup_menu(menu_items)
-      begin
-	@graphics.draw_menu
-	menu_event = @title_input.get_menu_item_navigation_event
-	if [:previous_menu_item, :next_menu_item].include?(menu_event) then
-	  @graphics.send(menu_event)
-	end
-      end until [:exit_menu, :select_menu_item].include?(menu_event)
-      @graphics.erase_menu
-      if menu_event == :select_menu_item then
-	return @graphics.menu_chosen_item
-      else
-	return false
-      end
+      @graphics.choose_from_menu( menu_items, @title_input )
     end
 
 
