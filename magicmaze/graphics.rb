@@ -67,8 +67,6 @@ module MagicMaze
       2 + SPRITE_WIDTH * VIEW_AREA_MAP_HEIGHT_CENTER ]
 
 
-    FADE_DURATION = 16
-
     ##
     # Singleton graphics instance.
     def self.get_graphics(options={})
@@ -82,19 +80,7 @@ module MagicMaze
     end
 
     def initialize(options={})
-      puts "Setting up graphics..." if DEBUG
-      @xsize = FULLSCREEN[2]
-      @ysize = FULLSCREEN[3]
-      @bpp = 8 # 16 wont work
-      SDL.init( SDL::INIT_VIDEO )
-      SDL::Mouse.hide
-      SDL::WM.set_caption( _("Magic Maze"),"" )
-      SDL::WM.icon=( SDL::Surface.load("data/gfx/icon.png") )
-
-      screen_mode = SDL::HWSURFACE + SDL::DOUBLEBUF
-      screen_mode += SDL::FULLSCREEN if options[:fullscreen] 
-
-      @screen = SDL::setVideoMode(@xsize,@ysize, @bpp, screen_mode)
+      screen_init(options)
 
       font_init
 
@@ -114,6 +100,34 @@ module MagicMaze
     def destroy
       SDL.quit
     end
+
+    def screen_init(options)
+      puts "Setting up graphics..." if DEBUG
+      @xsize = FULLSCREEN[2]
+      @ysize = FULLSCREEN[3]
+      @bpp = 8 # 16 wont work
+      SDL.init( SDL::INIT_VIDEO )
+      SDL::Mouse.hide
+      SDL::WM.set_caption( _("Magic Maze"),"" )
+      SDL::WM.icon=( SDL::Surface.load("data/gfx/icon.png") )
+
+      screen_mode = SDL::HWSURFACE + SDL::DOUBLEBUF
+      screen_mode += SDL::FULLSCREEN if options[:fullscreen] 
+
+      @screen = SDL::setVideoMode(@xsize,@ysize, @bpp, screen_mode)
+
+      unless @screen.respond_to? :draw_rect then
+	def @screen.draw_rect(x,y,w,h,c)
+	  # Workaround for older Ruby/SDL...
+	  fill_rect(x,y,   w,1, c)
+	  fill_rect(x,y,   1,h, c)
+	  fill_rect(x,y+h, w,1, c)
+	  fill_rect(x+w,y, 1,h, c)
+	end
+      end
+
+    end
+
 
 
     def font_init
@@ -662,7 +676,7 @@ module MagicMaze
       end
 
       @screen.fillRect( topx, topy, @menu_width,@menu_height,0 )
-      @screen.drawRect( topx, topy, @menu_width,@menu_height, COL_GRAY )
+      @screen.draw_rect( topx, topy, @menu_width,@menu_height, COL_GRAY )
       y_offset = topy
       font = @font32
       curr_menu_items.each do |text|
@@ -676,7 +690,7 @@ module MagicMaze
 	    font.height - 4*SCALE_FACTOR,
 	    COL_WHITE
 	  ]
-	  @screen.drawRect( *rect )
+	  @screen.draw_rect( *rect )
 	  color_intensity = 255
 	end
 	write_smooth_text(text, 
