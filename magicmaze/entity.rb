@@ -120,9 +120,9 @@ module MagicMaze
 
     def action_tick( *args )
       return unless @active
-      backgorund =  @location.get(:background)
+      background =  @location.get(:background)
       entity     =  @location.get(:entity)
-      if @location.get(:background).blocked?
+      if background.blocked?
 	remove_missile
       elsif entity and entity != @caster 
 	hit_entity( entity )
@@ -303,7 +303,8 @@ module MagicMaze
     def initialize( map, x, y, tile )
       super( map, x, y, tile )
       @life = tile.start_health
-      @sleep = 8
+      # @sleep = 8
+      @sleep = ((x.hash+y.hash)&7) # Spread out the first sleep.
     end
 
     def action_tick( *args )           
