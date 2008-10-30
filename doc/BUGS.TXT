@@ -1,4 +1,15 @@
 
+
+
+__________
+2008-10-30
+
+Seems slower to start on the XO than before.
+
+Multiple fade-in after stopping a game.
+
+
+
 __________
 2008-09-21
 

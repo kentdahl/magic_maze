@@ -131,9 +131,12 @@ module MagicMaze
       while @state == :title_loop
         @title_input.check_input
       end
-      @graphics.fade_out { @graphics.sleep_delay(1)}
-      @graphics.clear_screen
-      @graphics.fade_in {}
+
+      if @quit then
+	@graphics.fade_out do  
+	  @graphics.sleep_delay(1)
+	end
+      end
     end
 
     def loop
@@ -144,6 +147,7 @@ module MagicMaze
       end
       save_checkpoints
       puts "Exiting..."
+      puts "Thanks for playing Magic Maze. Bye bye."
     end
 
     def start_game( level = nil, player_status = nil )

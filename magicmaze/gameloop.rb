@@ -255,6 +255,7 @@ module MagicMaze
       # Fade out.
       @graphics.put_screen( :background, false, false )
       draw_now
+      puts "Game loop fade out..."
       @graphics.fade_out do  
 	@graphics.sleep_delay(1)
       end
@@ -262,6 +263,7 @@ module MagicMaze
       # Clear screen for returning to the title loop
       @graphics.clear_screen
       @graphics.flip
+      @graphics.clear_screen
 
       @state
     end # loop
