@@ -130,9 +130,10 @@ module MagicMaze
     end
 
     def fade_in_and_out( sleep_ms = 500, &block )
-      fade_in( &block )
+      block.call
+      fade_in {} #( &block )
       sleep_delay( sleep_ms )
-      fade_out( &block )      
+      fade_out {} #( &block )      
     end
 
     def clear_screen
