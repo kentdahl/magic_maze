@@ -147,6 +147,7 @@ module MagicMaze
       end
       save_checkpoints
       puts "Exiting..."
+      destroy
       puts "Thanks for playing Magic Maze. Bye bye."
     end
 

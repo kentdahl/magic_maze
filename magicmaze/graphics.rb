@@ -80,6 +80,7 @@ module MagicMaze
     end
 
     def initialize(options={})
+      puts "Starting Magic Maze..."
       screen_init(options)
       early_progress
       font_init
@@ -95,11 +96,21 @@ module MagicMaze
       @sprite_images = load_new_sprites || load_old_sprites 
 
       # show_message("Enter!")
+      
+      # Cached values for what is already drawn.
+      @cached_drawing = Hash.new
+      @delay_stats = Array.new
 
       puts "Graphics initialized." if DEBUG
     end
 
     def destroy
+      if @delay_stats && @delay_stats.size.nonzero? then
+	puts "Delay average: " + 
+	  (@delay_stats.inject(0.0){|i,j|i+j}/@delay_stats.size).to_s
+	puts "Delay min/max: " + 
+	  @delay_stats.min.to_s + " / " + @delay_stats.max.to_s
+      end
       SDL.quit
     end
 
@@ -323,6 +334,8 @@ module MagicMaze
 
 
     def write_score( score )
+      return if cached_drawing_valid?(:score, score )
+
       text = sprintf "%9d", score   # fails on EeePC
       # text = sprintf "%09d", score # old safe one.
       rect = SCORE_RECTANGLE
@@ -385,10 +398,18 @@ module MagicMaze
       @screen.flip if flip
     end
 
+    def cached_drawing_valid?(symbol, value)
+      return true if value == @cached_drawing[symbol]
+      @cached_drawing[symbol] = value
+      false
+    end
+
     
     ##
     # assumes life and mana are in range (0..100)
     def update_life_and_mana( life, mana )
+      return if cached_drawing_valid?(:life_and_mana, [life, mana] )
+
       rect = LIFE_MANA_RECTANGLE
       @screen.fillRect(*rect) 
       @screen.fillRect(rect[0], rect[1], 
@@ -400,6 +421,8 @@ module MagicMaze
     end
 
     def update_inventory( inventory )
+      return if cached_drawing_valid?(:inventory, inventory )
+
       rect = INVENTORY_RECTANGLE
       @screen.fillRect(*rect) 
       currx = rect.first
@@ -412,6 +435,8 @@ module MagicMaze
     end
 
     def update_spells( primary, secondary )
+      return if cached_drawing_valid?(:spells, [primary, secondary] )
+
       rect1 = SPELL_RECTANGLE
       rect2 = ALT_SPELL_RECTANGLE
       @screen.fillRect( *rect1 )

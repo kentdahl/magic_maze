@@ -58,6 +58,7 @@ module MagicMaze
       end
       @screen.put( image, x,y )
       @screen.flip if flip
+      @cached_drawing.clear
     end
 
     def put_background( sprite, x, y )
@@ -151,6 +152,7 @@ module MagicMaze
       yield # Do actual work.
       time_end = SDL.get_ticks
       delay = game_delay + time_start - time_end
+      # @delay_stats << delay # if debugging...
       sleep_delay(delay) if delay > 0 
     end
 
