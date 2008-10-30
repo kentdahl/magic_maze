@@ -408,7 +408,7 @@ module MagicMaze
     ##
     # assumes life and mana are in range (0..100)
     def update_life_and_mana( life, mana )
-      return if cached_drawing_valid?(:life_and_mana, [life, mana] )
+      return if cached_drawing_valid?(:life_and_mana, life.hash ^ mana.hash )
 
       rect = LIFE_MANA_RECTANGLE
       @screen.fillRect(*rect) 
@@ -421,7 +421,7 @@ module MagicMaze
     end
 
     def update_inventory( inventory )
-      return if cached_drawing_valid?(:inventory, inventory )
+      # FIXME: return if cached_drawing_valid?(:inventory, inventory.hash )
 
       rect = INVENTORY_RECTANGLE
       @screen.fillRect(*rect) 
@@ -435,7 +435,7 @@ module MagicMaze
     end
 
     def update_spells( primary, secondary )
-      return if cached_drawing_valid?(:spells, [primary, secondary] )
+      return if cached_drawing_valid?(:spells, primary.hash ^ secondary.hash )
 
       rect1 = SPELL_RECTANGLE
       rect2 = ALT_SPELL_RECTANGLE
