@@ -81,16 +81,16 @@ module MagicMaze
 
     def initialize(options={})
       screen_init(options)
-
+      early_progress(2)
       font_init
-
+      early_progress(3)
       show_message(_("Summoning..."))
-
       load_background_images
-
+      clear_screen
       show_message(_("Magic Maze"))
 
       @sprite_images = load_new_sprites || load_old_sprites 
+      early_progress(5)
 
       # show_message("Enter!")
 
@@ -109,13 +109,17 @@ module MagicMaze
       SDL.init( SDL::INIT_VIDEO )
       SDL::Mouse.hide
       SDL::WM.set_caption( _("Magic Maze"),"" )
-      SDL::WM.icon=( SDL::Surface.load("data/gfx/icon.png") )
+      # SDL::WM.icon=( SDL::Surface.load("data/gfx/icon.png") )
 
       screen_mode = SDL::HWSURFACE + SDL::DOUBLEBUF
       screen_mode += SDL::FULLSCREEN if options[:fullscreen] 
 
       @screen = SDL::setVideoMode(@xsize,@ysize, @bpp, screen_mode)
+      early_progress(0)
 
+      SDL::WM.icon=( SDL::Surface.load("data/gfx/icon.png") )
+      early_progress(1)
+      
       unless @screen.respond_to? :draw_rect then
 	def @screen.draw_rect(x,y,w,h,c)
 	  # Workaround for older Ruby/SDL...
@@ -125,7 +129,17 @@ module MagicMaze
 	  fill_rect(x+w,y, 1,h, c)
 	end
       end
+    end
 
+
+    # Simple progress indication before we can write etc to screen.
+    def early_progress(progress)
+      w = SCALE_FACTOR * (32 - progress*8)
+      c = 255 >> progress
+      clear_screen
+      @screen.fill_rect(@xsize-w,0, w,@ysize,
+			@screen.map_rgb(c,c,c))
+      @screen.flip
     end
 
 
@@ -242,8 +256,8 @@ module MagicMaze
 
       @screen.set_palette( SDL::LOGPAL|SDL::PHYSPAL, palette, 0 )
 
-
       (0...lines).each do|line|	
+
 	(0...10).each do|column|
 	  sprite = SDL::Surface.new(SDL::HWSURFACE, #|SDL::SRCCOLORKEY,
                                     SPRITE_WIDTH, SPRITE_HEIGHT, @screen)
