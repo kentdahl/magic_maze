@@ -108,7 +108,7 @@ module MagicMaze
 			( g - tg ) * factor + tg, 
 			( b - tb ) * factor + tb ]
 		    } )
-	yield i, range
+	yield i, range if block_given?
       }
       @fade_color = [ tr, tg, tb ]
     end
@@ -124,7 +124,7 @@ module MagicMaze
 			( g - tg ) * factor + tg, 
 			( b - tb ) * factor + tb ]
 		    } )
-	yield i, range
+	yield i, range if block_given?
       }
       set_palette( mypal )
     end

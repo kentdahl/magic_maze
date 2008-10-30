@@ -226,9 +226,7 @@ module MagicMaze
       # Fade in the background
       @graphics.put_screen( :background, false, false )
       draw_now
-      @graphics.fade_in do 
-	@graphics.sleep_delay(1)
-      end    
+      @graphics.fade_in
 
       @state = :game_loop
       while @state == :game_loop

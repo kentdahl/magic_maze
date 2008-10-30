@@ -92,17 +92,13 @@ module MagicMaze
 
     def test_fade
       # THIS IS FOR TESTING!
-      @graphics.fade_out {}
+      @graphics.fade_out
       @graphics.put_screen( :titlescreen, true )
 
-      @graphics.fade_out do 
-        @graphics.sleep_delay(1)
-      end
+      @graphics.fade_out
       put_titlescreen
       
-      @graphics.fade_in do 
-        @graphics.sleep_delay(1)
-      end
+      @graphics.fade_in
     end
     
     def test_endgame
@@ -122,20 +118,12 @@ module MagicMaze
     
     def title_loop
       puts "Title loop..."
-      @graphics.fade_out {}
+      @graphics.fade_out
       put_titlescreen
-      @graphics.fade_in do 
-	@graphics.sleep_delay(1)
-      end
+      @graphics.fade_in
       @state = :title_loop
       while @state == :title_loop
         @title_input.check_input
-      end
-
-      if @quit then
-	@graphics.fade_out do  
-	  @graphics.sleep_delay(1)
-	end
       end
     end
 
@@ -145,6 +133,7 @@ module MagicMaze
       while not @quit
         title_loop
       end
+      @graphics.fade_out
       save_checkpoints
       puts "Exiting..."
       destroy
@@ -182,7 +171,7 @@ module MagicMaze
     # The fade before starting the game.
     def pregame_preparation
       @graphics.put_screen( :titlescreen, true )
-      @graphics.fade_out{ @graphics.sleep_delay(1) }
+      @graphics.fade_out
       @state = :starting_game
     end
 
