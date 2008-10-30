@@ -81,16 +81,18 @@ module MagicMaze
 
     def initialize(options={})
       screen_init(options)
-      early_progress(2)
+      early_progress
       font_init
-      early_progress(3)
-      show_message(_("Summoning..."))
+
+      @progress_msg = _("Summoning") + "\n."
+      early_progress
+
       load_background_images
-      clear_screen
-      show_message(_("Magic Maze"))
+
+      @progress_msg = _("Magic Maze") + "\n."
+      early_progress
 
       @sprite_images = load_new_sprites || load_old_sprites 
-      early_progress(5)
 
       # show_message("Enter!")
 
@@ -115,10 +117,10 @@ module MagicMaze
       screen_mode += SDL::FULLSCREEN if options[:fullscreen] 
 
       @screen = SDL::setVideoMode(@xsize,@ysize, @bpp, screen_mode)
-      early_progress(0)
+      early_progress
 
       SDL::WM.icon=( SDL::Surface.load("data/gfx/icon.png") )
-      early_progress(1)
+      early_progress
       
       unless @screen.respond_to? :draw_rect then
 	def @screen.draw_rect(x,y,w,h,c)
@@ -133,13 +135,15 @@ module MagicMaze
 
 
     # Simple progress indication before we can write etc to screen.
-    def early_progress(progress)
-      w = SCALE_FACTOR * (32 - progress*8)
-      c = 255 >> progress
-      clear_screen
+    def early_progress(progress=nil, flip=true, clear=true)
+      @progress = progress || (@progress||0)+1
+      w = SCALE_FACTOR * (64 - @progress*8)
+      c = 255 - (@progress**2)
+      clear_screen if clear
       @screen.fill_rect(@xsize-w,0, w,@ysize,
 			@screen.map_rgb(c,c,c))
-      @screen.flip
+      show_long_message(@progress_msg) if @progress_msg
+      @screen.flip if flip
     end
 
 
@@ -172,6 +176,7 @@ module MagicMaze
       @background_images = {}
       SCREEN_IMAGES.each{|key, filename|
         source_image = SDL::Surface.load( GFX_PATH+filename ) 
+	@progress_msg += "." ; early_progress
         if SCALE_FACTOR != 1 then
           scaled_image = SDL::Surface.new(SDL::SWSURFACE, 
                                         source_image.w * SCALE_FACTOR, 
@@ -257,7 +262,7 @@ module MagicMaze
       @screen.set_palette( SDL::LOGPAL|SDL::PHYSPAL, palette, 0 )
 
       (0...lines).each do|line|	
-
+	@progress_msg += "." ; early_progress
 	(0...10).each do|column|
 	  sprite = SDL::Surface.new(SDL::HWSURFACE, #|SDL::SRCCOLORKEY,
                                     SPRITE_WIDTH, SPRITE_HEIGHT, @screen)
