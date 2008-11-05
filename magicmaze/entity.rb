@@ -372,6 +372,8 @@ module MagicMaze
 	was_moved = move_forward
 	if was_moved
 	  @sleep = 8
+	else
+	  @sleep = 2 # Short delay since we couldn't move.
 	end
       end #
 
