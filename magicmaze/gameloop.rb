@@ -46,11 +46,14 @@ module MagicMaze
                          ) if level.kind_of? Numeric
       filemap = MagicMaze::FileMap.new( filename )
 
+      @map_title = filemap.title
+
+      yield level, @map_title
+
       @map.purge if @map # Clean up old map, if any.
 
       @level = level
       @map = filemap.to_gamemap
-      @map_title = filemap.title
 
       should_reset = @player || @restart_status
       @player = Player.new( @map, self )  unless @player
@@ -269,15 +272,17 @@ module MagicMaze
 
     def start
       begin
-        load_map( @level )
-
-	# Loading message
-	loading_message = _("Entering level %s") % @level.to_s + 
-          "\n" + _(@map_title) + "\n"+ _("Get ready!")
-	@graphics.fade_in_and_out do
-	  @graphics.clear_screen
-	  @graphics.show_long_message(loading_message, false, :fullscreen )
+	@graphics.time_synchronized(1000) do
+	  load_map( @level ) do |level, map_title |
+	    # Loading message as soon as title has been loaded.
+	    loading_message = _("Entering level %s") % level.to_s + 
+	      "\n" + _(map_title) + "\n"+ _("Get ready!")
+	    @graphics.clear_screen
+	    @graphics.show_long_message(loading_message, false, :fullscreen )
+	    @graphics.fade_in
+	  end
 	end
+	@graphics.fade_out
 
 
 

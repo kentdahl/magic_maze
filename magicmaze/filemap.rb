@@ -33,28 +33,34 @@ module MagicMaze
     # Open an old-style filemap for Magic Maze.
     # Filename must point to a valid map file.
     def initialize( filename, monster_maker = nil )
-      File.open(filename, 'rb'){|file|
-        header_data = file.read(MAP_HEADER_SIZE)
-        unless MAP_FILE_SIGNATURE == header_data[0,MAP_FILE_SIGNATURE.size]
-          raise ArgumentError, "Map file is invalid: "+filename
-        end
-
-        extract_from_header( header_data )
-
-        @real_checksum = 0
-        @map_rows = []
-        begin
-          row = file.read(MAP_ROW_SIZE)
-          extract_from_row( row ) if row
-        end while row     
-        @real_checksum &= 0xFFFF
-        unless @checksum == @real_checksum 
-          raise ArgumentError, "Map file checksum failed: "+
-            "Excpected #@checksum, found #@real_checksum."
-        end
-      }
+      @file = File.open(filename, 'rb')
+      header_data = @file.read(MAP_HEADER_SIZE)
+      unless MAP_FILE_SIGNATURE == header_data[0,MAP_FILE_SIGNATURE.size]
+	raise ArgumentError, "Map file is invalid: "+filename
+      end
+      
+      extract_from_header( header_data )
     end
 
+    def load_map
+      @real_checksum = 0
+      @map_rows = []
+      begin
+	row = @file.read(MAP_ROW_SIZE)
+	extract_from_row( row ) if row
+	yield row if block_given?
+      end while row     
+      @real_checksum &= 0xFFFF
+      unless @checksum == @real_checksum 
+	raise ArgumentError, "Map file checksum failed: "+
+	  "Excpected #@checksum, found #@real_checksum."
+      end
+    end
+
+    def close
+      @file.close if @file
+      @file = nil
+    end
 
     def convert_string_to_bytes( str )
       if str.respond_to?(:bytes) then
@@ -171,6 +177,8 @@ module MagicMaze
 
 
     def to_gamemap
+      load_map if @map_rows.nil? and @file
+      close # close file, no more reading.
       @tilehash = {
         :object=>DEFAULT_TILES_ID_LOOKUP.dup,
         :background=>{}
