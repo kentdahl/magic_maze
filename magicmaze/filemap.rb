@@ -55,14 +55,23 @@ module MagicMaze
       }
     end
 
+
+    def convert_string_to_bytes( str )
+      if str.respond_to?(:bytes) then
+	str.bytes.collect{|i| i } # Ruby 1.9
+      else
+	str # Ruby 1.8
+      end
+    end
     ##
     # Extract various data from the header part of the map.
-    def extract_from_header( header_data )
+    def extract_from_header( header_data_str )
+      header_data = convert_string_to_bytes( header_data_str )
       @checksum = header_data[16] + (header_data[17]<<8)
       @startx =   header_data[24]
       @starty =   header_data[25]
       @default_wall_tile = header_data[30]
-      @last_level = header_data[32]&BLOCKED_BIT==BLOCKED_BIT
+      @last_level = header_data[32] & BLOCKED_BIT == BLOCKED_BIT
 
       @title = ""
       index = 128        
@@ -123,7 +132,7 @@ module MagicMaze
     # If the most significant bit is set, it is blocked.
     # If the coordinate is outside the map, a default block is returned.
     def get_background_data( x, y )
-      row = @map_rows[y]
+      row = convert_string_to_bytes(@map_rows[y])
       row ||= EMPTY_ROW
       index = x*2
       if (index<0||index>=row.size) then
@@ -143,7 +152,8 @@ module MagicMaze
     ##
     # return object code for the position given.
     def get_object( x, y )
-      object = @map_rows[y][x*2+1]
+      row = convert_string_to_bytes(@map_rows[y])
+      object = row[x*2+1]
     end
     alias :get_object_data :get_object
 

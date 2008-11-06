@@ -10,6 +10,7 @@
 ############################################################
 
 require 'magicmaze/tile'
+require 'magicmaze/entity'
 
 module MagicMaze
 

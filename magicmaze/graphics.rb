@@ -490,7 +490,7 @@ module MagicMaze
 	'Alt :-  Cast secondary spell',
 	'X / Z :- Toggle attack spell',
 	'A / S :- Toggle secondary spell',
-	'',
+	'', # Failed for RubySDL2.0.1 and Ruby1.9.1-p1
 	'Esc / Q :- Quit playing',
 	'F9 / R :- Restart level',
 	# '[F4]: Load game    [F5]: Save game',
@@ -502,7 +502,7 @@ module MagicMaze
       y_offset = 0
       font = @font16
       lines.each{|line|
-	write_smooth_text( line, 5, y_offset, font )
+	write_smooth_text( line, 5, y_offset, font ) if line.size.nonzero? # Failed for RubySDL2.0.1 and Ruby1.9.1-p1 on empty string.
 	y_offset+= font.height
       }
       

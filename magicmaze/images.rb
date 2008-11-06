@@ -87,7 +87,7 @@ module MagicMaze
     end
 
     def write_smooth_text( text, x, y, font = @font16,r=255,g=255,b=255 )
-      font.drawBlendedUTF8(@screen, text, x,y, r,g,b)
+      font.drawBlendedUTF8(@screen, text, x,y, r,g,b) # Failed for RubySDL2.0.1 and Ruby1.9.1-p1 on multiline strings.
     end
 
     def set_palette( pal, start_color = 0 )
