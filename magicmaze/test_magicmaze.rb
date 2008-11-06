@@ -1,6 +1,7 @@
 require 'test/unit'
 
 require 'magicmaze/test_tile'
+require 'magicmaze/test_filemap'
 require 'magicmaze/test_map'
 require 'magicmaze/test_movement'
 require 'magicmaze/test_player'
