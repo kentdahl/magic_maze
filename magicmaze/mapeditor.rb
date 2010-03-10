@@ -22,14 +22,15 @@ module MagicMaze
   # 
   class EditorLoop < GameLoop
     
-    def initialize( game_config, level = 1, player_status = nil )
+    def initialize( game_config, savedir) #level = 1, player_status = nil )
       @game_config = game_config
       @graphics    = game_config.graphics
       @sound       = game_config.sound
       @input = @game_input  = Input::Control.new( self, :in_game )
       @game_delay  = 50
-      @level = level
-      @restart_status = player_status
+      @savedir = savedir
+      #@level = level
+      #@restart_status = player_status
 
       @map = nil
       @player = nil
@@ -49,22 +50,22 @@ module MagicMaze
 
     def choose_level_to_load
       menu_items = [
-	Dir["data/maps/mm_map.*"],
-	# Dir[@savedir+"/*.map"]
+        Dir[@savedir+"/*.map"],
+	Dir["data/maps/mm_map.*"]
       ]
       menu_items.flatten!
-      menu_items.sort!
       menu_items.push "Exit"
+      menu_hash = Hash.new
+      menu_items.each{|f| menu_hash[File.basename(f)] = f }
 
-      selection = @graphics.choose_from_menu( menu_items.flatten, @input )
+      selection = @graphics.choose_from_menu( menu_hash.keys.sort, @input )
       if selection == "Exit" then
 	selection=nil
       end
-      return selection
+      return menu_hash[selection]
     end
 
     def load_map_file(filename)
-      # if @map then maybe_save end'
       @filemap = MagicMaze::FileMap.new(filename)
       @map = @filemap.to_gamemap
       @player = DungeonMaster.new( @map, self )
@@ -147,7 +148,7 @@ module MagicMaze
     end
     
     def sprite_id
-      ( @override_sprite || (@direction.value+26) )
+      ( @override_sprite || (@direction.value + MATURE_WIZARD_TILE_ID) )
     end
 
   end

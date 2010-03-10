@@ -51,6 +51,12 @@ module MagicMaze
     def create_entity(map,x,y,*args)
       Monster.new(map,x,y, self)
     end
+    def cast_spell( caster, *args )
+      loc = caster.location
+      dx, dy = caster.direction.to_2D_vector
+      create_entity(loc.map, loc.x + dx, loc.y + dy)
+    end
+
   end
 
   ########################################
@@ -252,5 +258,9 @@ module MagicMaze
   DEFAULT_TILES.each{|key,value|
     DEFAULT_TILES_ID_LOOKUP[ value.sprite_id ] = value
   }
+
+  ANCIENT_WIZARD_TILE_ID = 0
+  MATURE_WIZARD_TILE_ID = 26
+  YOUNG_WIZARD_TILE_ID  = 26
 
 end

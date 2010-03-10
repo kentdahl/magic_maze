@@ -175,7 +175,7 @@ module MagicMaze
   end
 
 
-  ##
+  ##################################
   # Main game loop.
   class GameLoop
     include DrawLoop

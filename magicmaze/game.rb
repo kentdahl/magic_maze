@@ -239,7 +239,7 @@ module MagicMaze
     def start_map_editor
       require 'magicmaze/mapeditor'
       editor = MagicMaze::MapEditor::EditorLoop.new(self, @savedir)
-      editor.start('data/maps/mm_map.xxx')
+      editor.start(@options[:map])
       put_titlescreen
       @state = :stopped_game
     end

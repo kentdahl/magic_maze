@@ -240,7 +240,12 @@ module MagicMaze
     end
 
     def sprite_id
-      ( @override_sprite || @direction.value )
+      return @override_sprite if @override_sprite
+      id_offset = if (@life > MAX_LIFE/2  && @mana > MAX_MANA/4)
+        then MATURE_WIZARD_TILE_ID 
+        else ANCIENT_WIZARD_TILE_ID
+        end
+      id_offset + @direction.value
     end
 
     def inventory_add_key( key )
