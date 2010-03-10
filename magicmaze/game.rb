@@ -130,6 +130,7 @@ module MagicMaze
     def loop
       puts "Starting..."
       load_checkpoints
+      start_map_editor if @options[:editor]
       while not @quit
         title_loop
       end
@@ -184,7 +185,7 @@ module MagicMaze
       if not @saved_checkpoints.empty? then
 	menu_items.unshift("Continue game") 
 	menu_items.push("Replay level") if @saved_checkpoints.size>1
-	# menu_items.push("Map Editor")
+	menu_items.push("Map Editor")
       end
       menu_items.push "Quit Magic Maze"
 
@@ -237,9 +238,10 @@ module MagicMaze
 
     def start_map_editor
       require 'magicmaze/mapeditor'
-      editor = MagicMaze::MapEditor.new(self, @savedir)
-      editor.start
+      editor = MagicMaze::MapEditor::EditorLoop.new(self, @savedir)
+      editor.start('data/maps/mm_map.xxx')
       put_titlescreen
+      @state = :stopped_game
     end
 
 

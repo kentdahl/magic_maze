@@ -62,13 +62,16 @@ module MagicMaze
       @file = nil
     end
 
-    def convert_string_to_bytes( str )
-      if str.respond_to?(:bytes) then
-	str.bytes.collect{|i| i } # Ruby 1.9
-      else
-	str # Ruby 1.8
+    if defined?(RUBY_PLATFORM) # Ruby 1.9
+      def convert_string_to_bytes( str )
+        str.bytes.collect{|i| i } # Ruby 1.9
+      end
+    else
+      def convert_string_to_bytes( str )
+        str # Ruby 1.8
       end
     end
+    
     ##
     # Extract various data from the header part of the map.
     def extract_from_header( header_data_str )

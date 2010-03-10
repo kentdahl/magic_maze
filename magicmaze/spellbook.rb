@@ -24,16 +24,18 @@ module MagicMaze
       ##
       # takes two hashes containing spell tiles.
       def initialize( primary_spells  = DEFAULT_ATTACK_SPELL_TILES, 
-                     secondary_spells = DEFAULT_OTHER_SPELL_TILES )
+                     secondary_spells = DEFAULT_OTHER_SPELL_TILES,
+                     spell_names = SPELL_NAMES)
         @spell_list = Hash.new
+        @spell_names = spell_names
         tiles = nil
         insertion = proc {|spell_name| 
           @spell_list[ spell_name ] = tiles[spell_name] 
         }
         tiles = primary_spells
-        SPELL_NAMES[:primary].each(&insertion)
+        @spell_names[:primary].each(&insertion)
         tiles = secondary_spells
-        SPELL_NAMES[:secondary].each(&insertion)
+        @spell_names[:secondary].each(&insertion)
         #:primary => primary_spells,
         #  :secondary => secondary_spells
         #}
@@ -42,7 +44,7 @@ module MagicMaze
 
       def spell( spell_type = :primary )
         @spell_list[
-          SPELL_NAMES[spell_type][ @spell_index[spell_type]] 
+          @spell_names[spell_type][ @spell_index[spell_type]] 
         ]
       end
 
@@ -61,7 +63,7 @@ module MagicMaze
 
       def bound_index!( spell_type = :primary )
         index = @spell_index[ spell_type ]
-        max = SPELL_NAMES[ spell_type ].size
+        max = @spell_names[ spell_type ].size
         index = if index<0
                   max + index
                 else

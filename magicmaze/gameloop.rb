@@ -17,7 +17,170 @@ require 'magicmaze/graphics'
 
 module MagicMaze
 
+  ##
+  # Methods for drawing the map.
+  module DrawLoop
+  
+     def follow_entity(leader)
+      # puts "Following #{leader}..."
+      time_synchronized_drawing do
+	draw(leader.location)
+      end
+      return true
+    end
+
+    def time_synchronized_drawing
+      @graphics.time_synchronized(@game_delay) do 
+	yield
+	@graphics.flip
+      end
+    end
+
+    def draw_now
+      draw ; @graphics.flip
+    end
+
+
+    def draw(where=@player.location)
+      draw_maze( where.x, where.y )
+      # @graphics.update_player( @player.direction.value )
+      draw_hud
+    end
+
+
+    def draw_hud
+      @graphics.update_spells(primary_spell.sprite_id, 
+                              secondary_spell.sprite_id )
+      @graphics.write_score( get_score ) 
+      @graphics.update_life_and_mana( get_life, get_mana )
+      @graphics.update_inventory( get_inventory )
+
+    end
+
+    def draw_maze( curr_x, curr_y )
+      @graphics.update_view_rows(curr_y)do |current_y|
+        @graphics.update_view_columns(curr_x)do |current_x|
+          @map.each_tile_at( current_x, current_y ) do |tile|
+            @graphics.update_view_block( tile.sprite_id ) if tile
+          end
+        end
+      end
+    end
+    
+    def alternative_inner_drawing
+      @map.all_tiles_at( current_x, current_y ) do
+        |background, object, entity, spiritual|
+        # background = @map.background.get(current_x,current_y)
+        @graphics.update_view_background_block( background.sprite_id )
+        # object = @map.object.get(current_x,current_y)
+        @graphics.update_view_block( object.sprite_id ) if object
+        # entity = @map.entity.get(current_x,current_y)
+        @graphics.update_view_block( entity.sprite_id ) if entity
+      end
+    end
+
+  
+  end
+
+  ##
+  # Methods for accessing player
+  module PlayerAccessors
+    def next_primary_spell
+      @player.spellbook.page_spell( :primary )
+    end
+    def previous_primary_spell
+      @player.spellbook.page_spell( :primary, -1)
+    end
+    def next_secondary_spell
+      @player.spellbook.page_spell( :secondary )
+    end
+    def previous_secondary_spell
+      @player.spellbook.page_spell( :secondary, -1)
+    end
+
+    def cast_primary_spell
+      primary_spell.cast_spell( @player )
+    end
+    def cast_alternative_spell
+      secondary_spell.cast_spell( @player )
+    end
+
+    ##
+    # Getters
+    def primary_spell
+      @player.spellbook.spell( :primary )
+    end
+    def secondary_spell
+      @player.spellbook.spell( :secondary )
+    end
+
+
+    def get_score
+      @player.score
+    end
+    def get_inventory
+      @player.inventory
+    end
+    def get_life
+      @player.life
+    end
+    def get_mana
+      @player.mana
+    end
+  end
+
+
+
+  module MovementHandling
+    def move_up
+      turn_and_move( Direction::NORTH )
+    end
+    def move_down
+      turn_and_move( Direction::SOUTH )
+    end
+    def move_left
+      turn_and_move( Direction::WEST )
+    end
+    def move_right
+      turn_and_move( Direction::EAST )
+    end
+
+    def turn_and_move( dir )
+      @movement |= (1<<dir.value)
+    end
+
+    def calc_movement
+      # cancelation of opposite moves instead
+      # of flickering like mad.
+      [0b1010, 0b0101].each{|cancel|
+        if @movement&cancel==cancel
+          @movement^=cancel
+        end
+      }
+      4.times{|m|
+        if @movement & 1 != 0
+          old_turn_and_move(m)
+        end
+        @movement >>=1
+      }
+    end
+
+    def old_turn_and_move( dir )
+      if @player.direction.value == dir
+        @player.add_impulse(:move_forward)
+      else
+        @player.add_impulse(:turn_around, dir )
+      end
+    end
+  end
+
+
+  ##
+  # Main game loop.
   class GameLoop
+    include DrawLoop
+    include PlayerAccessors
+    include MovementHandling
 
     attr_reader :graphics, :sound, :input
 
@@ -68,46 +231,6 @@ module MagicMaze
       GC.start
     end
 
-    def move_up
-      turn_and_move( Direction::NORTH )
-    end
-    def move_down
-      turn_and_move( Direction::SOUTH )
-    end
-    def move_left
-      turn_and_move( Direction::WEST )
-    end
-    def move_right
-      turn_and_move( Direction::EAST )
-    end
-
-    def turn_and_move( dir )
-      @movement |= (1<<dir.value)
-    end
-
-    def calc_movement
-      # cancelation of opposite moves instead
-      # of flickering like mad.
-      [0b1010, 0b0101].each{|cancel|
-        if @movement&cancel==cancel
-          @movement^=cancel
-        end
-      }
-      4.times{|m|
-        if @movement & 1 != 0
-          old_turn_and_move(m)
-        end
-        @movement >>=1
-      }
-    end
-
-    def old_turn_and_move( dir )
-      if @player.direction.value == dir
-        @player.add_impulse(:move_forward)
-      else
-        @player.add_impulse(:turn_around, dir )
-      end
-    end
 
 
     ##
@@ -176,51 +299,14 @@ module MagicMaze
       end
     end
 
-    def next_primary_spell
-      @player.spellbook.page_spell( :primary )
-    end
-    def previous_primary_spell
-      @player.spellbook.page_spell( :primary, -1)
-    end
-    def next_secondary_spell
-      @player.spellbook.page_spell( :secondary )
-    end
-    def previous_secondary_spell
-      @player.spellbook.page_spell( :secondary, -1)
-    end
 
-    def cast_primary_spell
-      primary_spell.cast_spell( @player )
+    def process_entities
+      alive = @player.action_tick
+      game_data = { 
+        :player_location => @player.location
+      }
+      @map.active_entities.each_tick( game_data )
     end
-    def cast_alternative_spell
-      secondary_spell.cast_spell( @player )
-    end
-
-
-    ##
-    # Getters
-    def primary_spell
-      @player.spellbook.spell( :primary )
-    end
-    def secondary_spell
-      @player.spellbook.spell( :secondary )
-    end
-
-
-
-    def get_score
-      @player.score
-    end
-    def get_inventory
-      @player.inventory
-    end
-    def get_life
-      @player.life
-    end
-    def get_mana
-      @player.mana
-    end
-
 
 
     def game_loop
@@ -242,11 +328,7 @@ module MagicMaze
 	  calc_movement
 	  
 	  @state = catch( :state_change ) do 
-	    alive = @player.action_tick
-	    game_data = { 
-	      :player_location => @player.location
-	    }
-	    @map.active_entities.each_tick( game_data )
+            process_entities
 	    @state
 	  end
 	end
@@ -304,69 +386,6 @@ module MagicMaze
       end while [:next_level,:restart_level,:player_died].include? @state
     end
 
-
-
-    def follow_entity(leader)
-      # puts "Following #{leader}..."
-      time_synchronized_drawing do
-	draw(leader.location)
-      end
-      return true
-    end
-
-    def time_synchronized_drawing
-      @graphics.time_synchronized(@game_delay) do 
-	yield
-	@graphics.flip
-      end
-    end
-
-
-
-    def draw_now
-      draw ; @graphics.flip
-    end
-
-
-    def draw(where=@player.location)
-      draw_maze( where.x, where.y )
-      # @graphics.update_player( @player.direction.value )
-      draw_hud
-    end
-
-
-    def draw_hud
-      @graphics.update_spells(primary_spell.sprite_id, 
-                              secondary_spell.sprite_id )
-      @graphics.write_score( get_score ) 
-      @graphics.update_life_and_mana( get_life, get_mana )
-      @graphics.update_inventory( get_inventory )
-
-    end
-
-
-
-    def draw_maze( curr_x, curr_y )
-      @graphics.update_view_rows(curr_y)do |current_y|
-        @graphics.update_view_columns(curr_x)do |current_x|
-          @map.each_tile_at( current_x, current_y ) do |tile|
-            @graphics.update_view_block( tile.sprite_id ) if tile
-          end
-        end
-      end
-    end
-
-    def alternative_inner_drawing
-      @map.all_tiles_at( current_x, current_y ) do
-        |background, object, entity, spiritual|
-        # background = @map.background.get(current_x,current_y)
-        @graphics.update_view_background_block( background.sprite_id )
-        # object = @map.object.get(current_x,current_y)
-        @graphics.update_view_block( object.sprite_id ) if object
-        # entity = @map.entity.get(current_x,current_y)
-        @graphics.update_view_block( entity.sprite_id ) if entity
-      end
-    end
 
       
   end # GameLoop

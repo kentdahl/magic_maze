@@ -36,7 +36,8 @@ options = GetoptLong.new(["--help",     "-h", GetoptLong::NO_ARGUMENT ],
                          ["--loadgame", "-L", GetoptLong::NO_ARGUMENT ],
                          ["--volume",   "-v", GetoptLong::REQUIRED_ARGUMENT ],
                          ["--joystick", "-j", GetoptLong::OPTIONAL_ARGUMENT ],
-                         ["--savedir",  "-D", GetoptLong::REQUIRED_ARGUMENT ]
+                         ["--savedir",  "-D", GetoptLong::REQUIRED_ARGUMENT ],
+                         ["--editor", "-E", GetoptLong::NO_ARGUMENT ]
 
  )
 
@@ -85,6 +86,8 @@ options.each do |option, argument|
     opt_hash[:debug] = true
   when "--fullscreen"
     opt_hash[:fullscreen] = true
+  when "--editor"
+    opt_hash[:editor] = true
   when "--savedir"
     opt_hash[:savedir] = argument
   when "--scale"

@@ -221,7 +221,7 @@ module MagicMaze
   DEFAULT_MONSTER_TILES = Hash.new
   [ 4, 13, 19, 25,  31, 38, 44, 51, 57, 63, 70, 76, 83, 89, 95, 101, 108, 114, 120, 127].
     each_with_index{|tough, index|    
-    DEFAULT_MONSTER_TILES[ ":monster#{index}".intern ] = MonsterTile.new( 40 + index, tough )
+    DEFAULT_MONSTER_TILES[ "monster#{index}".intern ] = MonsterTile.new( 40 + index, tough )
   }
 
 

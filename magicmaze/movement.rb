@@ -209,8 +209,6 @@ module MagicMaze
       end
     end
 
-
-
   end
 
 
