@@ -104,25 +104,22 @@ module MagicMaze
   end # EditorLoop
   
   
+  ##
+  # The Dungeon Master - or map-editor player...
   class DungeonMaster < Player
     DM_SPELL_NAMES = {
-      :primary => [:spell_lightning, :spell_bigball, :spell_coolcube],
-      :secondary => DEFAULT_MONSTER_TILES.keys # [:spell_heal, :spell_summon_mana, :spell_magic_map, :spell_spy_eye]
+      :primary => DEFAULT_ALL_OBJECT_TILES.keys.sort{|a,b| a.to_s<=>b.to_s},
+      :secondary => DEFAULT_MONSTER_TILES.keys.sort{|a,b| a.to_s<=>b.to_s}
     }
 
-    DM_CREATE_SPELL_TILES = {
-      :spell_lightning => AttackSpellTile.new( 10, 1,  4),
-      :spell_bigball   => AttackSpellTile.new( 11, 2,  9),
-      :spell_coolcube  => AttackSpellTile.new( 12, 4, 20),
-    }
-
-    DM_SUMMON_SPELL_TILES = DEFAULT_MONSTER_TILES #.values
+    DM_CREATE_SPELL_TILES = DEFAULT_ALL_OBJECT_TILES
+    DM_SUMMON_SPELL_TILES = DEFAULT_MONSTER_TILES
     
     def initialize( map, game_config, *args )
       super( map, game_config, *args )
       newlocation = SpiritualLocation.new( self, map, @location.x, @location.y )
       @location = newlocation
-      @primary_spell = DM_CREATE_SPELL_TILES[:spell_lightning]
+      @primary_spell = DM_CREATE_SPELL_TILES[DM_CREATE_SPELL_TILES.keys.first]
       @secondary_spell = DM_SUMMON_SPELL_TILES[DM_SUMMON_SPELL_TILES.keys.first]
       @spellbook = SpellBook.new( DM_CREATE_SPELL_TILES, DM_SUMMON_SPELL_TILES , DM_SPELL_NAMES )
     end

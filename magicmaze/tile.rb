@@ -1,6 +1,6 @@
 ############################################################
 # Magic Maze - a simple and low-tech monster-bashing maze game.
-# Copyright (C) 2004-2008 Kent Dahl
+# Copyright (C) 2004-2010 Kent Dahl
 #
 # This game is FREE as in both BEER and SPEECH. 
 # It is available and can be distributed under the terms of 
@@ -11,6 +11,8 @@
 
 module MagicMaze
 
+  ##
+  # Used to clarify interfaces that needs implementing.
   module Abstract
     def abstract_method_called
       raise ArgumentError, "Abstract method called."
@@ -27,8 +29,17 @@ module MagicMaze
     def initialize( sprite_id = nil )
       @sprite_id = sprite_id
     end
+    ##
+    # Used by the map editor (or Dungeon Master player)
+    def cast_spell( caster, *args )
+      loc = caster.location
+      dx, dy = caster.direction.to_2D_vector
+      loc.map.set_any_object(loc.x + dx, loc.y + dy, self) rescue puts "Outside map!"
+    end
   end
 
+  ##
+  # Man, I'm lazy...
   module SuperInit
     def initialize(*a)
       super(*a)
@@ -40,6 +51,14 @@ module MagicMaze
     def create_entity( *args )
       abstract_method_called
     end
+    
+    ##
+    # Used by the map editor (or Dungeon Master player)
+    def cast_spell( caster, *args )
+      loc = caster.location
+      dx, dy = caster.direction.to_2D_vector
+      create_entity(loc.map, loc.x + dx, loc.y + dy)
+    end
   end
 
   class MonsterTile < EntityTile
@@ -50,11 +69,6 @@ module MagicMaze
     attr_reader :start_health
     def create_entity(map,x,y,*args)
       Monster.new(map,x,y, self)
-    end
-    def cast_spell( caster, *args )
-      loc = caster.location
-      dx, dy = caster.direction.to_2D_vector
-      create_entity(loc.map, loc.x + dx, loc.y + dy)
     end
 
   end
@@ -78,6 +92,7 @@ module MagicMaze
     def collide_with_monster( *args )
       false
     end
+    
   end
 
   class KeyTile < ObjectTile
@@ -185,6 +200,15 @@ module MagicMaze
     def create_entity(map,x,y,*args)
       self
     end
+    
+    ##
+    # Used by the map editor (or Dungeon Master player)
+    def cast_spell( caster, *args )
+      loc = caster.location
+      dx, dy = caster.direction.to_2D_vector
+      loc.map.set_any_object(loc.x + dx, loc.y + dy, self) rescue puts "Outside map!"
+    end
+
   end
 
 
@@ -224,14 +248,14 @@ module MagicMaze
     :YELLOW_DOOR => DoorTile.new(35, :yellow),
   }
 
+  DEFAULT_MONSTER_TOUGHNESS_ARRAY = [ 4, 13, 19, 25,  31, 38, 44, 51, 57, 63, 70, 76, 83, 89, 95, 101, 108, 114] # , 120, 127].
   DEFAULT_MONSTER_TILES = Hash.new
-  [ 4, 13, 19, 25,  31, 38, 44, 51, 57, 63, 70, 76, 83, 89, 95, 101, 108, 114, 120, 127].
-    each_with_index{|tough, index|    
-    DEFAULT_MONSTER_TILES[ "monster#{index}".intern ] = MonsterTile.new( 40 + index, tough )
+  DEFAULT_MONSTER_TOUGHNESS_ARRAY.each_with_index{|tough, index|    
+    DEFAULT_MONSTER_TILES[ ("monster%02d"%index).intern ] = MonsterTile.new( 40 + index, tough )
   }
 
 
-  DEFAULT_TILES = {
+  DEFAULT_OBJECT_TILES = {
     :BLOOD_SPLAT => ObjectTile.new(9),
     :CHEST       => BonusTile.new(20, 50),
     :LIFE_POTION => LifeRefillTile.new(21, 25),
@@ -242,15 +266,22 @@ module MagicMaze
     
     :EXIT  => ExitTile.new(39),  
   }
-  # gather them all i DEFAULT_TILES
-  [ DEFAULT_KEY_TILES,     
+  
+  DEFAULT_ALL_OBJECT_TILES = Hash.new
+  [ DEFAULT_OBJECT_TILES,
+    DEFAULT_KEY_TILES,     
     DEFAULT_DOOR_TILES,
-    DEFAULT_MONSTER_TILES,
+  ].each{|i| DEFAULT_ALL_OBJECT_TILES.update(i) }
+
+  # gather them all i DEFAULT_TILES
+  DEFAULT_TILES = Hash.new
+  [ DEFAULT_OBJECT_TILES,
+    DEFAULT_KEY_TILES,     
+    DEFAULT_DOOR_TILES,
+    DEFAULT_MONSTER_TILES
     # DEFAULT_ATTACK_SPELL_TILES,
     # DEFAULT_OTHER_SPELL_TILES,
-  ].each{|tileset|
-    DEFAULT_TILES.update( tileset )
-  }
+  ].each{|i| DEFAULT_TILES.update(i) }
 
   # Create reverse lookup hash for tiles.
   # No two tiles may have same sprite id!
