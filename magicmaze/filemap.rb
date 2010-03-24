@@ -252,9 +252,13 @@ module MagicMaze
     ##
     # Update map from GameMap.
     def from_gamemap(gamemap)
-      @map_rows = []
+      # @map_rows = []
     end
     
+    def update_header_data
+      @header_data[24] = @startx   
+      @header_data[25] = @starty   
+    end
     
     def save_to(filename)
       close
@@ -263,7 +267,6 @@ module MagicMaze
       each_row {|row, y|
         @file.write row
       }
-      
       @file.close
     end
 
