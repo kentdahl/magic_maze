@@ -28,18 +28,19 @@ module MagicMaze
     BLOCKED_BIT = 128
 
     attr_reader :startx, :starty, :title
+    attr_reader :checksum, :default_wall_tile, :map_rows
 
     ##
     # Open an old-style filemap for Magic Maze.
     # Filename must point to a valid map file.
     def initialize( filename, monster_maker = nil )
       @file = File.open(filename, 'rb')
-      header_data = @file.read(MAP_HEADER_SIZE)
-      unless MAP_FILE_SIGNATURE == header_data[0,MAP_FILE_SIGNATURE.size]
+      @header_data = @file.read(MAP_HEADER_SIZE)
+      unless MAP_FILE_SIGNATURE == @header_data[0,MAP_FILE_SIGNATURE.size]
 	raise ArgumentError, "Map file is invalid: "+filename
       end
       
-      extract_from_header( header_data )
+      extract_from_header( @header_data )
     end
 
     def load_map
@@ -245,6 +246,25 @@ module MagicMaze
         tilehash[tile_id] = tile
       end
       tile
+    end
+    
+    
+    ##
+    # Update map from GameMap.
+    def from_gamemap(gamemap)
+      @map_rows = []
+    end
+    
+    
+    def save_to(filename)
+      close
+      @file = File.open(filename, 'wb')
+      @file.write @header_data
+      each_row {|row, y|
+        @file.write row
+      }
+      
+      @file.close
     end
 
   end # FileMap
