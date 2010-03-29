@@ -103,14 +103,18 @@ module MagicMaze
         @real_checksum += byte
       }
       # what if the row is less than 256 bytes? Pad it.
-      unless row_data.size >= MAP_ROW_SIZE
-        row_data << "\000"*(MAP_ROW_SIZE-row_data.size)
-      end     
+      pad_row( row_data )
       # store the raw data
       @map_rows << row_data
     end
     private :extract_from_row
 
+    def pad_row( row_data )
+      # what if the row is less than 256 bytes? Pad it.
+      unless row_data.size >= MAP_ROW_SIZE
+        row_data << "\000"*(MAP_ROW_SIZE-row_data.size)
+      end     
+    end
 
     ##
     # remove monsters from the map data and add them to the live
@@ -156,6 +160,11 @@ module MagicMaze
     # return background tile, without the blocked bit.
     def get_background_tile( x, y )
       get_background_data( x, y ) & TILE_BITS
+    end
+    
+    def set_background_tile( x, y, background, blocked = false)
+      row = @map_rows[y]
+      row[x*2] = background
     end
     
 
@@ -253,6 +262,16 @@ module MagicMaze
     # Update map from GameMap.
     def from_gamemap(gamemap)
       # @map_rows = []
+      gamemap.iterate_all_rows do |y, oy|
+        @map_rows[y]  ||= ""
+        pad_row(@map_rows[y])
+        gamemap.iterate_all_columns do |x, ox|
+          gamemap.all_tiles_at(x,y){|back, object, entity, spiritual|
+            set_background_tile(x,y, back.sprite_id, back.blocked?)
+            set_object(x,y,object.sprite_id) if object
+          }
+        end
+      end
     end
     
     def update_header_data
