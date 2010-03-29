@@ -61,9 +61,9 @@ class TestFileMap < Test::Unit::TestCase
       newfilename = temp_map_filename
       filemap.instance_eval { @startx = 12 }
       filemap.instance_eval { @starty = 34 }
-      filemap.update_header_data
       gamemap = filemap.to_gamemap
       filemap.from_gamemap(gamemap)
+      filemap.update_header_data
       filemap.save_to( newfilename )
       
       # Load back in from the temporary file and compare.

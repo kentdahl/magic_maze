@@ -67,16 +67,23 @@ module MagicMaze
     end
 
     def load_map_file(filename)
+      @load_filename = filename
       @filemap = MagicMaze::FileMap.new(filename)
       @map = @filemap.to_gamemap
       @player = DungeonMaster.new( @map, self )
     end
 
     def save_map_file
-      # @filemap = @map.to_filemap
+      @filemap.from_gamemap(@map)
+      @filemap.update_header_data
+      @filemap.save_to(@savedir+"/modified.map")
     end
     
-    
+    def save_game
+      puts "SAVE MAP!"
+      save_map_file
+    end
+
     def process_entities
       alive = @player.action_tick
       game_data = { 

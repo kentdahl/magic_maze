@@ -54,7 +54,7 @@ module MagicMaze
       @real_checksum &= 0xFFFF
       unless @checksum == @real_checksum 
 	raise ArgumentError, "Map file checksum failed: "+
-	  "Excpected #@checksum, found #@real_checksum."
+	  "Expected #@checksum, found #@real_checksum."
       end
     end
 
@@ -114,6 +114,23 @@ module MagicMaze
       unless row_data.size >= MAP_ROW_SIZE
         row_data << "\000"*(MAP_ROW_SIZE-row_data.size)
       end     
+    end
+    
+    def update_checksum(checksum)
+      @checksum = checksum
+      @header_data[16] = checksum & 0xFF
+      @header_data[17] = (checksum>>8) &0xFF
+    end
+    
+    def calculate_checksum
+      @real_checksum = 0
+      each_row do |row_data,y|
+        row_data.each_byte{|byte|
+          @real_checksum += byte
+        }
+      end
+      @real_checksum &= 0xFFFF
+      @real_checksum
     end
 
     ##
@@ -267,7 +284,7 @@ module MagicMaze
         pad_row(@map_rows[y])
         gamemap.iterate_all_columns do |x, ox|
           gamemap.all_tiles_at(x,y){|back, object, entity, spiritual|
-            set_background_tile(x,y, back.sprite_id, back.blocked?)
+            set_background_tile(x,y, back.sprite_id - BackgroundTile::BACKGROUND_TILES_BEGIN, back.blocked?)
             set_object(x,y,object.sprite_id) if object
           }
         end
@@ -276,7 +293,8 @@ module MagicMaze
     
     def update_header_data
       @header_data[24] = @startx   
-      @header_data[25] = @starty   
+      @header_data[25] = @starty
+      update_checksum( calculate_checksum )
     end
     
     def save_to(filename)
