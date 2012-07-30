@@ -166,19 +166,24 @@ module MagicMaze
       fontfile = "data/gfx/fraktmod.ttf"
       fontsize = [16, 32]
       tries = 0
+      
+      alternate_fonts = [
+        "/usr/share/fonts/truetype/ttf-isabella/Isabella.ttf",
+        "/usr/share/fonts/truetype/Isabella.ttf"
+      ]
+      
       begin
-	@font16 = SDL::TTF.open( fontfile, fontsize.first * SCALE_FACTOR )
-	@font32 = SDL::TTF.open( fontfile, fontsize.last  * SCALE_FACTOR )
+        @font16 = SDL::TTF.open( fontfile, fontsize.first * SCALE_FACTOR )
+        @font32 = SDL::TTF.open( fontfile, fontsize.last  * SCALE_FACTOR )
       rescue SDL::Error => err
-	# Debian font
-	fontfile = "/usr/share/fonts/truetype/Isabella.ttf"
-	fontsize = [12, 28]
-	if tries < 1 then 
-	  tries += 1 # to avoid loop.
-	  retry 
-	else 
-	  raise err 
-	end
+        # Debian font
+        fontfile = alternate_fonts.shift # "/usr/share/fonts/truetype/Isabella.ttf"
+        fontsize = [12, 28]
+        if fontfile then 
+          retry 
+        else 
+          raise err 
+        end
       end
       @font = @font16
     end
