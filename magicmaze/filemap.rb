@@ -118,8 +118,8 @@ module MagicMaze
     
     def update_checksum(checksum)
       @checksum = checksum
-      @header_data[16] = checksum & 0xFF
-      @header_data[17] = (checksum>>8) &0xFF
+      @header_data[16] = (checksum & 0xFF).chr
+      @header_data[17] = ((checksum>>8) &0xFF).chr
     end
     
     def calculate_checksum
@@ -181,7 +181,7 @@ module MagicMaze
     
     def set_background_tile( x, y, background, blocked = false)
       row = @map_rows[y]
-      row[x*2] = background
+      row[x.to_i*2] = background.chr
     end
     
 
@@ -196,7 +196,7 @@ module MagicMaze
     ##
     # place an object.
     def set_object( x, y, object )
-      @map_rows[y][x*2+1] = object
+      @map_rows[y][x*2+1] = object.chr
     end
 
     ##
@@ -292,8 +292,8 @@ module MagicMaze
     end
     
     def update_header_data
-      @header_data[24] = @startx   
-      @header_data[25] = @starty
+      @header_data[24] = @startx.chr   
+      @header_data[25] = @starty.chr
       update_checksum( calculate_checksum )
     end
     
