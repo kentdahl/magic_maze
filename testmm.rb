@@ -1,2 +1,2 @@
-#!/usr/bin/ruby -I.
-require 'magicmaze/test_magicmaze'
+#!/usr/bin/ruby -I. -Itest
+require 'test/test_magicmaze'
