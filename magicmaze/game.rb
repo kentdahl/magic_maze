@@ -13,7 +13,7 @@
 #require 'magicmaze/input'
 #require 'magicmaze/sound'
 
-current_engine = nil # 'gosu'
+current_engine = OVERRIDE_GRAPHICS_ENGINE if defined?(OVERRIDE_GRAPHICS_ENGINE) # 'gosu'
 current_engine ||= 'sdl'
 
 require "magicmaze/engine/#{current_engine}/images"

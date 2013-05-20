@@ -20,9 +20,9 @@ module MagicMaze
 
     GFX_PATH = 'data/gfx/'
     SCREEN_IMAGES = {
-      :titlescreen => 'title.pcx',
-      :background  => 'background.pcx',
-      :endscreen   => 'end.pcx',
+      :titlescreen => 'title.png',
+      :background  => 'background.png',
+      :endscreen   => 'end.png',
     }
 
     SCALE_FACTOR = (self.constants.include?("OVERRIDE_GRAPHICS_SCALE_FACTOR") ? OVERRIDE_GRAPHICS_SCALE_FACTOR : 2)

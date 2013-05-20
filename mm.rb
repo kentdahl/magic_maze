@@ -32,6 +32,7 @@ options = GetoptLong.new(["--help",     "-h", GetoptLong::NO_ARGUMENT ],
                          ["--debug",    "-d", GetoptLong::NO_ARGUMENT ],
                          ["--fullscreen",    "-f", GetoptLong::NO_ARGUMENT ],
                          ["--scale",    "-s", GetoptLong::REQUIRED_ARGUMENT ],
+                         ["--engine",    "-e", GetoptLong::REQUIRED_ARGUMENT ],
                          ["--level",    "-l", GetoptLong::REQUIRED_ARGUMENT ],
                          ["--loadgame", "-L", GetoptLong::NO_ARGUMENT ],
                          ["--volume",   "-v", GetoptLong::REQUIRED_ARGUMENT ],
@@ -105,7 +106,9 @@ options.each do |option, argument|
         OVERRIDE_GRAPHICS_SCALE_FACTOR = OVERRIDE_GRAPHICS_SCALE_FACTOR
       end
     end
-
+  when "--engine"
+    engine = (argument)
+    OVERRIDE_GRAPHICS_ENGINE = engine
   end
 end                      
 
