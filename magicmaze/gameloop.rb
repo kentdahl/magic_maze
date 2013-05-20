@@ -200,6 +200,7 @@ module MagicMaze
 
       @map = nil
       @player = nil
+      @movement = 0
     end
     
     def load_map( level = 1, saved = nil )
@@ -357,7 +358,7 @@ module MagicMaze
     end
 
     def update
-      @movement = 0
+      # @movement = 0
       #@game_input.check_input
       calc_movement
 

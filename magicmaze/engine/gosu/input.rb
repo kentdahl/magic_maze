@@ -286,7 +286,7 @@ module MagicMaze
       # send a callback if it can handle it
       def call_callback( method_name )
         return nil unless method_name && @callback.respond_to?(method_name)
-        puts "event callback: #{method_name.to_s}"
+        # puts "event callback: #{method_name.to_s} - to - #{@callback.class}"
         @callback.send( method_name )
       end
       ##
