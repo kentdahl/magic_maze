@@ -9,63 +9,11 @@
 # Please see README.txt and COPYING_GPL.txt for details.
 ############################################################
 
-require 'sdl'
 
 module MagicMaze
   ################################################
   #
   # SOUND_ENABLED = true unless defined? SOUND_ENABLED 
-
-  ##
-  # Use SDL for sound
-  #
-  class Sound
-    ALL_CHANNELS = -1
-
-    ##
-    # Singleton graphics instance.
-    def self.get_sound(options={})
-      @sound_instance ||= MagicMaze::Sound.new(options)
-      @sound_instance
-    end
-
-    def self.shutdown_graphics
-      @sound_instance.destroy
-      @sound_instance = nil
-    end
-
-
-    def initialize(options={})
-      SDL::Mixer.open
-      @sounds = {}
-      (1..4).each{|sound_no|
-        filename = sprintf "data/sound/sound%d.wav", sound_no
-        sound = SDL::Mixer::Wave.load( filename )
-        @sounds[sound_no] = sound
-      }
-      volume = options[:volume] || 8
-      SDL::Mixer.set_volume( ALL_CHANNELS, 64*volume/10 )
-    end
-    
-    def destroy
-      SDL::Mixer.set_volume( ALL_CHANNELS, 0 )
-    end
-
-    def play_sound( sound_no )
-      sound_no = SOUNDS[sound_no] unless sound_no.kind_of? Numeric
-      wave = @sounds[sound_no]
-      SDL::Mixer.playChannel(sound_no,wave,0)
-    end
-
-    def change_volume( way = 1, step = 8 )
-      old_vol = SDL::Mixer.set_volume( ALL_CHANNELS, -1 )
-      new_vol = old_vol + way * step
-      if new_vol.between?( 1, 128 )
-        SDL::Mixer.set_volume( ALL_CHANNELS, new_vol )
-      end
-    end
-    
-  end
 
   ##
   # Dummy class for when we want no sound.

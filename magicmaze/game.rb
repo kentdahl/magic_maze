@@ -9,10 +9,20 @@
 # Please see README.txt and COPYING_GPL.txt for details.
 ############################################################
 
+#require 'magicmaze/graphics'
+#require 'magicmaze/input'
+#require 'magicmaze/sound'
+
+current_engine = nil # 'gosu'
+current_engine ||= 'sdl'
+
+require "magicmaze/engine/#{current_engine}/images"
+require "magicmaze/engine/#{current_engine}/graphics"
+require "magicmaze/engine/#{current_engine}/input"
+require "magicmaze/engine/#{current_engine}/sound"
+
 require 'magicmaze/gameloop'
-require 'magicmaze/graphics'
-require 'magicmaze/input'
-require 'magicmaze/sound'
+
 
 require 'yaml'
 
@@ -52,7 +62,7 @@ module MagicMaze
                then 
                  begin
                    Sound.get_sound(@options) 
-                 rescue SDL::Error => sound_error
+                 rescue => sound_error
                    puts "ERROR: Could not initialize sound! Proceeding muted." 
                    NoSound.new
                  end
