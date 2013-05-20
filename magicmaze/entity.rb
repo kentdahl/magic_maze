@@ -71,12 +71,12 @@ module MagicMaze
       @life = MAX_LIFE if @life > MAX_LIFE
 
       if @life <= 0
-	@life = 0
-	location.remove_old_entity
-	unless location.get(:object)
-	  location.set(:object,  DEFAULT_TILES[ :BLOOD_SPLAT ])
-	end
-	(old_life > 0 ? :died : :dead) 
+        @life = 0
+        location.remove_old_entity
+        unless location.get(:object)
+          location.set(:object,  DEFAULT_TILES[ :BLOOD_SPLAT ])
+        end
+        (old_life > 0 ? :died : :dead) 
       end
     end
 
@@ -123,21 +123,21 @@ module MagicMaze
       background =  @location.get(:background)
       entity     =  @location.get(:entity)
       if background.blocked?
-	remove_missile
+        remove_missile
       elsif entity and entity != @caster 
-	hit_entity( entity )
+        hit_entity( entity )
       else
-	@movements -= 1
-	remove_missile if not move_forward or @movements < 1 
+        @movements -= 1
+        remove_missile if not move_forward or @movements < 1 
       end
      
     end
 
     def hit_entity( entity )
       if entity.kind_of?(Monster) && entity.add_life( -@tile.damage ) == :died
-	# puts "SMACK! #{entity.alive?}"
-	@caster.play_sound( :argh ) 
-	@caster.increase_score( 10 ) # whats the value again?
+        # puts "SMACK! #{entity.alive?}"
+        @caster.play_sound( :argh ) 
+        @caster.increase_score( 10 ) # whats the value again?
       end
       remove_missile
     end
@@ -174,8 +174,8 @@ module MagicMaze
     def action_tick( *args )
       return false if !@active
       if @direction and @tile.have_mana? then
-	move_forward 
-	@tile.use_mana
+        move_forward 
+        @tile.use_mana
       end
       @active
     end
@@ -253,12 +253,12 @@ module MagicMaze
 
     def run
       @caster.game_config.time_synchronized_drawing do
-	if @old_loc && @old_loc.to_a != self.location.to_a then
-	  @tile.draw_map_at(self, false)
-	  @caster.game_config.graphics.flip
-	end
-	@old_loc = self.location.dup
-	super # checks input
+        if @old_loc && @old_loc.to_a != self.location.to_a then
+          @tile.draw_map_at(self, false)
+          @caster.game_config.graphics.flip
+        end
+        @old_loc = self.location.dup
+        super # checks input
       end
     end
   end
@@ -310,7 +310,7 @@ module MagicMaze
     def action_tick( *args )           
       @sleep -= 1
       if @sleep < 0    
-	attempt_movement( *args )
+        attempt_movement( *args )
       end
     end
 
@@ -328,53 +328,53 @@ module MagicMaze
       jp = Direction::COMPASS_DIRECTIONS.collect{|i| rand(35) + 175 }  #  FOR j:=0 TO 3 DO jp[j]:=0+Random(35)+175;
 
       if ( py < my ) 
-	jp[0] += 1000
-	jp[2] -= 200
+        jp[0] += 1000
+        jp[2] -= 200
       end
       if ( py > my ) 
-	jp[2] += 1000
-	jp[0] -= 200
+        jp[2] += 1000
+        jp[0] -= 200
       end
       if ( px > mx ) 
-	jp[1] += 1000
-	jp[3] -= 200
+        jp[1] += 1000
+        jp[3] -= 200
       end
       if ( px < mx ) 
-	jp[3] += 1000
-	jp[1] -= 200
+        jp[3] += 1000
+        jp[1] -= 200
       end
 
       mp = -3000
       m = -1
       jp.each_with_index {|desire, curr_direction|
-	if direction == @direction.value 
-	  desire += 15 # Prefer to go straight
-	end
+        if direction == @direction.value 
+          desire += 15 # Prefer to go straight
+        end
 
-	# if blocked, set desire = 0
-	location = @location.to_maplocation + Direction.get_constant( curr_direction )
-	if location and not @location.allowed_access_to?( location.x, location.y )
-	  desire = 0
-	end
-	if not location
-	  puts "Orig Location(#{@location.x}, #{@location.y}) - #{direction}"
-	end
+        # if blocked, set desire = 0
+        location = @location.to_maplocation + Direction.get_constant( curr_direction )
+        if location and not @location.allowed_access_to?( location.x, location.y )
+          desire = 0
+        end
+        if not location
+          puts "Orig Location(#{@location.x}, #{@location.y}) - #{direction}"
+        end
 
 
-	if desire > mp # Store the direction we desire the most.
-	  mp = desire
-	  m = curr_direction	  
-	end
+        if desire > mp # Store the direction we desire the most.
+          mp = desire
+          m = curr_direction      
+        end
       }
 
       if mp > 0
-	@direction = Direction.get_constant( m )
-	was_moved = move_forward
-	if was_moved
-	  @sleep = 8
-	else
-	  @sleep = 2 # Short delay since we couldn't move.
-	end
+        @direction = Direction.get_constant( m )
+        was_moved = move_forward
+        if was_moved
+          @sleep = 8
+        else
+          @sleep = 2 # Short delay since we couldn't move.
+        end
       end #
 
     end 

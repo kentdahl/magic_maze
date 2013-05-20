@@ -37,7 +37,7 @@ module MagicMaze
       @file = File.open(filename, 'rb')
       @header_data = @file.read(MAP_HEADER_SIZE)
       unless MAP_FILE_SIGNATURE == @header_data[0,MAP_FILE_SIGNATURE.size]
-	raise ArgumentError, "Map file is invalid: "+filename
+        raise ArgumentError, "Map file is invalid: "+filename
       end
       
       extract_from_header( @header_data )
@@ -47,14 +47,14 @@ module MagicMaze
       @real_checksum = 0
       @map_rows = []
       begin
-	row = @file.read(MAP_ROW_SIZE)
-	extract_from_row( row ) if row
-	yield row if block_given?
+        row = @file.read(MAP_ROW_SIZE)
+        extract_from_row( row ) if row
+        yield row if block_given?
       end while row     
       @real_checksum &= 0xFFFF
       unless @checksum == @real_checksum 
-	raise ArgumentError, "Map file checksum failed: "+
-	  "Expected #@checksum, found #@real_checksum."
+        raise ArgumentError, "Map file checksum failed: "+
+          "Expected #@checksum, found #@real_checksum."
       end
     end
 
@@ -228,25 +228,25 @@ module MagicMaze
           # background tiles.
           tile_id =  self.get_background_data( x, y )
 
-	  # Change the plain empty background tile occasionally. Helps with large open spaces.
-	  if tile_id == 0 and x&2==2 and y&2==2 then
-	    tile_id = 1
-	  end
-	  
-	  tile_number = tile_id&TILE_BITS
-	  tile_blocked = tile_id&BLOCKED_BIT==BLOCKED_BIT
-	  
+          # Change the plain empty background tile occasionally. Helps with large open spaces.
+          if tile_id == 0 and x&2==2 and y&2==2 then
+            tile_id = 1
+          end
+          
+          tile_number = tile_id&TILE_BITS
+          tile_blocked = tile_id&BLOCKED_BIT==BLOCKED_BIT
+          
           tile = fetch_or_create_tile( tile_id, :background ) {|tile_id| 
             BackgroundTile.new( tile_number, tile_blocked )
           }
 
-	  # Just for testing...
-	  if tile.blocked? and !tile_blocked
-	    puts "ERROR with tile at #{x}, #{y}" 
-	    p @tilehash[:background][10]
-	    p @tilehash[:background][138]
-	    p tile
-	  end
+          # Just for testing...
+          if tile.blocked? and !tile_blocked
+            puts "ERROR with tile at #{x}, #{y}" 
+            p @tilehash[:background][10]
+            p @tilehash[:background][138]
+            p tile
+          end
 
           gamemap.set_background( x, y, tile )
           # object tiles

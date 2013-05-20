@@ -130,7 +130,7 @@ module MagicMaze
       @grid = @map.send(@entity_type)
       old_entity = @grid.get(@x, @y) 
       if old_entity == @entity
-	@grid.set(@x,@y, nil) 
+        @grid.set(@x,@y, nil) 
       end
     end
 
@@ -138,7 +138,7 @@ module MagicMaze
       oldx, oldy = @x, @y
       was_moved = super(x,y)
       if was_moved
-	@grid = @map.send(@entity_type)
+        @grid = @map.send(@entity_type)
         old_entity = @grid.get(oldx, oldy) if oldx && oldy
         replaced_entity = @grid.get(x,y)       
 
@@ -156,7 +156,7 @@ module MagicMaze
     def delete
       old_entity = @grid.get(self.x, self.y) 
       if old_entity == @entity
-	@map.send(@entity_type).set(self.x, self.y, nil )
+        @map.send(@entity_type).set(self.x, self.y, nil )
       end      
     end
 

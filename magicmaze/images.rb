@@ -102,13 +102,13 @@ module MagicMaze
       @old_palette = mypal
       range = fade_duration
       (0...range).each {|i|
-	factor = (range-i).to_f / range
-	set_palette( mypal.map {|r,g,b| 
-		      [ ( r - tr ) * factor + tr,
-			( g - tg ) * factor + tg, 
-			( b - tb ) * factor + tb ]
-		    } )
-	yield i, range if block_given?
+        factor = (range-i).to_f / range
+        set_palette( mypal.map {|r,g,b| 
+                      [ ( r - tr ) * factor + tr,
+                        ( g - tg ) * factor + tg, 
+                        ( b - tb ) * factor + tb ]
+                    } )
+        yield i, range if block_given?
       }
       @fade_color = [ tr, tg, tb ]
     end
@@ -118,13 +118,13 @@ module MagicMaze
       tr, tg, tb = *(@fade_color || [0,0,0])
       range = fade_duration
       (0..range).each {|i|
-	factor = i.to_f / range
-	set_palette( mypal.map {|r,g,b| 
-		      [ ( r - tr ) * factor + tr,
-			( g - tg ) * factor + tg, 
-			( b - tb ) * factor + tb ]
-		    } )
-	yield i, range if block_given?
+        factor = i.to_f / range
+        set_palette( mypal.map {|r,g,b| 
+                      [ ( r - tr ) * factor + tr,
+                        ( g - tg ) * factor + tg, 
+                        ( b - tb ) * factor + tb ]
+                    } )
+        yield i, range if block_given?
       }
       set_palette( mypal )
     end

@@ -24,15 +24,15 @@ module MagicMaze
      def follow_entity(leader)
       # puts "Following #{leader}..."
       time_synchronized_drawing do
-	draw(leader.location)
+        draw(leader.location)
       end
       return true
     end
 
     def time_synchronized_drawing
       @graphics.time_synchronized(@game_delay) do 
-	yield
-	@graphics.flip
+        yield
+        @graphics.flip
       end
     end
 
@@ -192,9 +192,9 @@ module MagicMaze
       @game_delay  = 50
       @level = level
       if player_status == :training then
-	puts "Entering training mode..."
-	@training_mode = true
-	player_status = nil
+        puts "Entering training mode..."
+        @training_mode = true
+        player_status = nil
       end
       @restart_status = player_status
 
@@ -224,8 +224,8 @@ module MagicMaze
       @restart_status = nil
 
       unless @training_mode then
-	@saved_player_status = @player.get_saved
-	@game_config.update_checkpoint( level, @saved_player_status )
+        @saved_player_status = @player.get_saved
+        @game_config.update_checkpoint( level, @saved_player_status )
       end
 
       GC.start
@@ -247,13 +247,13 @@ module MagicMaze
     def really_do?( message )
       @graphics.show_long_message( message + "\n" + _("[Y/N]") )
       if @game_input.get_yes_no_answer
-	yield
+        yield
       end
     end
 
     def escape
       really_do?(_("Quit game?")) do
-	@state = :stopped_game
+        @state = :stopped_game
       end
     end
 
@@ -295,7 +295,7 @@ module MagicMaze
 
     def restart_level
       really_do?(_("Restart level?")) do
-	@state = :restart_level
+        @state = :restart_level
       end
     end
 
@@ -321,17 +321,17 @@ module MagicMaze
       while @state == :game_loop
 
         @graphics.time_synchronized(@game_delay) do 
-	  draw_now
+          draw_now
 
-	  @movement = 0
-	  @game_input.check_input
-	  calc_movement
-	  
-	  @state = catch( :state_change ) do 
+          @movement = 0
+          @game_input.check_input
+          calc_movement
+          
+          @state = catch( :state_change ) do 
             process_entities
-	    @state
-	  end
-	end
+            @state
+          end
+        end
       end
 
 
@@ -340,7 +340,7 @@ module MagicMaze
       draw_now
       puts "Game loop fade out..."
       @graphics.fade_out do  
-	@graphics.sleep_delay(1)
+        @graphics.sleep_delay(1)
       end
       
       # Clear screen for returning to the title loop
@@ -354,17 +354,17 @@ module MagicMaze
 
     def start
       begin
-	@graphics.time_synchronized(1000) do
-	  load_map( @level ) do |level, map_title |
-	    # Loading message as soon as title has been loaded.
-	    loading_message = _("Entering level %s") % level.to_s + 
-	      "\n" + _(map_title) + "\n"+ _("Get ready!")
-	    @graphics.clear_screen
-	    @graphics.show_long_message(loading_message, false, :fullscreen )
-	    @graphics.fade_in
-	  end
-	end
-	@graphics.fade_out
+        @graphics.time_synchronized(1000) do
+          load_map( @level ) do |level, map_title |
+            # Loading message as soon as title has been loaded.
+            loading_message = _("Entering level %s") % level.to_s + 
+              "\n" + _(map_title) + "\n"+ _("Get ready!")
+            @graphics.clear_screen
+            @graphics.show_long_message(loading_message, false, :fullscreen )
+            @graphics.fade_in
+          end
+        end
+        @graphics.fade_out
 
 
 
@@ -375,13 +375,13 @@ module MagicMaze
           unless @game_config.check_level( @level ) 
             @state = :endgame
           end
-	when :restart_level
-	  @restart_status = @saved_player_status
+        when :restart_level
+          @restart_status = @saved_player_status
         when :player_died 
           draw_now
           puts "Score: #{@player.score}"
           sleep 1
-	  @restart_status = @saved_player_status
+          @restart_status = @saved_player_status
         end
       end while [:next_level,:restart_level,:player_died].include? @state
     end

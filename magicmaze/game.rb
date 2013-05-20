@@ -34,8 +34,8 @@ module MagicMaze
       init_input
 
       @savedir = (@options[:savedir] ||
-		 (ENV.include?("HOME") ? 
-		  (ENV['HOME'] + '/.magicmaze') : nil) || "data" )
+                 (ENV.include?("HOME") ? 
+                  (ENV['HOME'] + '/.magicmaze') : nil) || "data" )
 
       @savegame_filename = @savedir + "/progress.dat"
       @loadgame = (options[:loadgame] || false)
@@ -50,14 +50,14 @@ module MagicMaze
     def init_sound
       @sound = if @options[:sound]
                then 
-		 begin
-		   Sound.get_sound(@options) 
-		 rescue SDL::Error => sound_error
-		   puts "ERROR: Could not initialize sound! Proceeding muted." 
-		   NoSound.new
-		 end
+                 begin
+                   Sound.get_sound(@options) 
+                 rescue SDL::Error => sound_error
+                   puts "ERROR: Could not initialize sound! Proceeding muted." 
+                   NoSound.new
+                 end
                else 
-		 NoSound.new 
+                 NoSound.new 
                end
     end
 
@@ -179,29 +179,29 @@ module MagicMaze
 
     def open_game_menu
       menu_items = [
-	"Start new game",
-	"Training",
+        "Start new game",
+        "Training",
       ]
       if not @saved_checkpoints.empty? then
-	menu_items.unshift("Continue game") 
-	menu_items.push("Replay level") if @saved_checkpoints.size>1
-	menu_items.push("Map Editor")
+        menu_items.unshift("Continue game") 
+        menu_items.push("Replay level") if @saved_checkpoints.size>1
+        menu_items.push("Map Editor")
       end
       menu_items.push "Quit Magic Maze"
 
       case choose_from_menu( menu_items )
       when /Continue/, /Load/
-	select_game_checkpoint
+        select_game_checkpoint
       when /New/, /Start/
-	start_game
+        start_game
       when /Exit/, /Quit/
-	exit_game
+        exit_game
       when /Training/
-	open_training_menu
+        open_training_menu
       when /Replay/
-	open_replay_menu
+        open_replay_menu
       when /Editor/i
-	start_map_editor
+        start_map_editor
       end
       put_titlescreen
     end
@@ -212,25 +212,25 @@ module MagicMaze
 
       case choose_from_menu( menu_items )
       when /(\d+)/
-	start_training_game( $1.to_i )
+        start_training_game( $1.to_i )
       when /Back/, /Exit/
-	# Just fall out of the loop
+        # Just fall out of the loop
       end
       put_titlescreen
     end
 
     def open_replay_menu
       menu_items = @saved_checkpoints.keys.sort.collect{
-	|i,j| 
-	"Replay level #{i}" 
+        |i,j| 
+        "Replay level #{i}" 
       }
       menu_items.push "Back"
 
       case choose_from_menu( menu_items )
       when /(\d+)/
-	start_replay_level_game( $1.to_i )
+        start_replay_level_game( $1.to_i )
       when /Back/, /Exit/
-	# Just fall out of the loop
+        # Just fall out of the loop
       end
       put_titlescreen
     end
@@ -338,8 +338,8 @@ module MagicMaze
     def update_checkpoint( level, status )
       checkpoint = @saved_checkpoints[ level ]
       if (not checkpoint) || (checkpoint[:score] <= status[:score])
-	puts "Updating checkpoint for level #{level}."
-	@saved_checkpoints[ level ] = status
+        puts "Updating checkpoint for level #{level}."
+        @saved_checkpoints[ level ] = status
       end      
     end
 
@@ -347,12 +347,12 @@ module MagicMaze
     def load_checkpoints
       checkpoints = Hash.new 
       begin
-	File.open(@savegame_filename,'r') do|file|
-	  obj = YAML.load( file )	  
-	  checkpoints = obj if obj.kind_of? Hash 
-	end
+        File.open(@savegame_filename,'r') do|file|
+          obj = YAML.load( file )         
+          checkpoints = obj if obj.kind_of? Hash 
+        end
       rescue Exception => e
-	puts "Error reading checkpoints: " + e.inspect	
+        puts "Error reading checkpoints: " + e.inspect  
       end      
       @saved_checkpoints = checkpoints
     end
@@ -363,12 +363,12 @@ module MagicMaze
     def save_checkpoints
       failures = 0 # To avoid loops
       begin
-	File.open(@savegame_filename,'w') do|file|
-	  puts "Saving checkpoints..."
-	  file.puts @saved_checkpoints.to_yaml
-	end
+        File.open(@savegame_filename,'w') do|file|
+          puts "Saving checkpoints..."
+          file.puts @saved_checkpoints.to_yaml
+        end
       rescue Errno::ENOENT => e
-	puts "Error saving checkpoints: " + e.inspect	
+        puts "Error saving checkpoints: " + e.inspect   
         basedir = File.dirname(@savegame_filename)
         if Dir[basedir].empty? and failures.zero? then
           puts "Directory seems missing, trying to create: #{basedir}"
@@ -378,8 +378,8 @@ module MagicMaze
           retry
         end
       rescue Exception => e
-	puts "Error saving checkpoints: " + e.inspect
-        failures+=1	
+        puts "Error saving checkpoints: " + e.inspect
+        failures+=1     
       end            
     end
       

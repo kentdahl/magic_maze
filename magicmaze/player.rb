@@ -68,9 +68,9 @@ module MagicMaze
       end
 
       if saved
-	@mana = saved[:mana]
-	@life = saved[:life]
-	@score = saved[:score]
+        @mana = saved[:mana]
+        @life = saved[:life]
+        @score = saved[:score]
       end
 
       @mana = [ @mana, START_MANA ].max
@@ -88,9 +88,9 @@ module MagicMaze
     # return hash with saved game status... Only restart point of level so far.
     def get_saved
       {
-	:mana => @mana,
-	:life => @life,
-	:score=> @score
+        :mana => @mana,
+        :life => @life,
+        :score=> @score
       }      
     end
 

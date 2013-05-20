@@ -45,8 +45,8 @@ module MagicMaze
         SDL::Key::H      => :helpscreen,
         SDL::Key::F4     => :load_game,
         SDL::Key::F5     => :save_game,
-	SDL::Key::F9     => :restart_level,
-	SDL::Key::R      => :restart_level,
+        SDL::Key::F9     => :restart_level,
+        SDL::Key::R      => :restart_level,
 
         SDL::Key::F12    => :toogle_fullscreen,
         SDL::Key::ESCAPE => :escape,
@@ -55,14 +55,14 @@ module MagicMaze
         SDL::Key::Z      => :previous_primary_spell,
         SDL::Key::S      => :next_secondary_spell,
         SDL::Key::A      => :previous_secondary_spell,
-	SDL::Key::P      => :pause_game,
-	SDL::Key::R      => :restart_level,
+        SDL::Key::P      => :pause_game,
+        SDL::Key::R      => :restart_level,
 
-	SDL::Key::PAGEUP   => :increase_volume,
-	SDL::Key::PAGEDOWN => :decrease_volume,
+        SDL::Key::PAGEUP   => :increase_volume,
+        SDL::Key::PAGEDOWN => :decrease_volume,
 
-	SDL::Key::KP_PLUS   => :increase_speed,
-	SDL::Key::KP_MINUS  => :decrease_speed,
+        SDL::Key::KP_PLUS   => :increase_speed,
+        SDL::Key::KP_MINUS  => :decrease_speed,
 
         # For OLPC 
         SDL::Key::KP3   => :next_primary_spell,     # X
@@ -217,53 +217,53 @@ module MagicMaze
 
 
       def get_key_press
-	begin
-	  event = SDL::Event2.poll
-	end until event.kind_of? SDL::Event2::KeyUp
-	return event
+        begin
+          event = SDL::Event2.poll
+        end until event.kind_of? SDL::Event2::KeyUp
+        return event
       end
 
 
       YES_NO_ANSWERS = {
-	SDL::Key::ESCAPE => false,
-	SDL::Key::Q => false,
-	SDL::Key::N => false,
-	SDL::Key::Y => true,
-	SDL::Key::J => true,
-	# For OLPC:
-	SDL::Key::KP3   => false,    # X
-	SDL::Key::KP1   => true,     # V
+        SDL::Key::ESCAPE => false,
+        SDL::Key::Q => false,
+        SDL::Key::N => false,
+        SDL::Key::Y => true,
+        SDL::Key::J => true,
+        # For OLPC:
+        SDL::Key::KP3   => false,    # X
+        SDL::Key::KP1   => true,     # V
       }
 
       def get_yes_no_answer
-	answers = YES_NO_ANSWERS
-	begin
-	  key = get_key_press.sym
-	end until answers.has_key?( key )
-	return answers[ key ]
+        answers = YES_NO_ANSWERS
+        begin
+          key = get_key_press.sym
+        end until answers.has_key?( key )
+        return answers[ key ]
       end
 
 
       MENU_NAVIGATION = {
-	SDL::Key::ESCAPE => :exit_menu,
-	SDL::Key::Q      => :exit_menu,
+        SDL::Key::ESCAPE => :exit_menu,
+        SDL::Key::Q      => :exit_menu,
         SDL::Key::UP     => :previous_menu_item,
         SDL::Key::DOWN   => :next_menu_item,
-	SDL::Key::RETURN => :select_menu_item,
-	SDL::Key::SPACE  => :select_menu_item,
-	# For OLPC:
-	SDL::Key::KP3   => :exit_menu,         # X
-	SDL::Key::KP1   => :select_menu_item,  # V
+        SDL::Key::RETURN => :select_menu_item,
+        SDL::Key::SPACE  => :select_menu_item,
+        # For OLPC:
+        SDL::Key::KP3   => :exit_menu,         # X
+        SDL::Key::KP1   => :select_menu_item,  # V
         SDL::Key::KP8   => :previous_menu_item,
         SDL::Key::KP2   => :next_menu_item,
       }
 
       def get_menu_item_navigation_event
-	answers = MENU_NAVIGATION
-	begin
-	  key = get_key_press.sym
-	end until answers.has_key?( key )
-	return answers[ key ]
+        answers = MENU_NAVIGATION
+        begin
+          key = get_key_press.sym
+        end until answers.has_key?( key )
+        return answers[ key ]
       end
 
 

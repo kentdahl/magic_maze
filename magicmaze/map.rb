@@ -221,11 +221,11 @@ module MagicMaze
     
     def iterate_all_cells( offset = 0, &block )
       (0-offset...MAP_Y_SIZE+offset).each do |y|
-	(0-offset...MAP_X_SIZE+offset).each do |x|
-	  all_tiles_at( x, y ) do |b,o,e,s|
-	    yield x, y, b, o, e, s
-	  end
-	end
+        (0-offset...MAP_X_SIZE+offset).each do |x|
+          all_tiles_at( x, y ) do |b,o,e,s|
+            yield x, y, b, o, e, s
+          end
+        end
       end
     end
 

@@ -42,9 +42,9 @@ module MagicMaze
       @graphics.clear_screen
       filename ||= choose_level_to_load
       if filename then
-	load_map_file( filename )
+        load_map_file( filename )
       else
-	return
+        return
       end
       game_loop
     end
@@ -52,7 +52,7 @@ module MagicMaze
     def choose_level_to_load
       menu_items = [
         Dir[@savedir+"/*.map"],
-	Dir["data/maps/mm_map.*"]
+        Dir["data/maps/mm_map.*"]
       ]
       menu_items.flatten!
       menu_items.push "Exit"
@@ -61,7 +61,7 @@ module MagicMaze
 
       selection = @graphics.choose_from_menu( menu_hash.keys.sort, @input )
       if selection == "Exit" then
-	selection=nil
+        selection=nil
       end
       return menu_hash[selection]
     end

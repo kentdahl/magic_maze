@@ -51,7 +51,7 @@ Magic Maze, a Ruby/SDL game.
 
     -h --help         Show this message
     -j --joystick     Enable joystick support 
-    -l --level 	      Assign a start level (1-10)
+    -l --level        Assign a start level (1-10)
     -L --loadgame     Load savegame automatically
     -D --savedir      Specify savegame directory
     -S --nosound      Disables sound
@@ -107,7 +107,7 @@ options.each do |option, argument|
     end
 
   end
-end			 
+end                      
 
 
 

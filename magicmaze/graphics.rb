@@ -106,10 +106,10 @@ module MagicMaze
 
     def destroy
       if @delay_stats && @delay_stats.size.nonzero? then
-	puts "Delay average: " + 
-	  (@delay_stats.inject(0.0){|i,j|i+j}/@delay_stats.size).to_s
-	puts "Delay min/max: " + 
-	  @delay_stats.min.to_s + " / " + @delay_stats.max.to_s
+        puts "Delay average: " + 
+          (@delay_stats.inject(0.0){|i,j|i+j}/@delay_stats.size).to_s
+        puts "Delay min/max: " + 
+          @delay_stats.min.to_s + " / " + @delay_stats.max.to_s
       end
       SDL.quit
     end
@@ -134,13 +134,13 @@ module MagicMaze
       early_progress
       
       unless @screen.respond_to? :draw_rect then
-	def @screen.draw_rect(x,y,w,h,c)
-	  # Workaround for older Ruby/SDL...
-	  fill_rect(x,y,   w,1, c)
-	  fill_rect(x,y,   1,h, c)
-	  fill_rect(x,y+h, w,1, c)
-	  fill_rect(x+w,y, 1,h, c)
-	end
+        def @screen.draw_rect(x,y,w,h,c)
+          # Workaround for older Ruby/SDL...
+          fill_rect(x,y,   w,1, c)
+          fill_rect(x,y,   1,h, c)
+          fill_rect(x,y+h, w,1, c)
+          fill_rect(x+w,y, 1,h, c)
+        end
       end
     end
 
@@ -152,7 +152,7 @@ module MagicMaze
       c = 255 - (@progress**2)
       clear_screen if clear
       @screen.fill_rect(@xsize-w,0, w,@ysize,
-			@screen.map_rgb(c,c,c))
+                        @screen.map_rgb(c,c,c))
       show_long_message(@progress_msg) if @progress_msg
       @screen.flip if flip
     end
@@ -192,7 +192,7 @@ module MagicMaze
       @background_images = {}
       SCREEN_IMAGES.each{|key, filename|
         source_image = SDL::Surface.load( GFX_PATH+filename ) 
-	@progress_msg += "." ; early_progress
+        @progress_msg += "." ; early_progress
         if SCALE_FACTOR != 1 then
           scaled_image = SDL::Surface.new(SDL::SWSURFACE, 
                                         source_image.w * SCALE_FACTOR, 
@@ -225,7 +225,7 @@ module MagicMaze
           }
         end
 
-	@sprite_palette = palette
+        @sprite_palette = palette
 
         # Loop over 1030 byte segments, which each is a sprite.
         begin
@@ -266,9 +266,9 @@ module MagicMaze
       puts "Loading sprites..." if DEBUG
       sprite_images = []
       begin
-	spritemap = SDL::Surface.load( GFX_PATH + 'sprites.pcx' ) 
+        spritemap = SDL::Surface.load( GFX_PATH + 'sprites.pcx' ) 
       rescue
-	return nil
+        return nil
       end
 
       palette = spritemap.get_palette
@@ -277,19 +277,19 @@ module MagicMaze
 
       @screen.set_palette( SDL::LOGPAL|SDL::PHYSPAL, palette, 0 )
 
-      (0...lines).each do|line|	
-	@progress_msg += "." ; early_progress
-	(0...10).each do|column|
-	  sprite = SDL::Surface.new(SDL::HWSURFACE, #|SDL::SRCCOLORKEY,
+      (0...lines).each do|line| 
+        @progress_msg += "." ; early_progress
+        (0...10).each do|column|
+          sprite = SDL::Surface.new(SDL::HWSURFACE, #|SDL::SRCCOLORKEY,
                                     SPRITE_WIDTH, SPRITE_HEIGHT, @screen)
           mode =  SDL::LOGPAL|SDL::PHYSPAL
 
-	  x =  column * 32
-	  y = line * 32
-	  w = h = 32
+          x =  column * 32
+          y = line * 32
+          w = h = 32
 
-	  sprite.set_palette( mode, palette, 0 )
-	  sprite.setColorKey( SDL::SRCCOLORKEY || SDL::RLEACCEL ,0)
+          sprite.set_palette( mode, palette, 0 )
+          sprite.setColorKey( SDL::SRCCOLORKEY || SDL::RLEACCEL ,0)
           sprite.fillRect(0,0,SPRITE_WIDTH,SPRITE_HEIGHT,3)
 
           if SCALE_FACTOR == 1 then
@@ -298,11 +298,11 @@ module MagicMaze
             linear_scale_image(spritemap,x,y, sprite, SCALE_FACTOR )
           end
 
-	  sprite.set_palette( mode, palette, 0 )
-	  sprite.setColorKey( SDL::SRCCOLORKEY || SDL::RLEACCEL ,0)
+          sprite.set_palette( mode, palette, 0 )
+          sprite.setColorKey( SDL::SRCCOLORKEY || SDL::RLEACCEL ,0)
 
-	  sprite_images << sprite.display_format
-	end
+          sprite_images << sprite.display_format
+        end
       end
 
       @sprite_palette = palette 
@@ -324,9 +324,9 @@ module MagicMaze
       spritemap.set_palette( SDL::LOGPAL, @sprite_palette, 0 )
 
       @sprite_images.each_with_index do|sprite, index|
-	y = (index / 10)  * 32
-	x = (index % 10 ) * 32
-	spritemap.put( sprite, x, y )
+        y = (index / 10)  * 32
+        x = (index % 10 ) * 32
+        spritemap.put( sprite, x, y )
       end
 
       spritemap.save_bmp( filename + ".bmp" )      
@@ -365,9 +365,9 @@ module MagicMaze
       h = rect[3] 
       
       write_smooth_text(text, 
-		 x + (w-tw)/2,
-		 y + (h-th)/2, 
-		 @font32 ) 
+                 x + (w-tw)/2,
+                 y + (h-th)/2, 
+                 @font32 ) 
       @screen.flip if flip
     end
 
@@ -380,9 +380,9 @@ module MagicMaze
 
       gth = 0
       lines = text.split("\n").collect do |line| 
-	tw, th = @font32.text_size( line ) 
-	gth += th
-	[ line, tw, th ]
+        tw, th = @font32.text_size( line ) 
+        gth += th
+        [ line, tw, th ]
       end
 
       x = rect[0] 
@@ -393,11 +393,11 @@ module MagicMaze
       y_offset = y + (h-gth)/2
 
       lines.each do |line, tw, th|
-	write_smooth_text(line, 
-			  x + (w-tw)/2,
-			  y_offset, 
-			  @font32 )
-	y_offset += th
+        write_smooth_text(line, 
+                          x + (w-tw)/2,
+                          y_offset, 
+                          @font32 )
+        y_offset += th
       end
 
       @screen.flip if flip
@@ -489,26 +489,26 @@ module MagicMaze
       clear_screen
 
       lines = [
-	'  ---++* Magic Maze Help *++---',
-	'Arrow keys to move the wizard.',
-	'Ctrl :-  Cast attack spell',
-	'Alt :-  Cast secondary spell',
-	'X / Z :- Toggle attack spell',
-	'A / S :- Toggle secondary spell',
-	'', # Failed for RubySDL2.0.1 and Ruby1.9.1-p1
-	'Esc / Q :- Quit playing',
-	'F9 / R :- Restart level',
-	# '[F4]: Load game    [F5]: Save game',
-	# '[S]: Sound on/off',
-	'PgUp / PgDn :- Tune Volume',
-	'Plus / Minus :- Tune Speed (on keypad)',
+        '  ---++* Magic Maze Help *++---',
+        'Arrow keys to move the wizard.',
+        'Ctrl :-  Cast attack spell',
+        'Alt :-  Cast secondary spell',
+        'X / Z :- Toggle attack spell',
+        'A / S :- Toggle secondary spell',
+        '', # Failed for RubySDL2.0.1 and Ruby1.9.1-p1
+        'Esc / Q :- Quit playing',
+        'F9 / R :- Restart level',
+        # '[F4]: Load game    [F5]: Save game',
+        # '[S]: Sound on/off',
+        'PgUp / PgDn :- Tune Volume',
+        'Plus / Minus :- Tune Speed (on keypad)',
       ]
       
       y_offset = 0
       font = @font16
       lines.each{|line|
-	write_smooth_text( line, 5, y_offset, font ) if line.size.nonzero? # Failed for RubySDL2.0.1 and Ruby1.9.1-p1 on empty string.
-	y_offset+= font.height
+        write_smooth_text( line, 5, y_offset, font ) if line.size.nonzero? # Failed for RubySDL2.0.1 and Ruby1.9.1-p1 on empty string.
+        y_offset+= font.height
       }
       
       flip
@@ -524,8 +524,8 @@ module MagicMaze
       @screen.fillRect(*rect)
       
       if line_by_line then
-	@screen.flip 
-	@screen.fillRect(*rect)
+        @screen.flip 
+        @screen.fillRect(*rect)
       end
 
       map_zoom_factor = 4
@@ -556,16 +556,16 @@ module MagicMaze
                               map_block_size,
                               map_block_size,
                               col)
-          end	
+          end   
 
         end
 
-	# The center.
-	@screen.draw_rect(rect[0] + map_width/2  * map_block_size,
-			  rect[1] + map_height/2 * map_block_size,
-			  map_block_size,
-			  map_block_size,
-			  COL_WHITE)
+        # The center.
+        @screen.draw_rect(rect[0] + map_width/2  * map_block_size,
+                          rect[1] + map_height/2 * map_block_size,
+                          map_block_size,
+                          map_block_size,
+                          COL_WHITE)
 
         flip if line_by_line
 
@@ -658,9 +658,9 @@ module MagicMaze
       total_height = 0
       font = @font32
       @menu_items.each do |text|
-	tw, th = font.text_size( text )
-	max_width = [max_width,tw+16*SCALE_FACTOR].max
-	total_height += th + 4*SCALE_FACTOR
+        tw, th = font.text_size( text )
+        max_width = [max_width,tw+16*SCALE_FACTOR].max
+        total_height += th + 4*SCALE_FACTOR
       end
       @menu_width = max_width
       @menu_chosen_item = chosen || @menu_items.first
@@ -668,11 +668,11 @@ module MagicMaze
       # Truncate if the items can fit on screen.
       scr_height = 200 * SCALE_FACTOR
       if total_height > scr_height then
-	@menu_height = scr_height
-	@menu_truncate_size = (@menu_items.size * scr_height / (total_height)).to_i
+        @menu_height = scr_height
+        @menu_truncate_size = (@menu_items.size * scr_height / (total_height)).to_i
       else
-	@menu_height = total_height
-	@menu_truncate_size = false 
+        @menu_height = total_height
+        @menu_truncate_size = false 
       end
     end
 
@@ -682,17 +682,17 @@ module MagicMaze
     def choose_from_menu( menu_items = %w{OK Cancel}, input = nil )
       setup_menu(menu_items)
       begin
-	draw_menu
-	menu_event = input ? input.get_menu_item_navigation_event : yield
-	if [:previous_menu_item, :next_menu_item].include?(menu_event) then
-	  self.send(menu_event)
-	end
+        draw_menu
+        menu_event = input ? input.get_menu_item_navigation_event : yield
+        if [:previous_menu_item, :next_menu_item].include?(menu_event) then
+          self.send(menu_event)
+        end
       end until [:exit_menu, :select_menu_item].include?(menu_event)
       erase_menu
       if menu_event == :select_menu_item then
-	return menu_chosen_item
+        return menu_chosen_item
       else
-	return false
+        return false
       end
     end
 
@@ -707,21 +707,21 @@ module MagicMaze
 
       # Handle the case of truncated menu. Not too nice.
       if @menu_truncate_size then
-	chosen_index = @menu_items.index(@menu_chosen_item)
-	if chosen_index then
-	  half_trunc = @menu_truncate_size / 2
-	  first_item = [chosen_index-half_trunc, 0].max
-	  if first_item.zero?
-	    half_trunc += half_trunc - chosen_index
-	  end
-	  last_item  = [chosen_index+half_trunc, @menu_items.size].min
+        chosen_index = @menu_items.index(@menu_chosen_item)
+        if chosen_index then
+          half_trunc = @menu_truncate_size / 2
+          first_item = [chosen_index-half_trunc, 0].max
+          if first_item.zero?
+            half_trunc += half_trunc - chosen_index
+          end
+          last_item  = [chosen_index+half_trunc, @menu_items.size].min
 
-	  curr_menu_items = @menu_items[first_item..last_item]
-	else
-	  curr_menu_items = @menu_items[0..@menu_truncate_size]
-	end
+          curr_menu_items = @menu_items[first_item..last_item]
+        else
+          curr_menu_items = @menu_items[0..@menu_truncate_size]
+        end
       else
-	curr_menu_items = @menu_items
+        curr_menu_items = @menu_items
       end
 
       @screen.fillRect( topx, topy, @menu_width,@menu_height,0 )
@@ -729,24 +729,24 @@ module MagicMaze
       y_offset = topy
       font = @font32
       curr_menu_items.each do |text|
-	tw, th = font.text_size( text )
-	color_intensity = 127
-	if text == @menu_chosen_item then
-	  rect = [ 
-	    topx + 4*SCALE_FACTOR, 
-	    y_offset + 4*SCALE_FACTOR,
-	    @menu_width - 8*SCALE_FACTOR, 
-	    font.height - 4*SCALE_FACTOR,
-	    COL_WHITE
-	  ]
-	  @screen.draw_rect( *rect )
-	  color_intensity = 255
-	end
-	write_smooth_text(text, 
-			  topx + (@menu_width-tw)/2, 
-			  y_offset + 2*SCALE_FACTOR, 
-			  font, *[color_intensity]*3 )
-	y_offset+= font.height + 4*SCALE_FACTOR
+        tw, th = font.text_size( text )
+        color_intensity = 127
+        if text == @menu_chosen_item then
+          rect = [ 
+            topx + 4*SCALE_FACTOR, 
+            y_offset + 4*SCALE_FACTOR,
+            @menu_width - 8*SCALE_FACTOR, 
+            font.height - 4*SCALE_FACTOR,
+            COL_WHITE
+          ]
+          @screen.draw_rect( *rect )
+          color_intensity = 255
+        end
+        write_smooth_text(text, 
+                          topx + (@menu_width-tw)/2, 
+                          y_offset + 2*SCALE_FACTOR, 
+                          font, *[color_intensity]*3 )
+        y_offset+= font.height + 4*SCALE_FACTOR
       end
       flip
     end
@@ -755,14 +755,14 @@ module MagicMaze
 
     def previous_menu_item
       @menu_chosen_item = 
-	@menu_items[@menu_items.index(@menu_chosen_item)-1] ||
-	@menu_items.last
+        @menu_items[@menu_items.index(@menu_chosen_item)-1] ||
+        @menu_items.last
     end
 
     def next_menu_item
       @menu_chosen_item = 
-	@menu_items[@menu_items.index(@menu_chosen_item)+1] ||
-	@menu_items.first
+        @menu_items[@menu_items.index(@menu_chosen_item)+1] ||
+        @menu_items.first
     end
 
 

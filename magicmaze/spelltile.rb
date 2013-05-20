@@ -103,7 +103,7 @@ module MagicMaze
 
       location.map.add_active_entity( manifestation )
       begin
-	manifestation.run
+        manifestation.run
       end while manifestation.active?
       manifestation.remove_entity
     end
@@ -154,7 +154,7 @@ module MagicMaze
       eyeball = Eyeball.new( @caster, location.map, location.x, location.y, self  )
       location.map.add_active_entity( eyeball )
       begin
-	eyeball.run
+        eyeball.run
       end while eyeball.active?
       eyeball.remove_entity
       true

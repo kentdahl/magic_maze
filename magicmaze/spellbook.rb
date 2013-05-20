@@ -49,7 +49,7 @@ module MagicMaze
       end
 
       def primary_spell
-	spell( :primary )
+        spell( :primary )
       end
 
       def secondary_spell

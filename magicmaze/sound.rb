@@ -40,8 +40,8 @@ module MagicMaze
       @sounds = {}
       (1..4).each{|sound_no|
         filename = sprintf "data/sound/sound%d.wav", sound_no
-	sound = SDL::Mixer::Wave.load( filename )
-	@sounds[sound_no] = sound
+        sound = SDL::Mixer::Wave.load( filename )
+        @sounds[sound_no] = sound
       }
       volume = options[:volume] || 8
       SDL::Mixer.set_volume( ALL_CHANNELS, 64*volume/10 )
@@ -61,7 +61,7 @@ module MagicMaze
       old_vol = SDL::Mixer.set_volume( ALL_CHANNELS, -1 )
       new_vol = old_vol + way * step
       if new_vol.between?( 1, 128 )
-	SDL::Mixer.set_volume( ALL_CHANNELS, new_vol )
+        SDL::Mixer.set_volume( ALL_CHANNELS, new_vol )
       end
     end
     
