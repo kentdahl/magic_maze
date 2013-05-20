@@ -39,6 +39,8 @@ module MagicMaze
         x = (@xsize - image.width)/2
         y = (@ysize - image.height)/2        
       end
+      @curr_bg = image
+      screen
     end
 
     def put_background( sprite, x, y )

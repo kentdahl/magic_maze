@@ -132,6 +132,9 @@ module MagicMaze
       put_titlescreen
       @graphics.fade_in
       @state = :title_loop
+
+      @graphics.start_loop
+
       while @state == :title_loop
         @title_input.check_input
       end

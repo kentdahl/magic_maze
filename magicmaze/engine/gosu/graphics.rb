@@ -19,6 +19,23 @@ module MagicMaze
   module Engine
     class GosuGameWindow < ::Gosu::Window
 
+      def initialize(parent, xsize, ysize, fullscreen, delay)
+        super(xsize, ysize, fullscreen, delay)
+        @parent = parent
+      end
+
+      def draw
+        @parent.draw
+      end
+
+      def update
+
+      end
+
+      def button_down(id)
+      end
+
+
     end
   end
 
@@ -70,6 +87,10 @@ module MagicMaze
       puts "Graphics initialized." if DEBUG
     end
 
+    def start_loop
+      @window.show
+    end
+
     def destroy
       if @delay_stats && @delay_stats.size.nonzero? then
         puts "Delay average: " + 
@@ -87,13 +108,17 @@ module MagicMaze
 
       @delay = 200
 
-      @window = ::MagicMaze::Engine::GosuGameWindow.new(@xsize, @ysize, !options[:fullscreen].nil?, @delay)
+      @window = ::MagicMaze::Engine::GosuGameWindow.new(self, @xsize, @ysize, !options[:fullscreen].nil?, @delay)
       @screen = @window
 
       early_progress
 
       early_progress
       
+    end
+
+    def draw
+      @curr_bg.draw(0,0,0) if @curr_bg
     end
 
 
