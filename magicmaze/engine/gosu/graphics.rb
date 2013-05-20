@@ -267,12 +267,13 @@ module MagicMaze
 
 
     def write_score( score )
-      return if cached_drawing_valid?(:score, score )
+      # return if cached_drawing_valid?(:score, score )
 
       text = sprintf "%9d", score   # fails on EeePC
       # text = sprintf "%09d", score # old safe one.
       rect = SCORE_RECTANGLE
-      #@screen.fillRect(*rect) 
+      #@screen.fillRect(*rect)
+      @font16.draw(text, rect[0], rect[1]-2, 1, 0.5, 0.5, 0xFFFFFFFF) 
       #write_text( text, rect[0]+2*SCALE_FACTOR, rect[1]-2*SCALE_FACTOR ) 
     end
 
