@@ -64,6 +64,13 @@ module MagicMaze
         #Gosu::KbNumpadPlus   => :increase_speed,
         #Gosu::KbNumpadMinus  => :decrease_speed,
 
+                Gosu::KbSpace  => :cast_alternative_spell,
+        Gosu::KbUp     => :move_up,
+        Gosu::KbDown   => :move_down,
+        Gosu::KbLeft   => :move_left,
+        Gosu::KbRight  => :move_right,   
+
+
         # For OLPC 
         Gosu::KbNumpad3   => :next_primary_spell,     # X
         Gosu::KbNumpad7   => :next_secondary_spell,   # []
@@ -278,7 +285,9 @@ module MagicMaze
       ##
       # send a callback if it can handle it
       def call_callback( method_name )
-        @callback.send( method_name ) if method_name and @callback.respond_to? method_name
+        return nil unless method_name && @callback.respond_to?(method_name)
+        puts "event callback: #{method_name.to_s}"
+        @callback.send( method_name )
       end
       ##
       # Check for seldom key presses.
