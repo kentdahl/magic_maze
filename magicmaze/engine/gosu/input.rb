@@ -53,6 +53,8 @@ module MagicMaze
         Gosu::KbQ      => :escape,
         Gosu::KbX      => :next_primary_spell,
         Gosu::KbZ      => :previous_primary_spell,
+        Gosu::KbC      => :cast_primary_spell,
+
         Gosu::KbS      => :next_secondary_spell,
         Gosu::KbA      => :previous_secondary_spell,
         Gosu::KbP      => :pause_game,
@@ -77,6 +79,8 @@ module MagicMaze
        
       }
       DEFAULT_ACTION_KEY_MAP = {
+        Gosu::KbC      => :cast_primary_spell,
+        Gosu::KbD      => :cast_alternative_spell,
         Gosu::KbSpace  => :cast_alternative_spell,
         Gosu::KbUp     => :move_up,
         Gosu::KbDown   => :move_down,
@@ -97,8 +101,11 @@ module MagicMaze
 
       }
       DEFAULT_MODIFIER_KEY_MAP = {
-        #Gosu::KbMOD_LCTRL  => :cast_primary_spell,
-        #Gosu::KbMOD_LALT   => :cast_alternative_spell,
+        Gosu::KbLeftControl    => :cast_primary_spell,
+        Gosu::KbRightControl   => :cast_primary_spell,
+
+        Gosu::KbLeftAlt    => :cast_alternative_spell,
+        Gosu::KbRightAlt   => :cast_alternative_spell,
 
       }
       DEFAULT_JOYSTICK_MAP = {
@@ -203,10 +210,8 @@ module MagicMaze
       
       attr_accessor :callback
       def initialize( callback, key_mode = :titlescreen )
-        # SDL::Key.enable_key_repeat( 10, 10 )
         @callback = callback
         set_key_mode( key_mode )
-
       end
 
       ##
@@ -215,12 +220,14 @@ module MagicMaze
         @keymap = KEY_MAPS[ key_mode ]
       end
 
+      attr_accessor :window
+
 
       def get_key_press
         #begin
         #  event = SDL::Event2.poll
         #end until event.kind_of? SDL::Event2::KeyUp
-        return event
+        # return event
       end
 
 
@@ -279,7 +286,7 @@ module MagicMaze
         #end
         check_key_hold
         check_modifier_keys
-        check_joystick
+        #check_joystick
       end
       
       ##
@@ -299,24 +306,19 @@ module MagicMaze
       ## 
       # Check for action keys that often will be pressed
       # and may be held down.
-      def check_key_hold
-        #SDL::Key.scan
-        @keymap[:action_keys].each do |key, action|
-          #if SDL::Key.press?( key )
-          #  call_callback( action )
-          #end
-        end
+      def check_key_hold(key_map_type = :action_keys)
+        window = @callback.graphics.window
+        @keymap[key_map_type].each do |key, action|
+          if window.button_down?( key )
+            call_callback( action )
+          end
+        end if window
       end
 
       ##
       # Check for modifier keys (Ctrl, Shift etc)
       def check_modifier_keys
-        #mod_state = SDL::Key.mod_state
-        @keymap[:modifier_keys].each do |key, action|
-          if (mod_state & key) != 0 then
-             call_callback( action )
-          end
-        end
+        check_key_hold(:modifier_keys)
       end
 
       ##

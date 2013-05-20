@@ -51,6 +51,8 @@ module MagicMaze
   class Graphics
     include Images # Generic GFX.
 
+    attr_reader :window
+
     SCREEN_IMAGES = {
       :titlescreen => 'title.png',
       :background  => 'background.png',
@@ -123,7 +125,7 @@ module MagicMaze
       @xsize = FULLSCREEN[2]
       @ysize = FULLSCREEN[3]
 
-      @delay = 200
+      @delay = 100
 
       @window = ::MagicMaze::Engine::GosuGameWindow.new(self, @xsize, @ysize, !options[:fullscreen].nil?, @delay)
       @screen = @window
@@ -353,7 +355,7 @@ module MagicMaze
     def draw_rectangle(ax,ay,w,h,col)
       bx = ax+w
       by = ay+h
-      
+
       @window.draw_quad(
         ax, ay, col, 
         bx, ay, col,

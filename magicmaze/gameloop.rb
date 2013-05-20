@@ -359,7 +359,7 @@ module MagicMaze
 
     def update
       # @movement = 0
-      #@game_input.check_input
+      @game_config.current_input.check_input
       calc_movement
 
       @state = catch( :state_change ) do 
