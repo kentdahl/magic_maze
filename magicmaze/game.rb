@@ -64,10 +64,10 @@ module MagicMaze
                    Sound.get_sound(@options) 
                  rescue => sound_error
                    puts "ERROR: Could not initialize sound! Proceeding muted." 
-                   ::MagicMaze::Sound::NoSound.new
+                   ::MagicMaze::NoSound.new
                  end
                else 
-                 ::MagicMaze::Sound::NoSound.new 
+                 ::MagicMaze::NoSound.new 
                end
     end
 
@@ -144,12 +144,16 @@ module MagicMaze
       start_map_editor if @options[:editor]
 
       puts "Starting loop..."
-      @graphics.start_loop(self)
-      puts "Started loop...."
-
-      #while not @quit
-      #  title_loop
-      #end
+      if @graphics.respond_to?(:start_loop)
+        # Gosu
+        @graphics.start_loop(self)
+      else
+        # SDL - manual loop
+        puts "Started loop...."
+        while not @quit
+          title_loop
+        end
+      end
       @graphics.fade_out
       save_checkpoints
       puts "Exiting..."
