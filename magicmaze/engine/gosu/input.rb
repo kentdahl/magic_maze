@@ -163,6 +163,7 @@ module MagicMaze
             Gosu::KbQ      => :exit_game,
             Gosu::KbReturn => :open_game_menu,
             Gosu::KbSpace  => :open_game_menu,
+            Gosu::MsLeft   => :open_game_menu,
 
             # For OLPC:
             Gosu::KbNumpad3   => :exit_game,      # X
