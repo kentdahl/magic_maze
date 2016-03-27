@@ -53,7 +53,7 @@ class MapExporter
           x: 0,
           y: 0,
           properties: {},
-          objects: [] # TODO
+          objects: object_layer_to_data
         },
         # Entities layer
         {
@@ -122,6 +122,30 @@ class MapExporter
     end
     data
   end
+
+  def object_layer_to_data
+    list = []
+    filemap.each_row do |row, y|  
+      filemap.each_column do |x|
+        obj =  gamemap.object.get( x, y )
+        next unless obj
+        data = 
+            {
+              gid: obj.sprite_id + 1, # FIXME: + ::MagicMaze::FileMap::MONSTER_NUMBER_BEGIN,
+              x: x * 32,
+              y: y * 32,
+              height: 0, width: 0,
+              type: obj.class.to_s.split(":").last,
+              visible: true,
+              properties: {
+              },
+            }
+        list << data
+      end
+    end
+    list
+  end
+
 
 
   module ClassMethods
