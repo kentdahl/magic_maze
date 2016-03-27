@@ -91,6 +91,10 @@ module MagicMaze
         @entities.clear
       end
 
+      def all
+        @entities
+      end
+
     end
 
 
