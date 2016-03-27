@@ -39,7 +39,7 @@ class MapExporter
           x: 0,
           y: 0,
           properties: {},
-          data: background_layer_to_data
+          data:  background_layer_to_data
         },
         # TODO: Foreground layer separate?
         # Objects layer
@@ -53,7 +53,8 @@ class MapExporter
           x: 0,
           y: 0,
           properties: {},
-          objects: object_layer_to_data
+          objects: object_layer_to_data,
+          draworder: "topdown",
         },
         # Entities layer
         {
@@ -65,24 +66,14 @@ class MapExporter
           visible: true,
           x: 0,
           y: 0,
-          objects: gamemap.active_entities.all.collect do |entity|
-            {
-              gid: entity.sprite_id + 1, # FIXME: + ::MagicMaze::FileMap::MONSTER_NUMBER_BEGIN,
-              x: entity.location.x * 32,
-              y: entity.location.y * 32,
-              height: 0, width: 0,
-              type: "Monster", # TODO: Any others here? # WAS: entity.class.to_s,
-              visible: true,
-              properties: {
-              },
-            }
-          end,
+          objects: entity_layer_to_data,
+          draworder: "topdown",
         },
 
       ],
       tilesets: [
         {
-          firstgid: 1,
+          firstgid: 1,  # NOTE: Tiled editor won't open if this is 0....
           image: "../../../data/gfx/sprites.png",
           imageheight: 288,
           imagewidth: 320,
@@ -114,11 +105,14 @@ class MapExporter
 
   def background_layer_to_data
     data = []
-    filemap.each_row do |row, y|  
-      filemap.each_column do |x|  
+    (0..gamemap.max_y).each do   |y|
+      (0..gamemap.max_x).each do |x|
         tile =  gamemap.background.get( x, y )
-        data << tile.sprite_id
+        data << (tile && tile.sprite_id.to_i + 1) || 0
       end
+    end
+    unless data.size == 128*128
+      raise "Data size inconsistent! #{ data.size } "
     end
     data
   end
@@ -134,7 +128,7 @@ class MapExporter
               gid: obj.sprite_id + 1, # FIXME: + ::MagicMaze::FileMap::MONSTER_NUMBER_BEGIN,
               x: x * 32,
               y: y * 32,
-              height: 0, width: 0,
+              height: 32, width: 32,
               type: obj.class.to_s.split(":").last,
               visible: true,
               properties: {
@@ -145,6 +139,23 @@ class MapExporter
     end
     list
   end
+
+
+  def entity_layer_to_data
+    gamemap.active_entities.all.collect do |entity|
+      {
+        gid: entity.sprite_id + 1, # FIXME: + ::MagicMaze::FileMap::MONSTER_NUMBER_BEGIN,
+        x: entity.location.x * 32,
+        y: entity.location.y * 32,
+        height: 32, width: 32,
+        type: "Monster", # TODO: Any others here? # WAS: entity.class.to_s,
+        visible: true,
+        properties: {
+        },
+      }
+    end
+  end
+
 
 
 
@@ -182,7 +193,9 @@ class MapExporter
 
         File.open(filename, 'w') do |output|
           puts "#{filename} ..."
-          output.puts JSON.pretty_generate(tiled_map)
+          json_str = tiled_map.to_json
+          # json_str = JSON.pretty_generate(tiled_map) # For debugging.
+          output.puts json_str
         end
         @filemap = nil
 
