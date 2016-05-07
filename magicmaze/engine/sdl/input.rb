@@ -118,6 +118,19 @@ module MagicMaze
         
       }
 
+      DEFAULT_MOUSE_MAP = {
+        :click => {
+          [70, 220,    70+64, 240]  => :escape,
+          [32+8, 0,  128+64, 64+32] => :move_up,
+          [32, 32,  64, 64] => :move_left,
+          [230,126, 262,158] => :cast_primary_spell,
+          [285,126, 285+32,126+32] => :cast_alternative_spell
+        },
+        :hold => {
+
+        }
+      }
+
       EMPTY_KEY_MAP = {}
 
 
@@ -135,6 +148,7 @@ module MagicMaze
           :action_keys => DEFAULT_ACTION_KEY_MAP,
           :modifier_keys => DEFAULT_MODIFIER_KEY_MAP,
           :joystick => DEFAULT_JOYSTICK_MAP,
+          :mouse => DEFAULT_MOUSE_MAP,
         },
         :titlescreen => {
           :normal_keys => {
@@ -162,6 +176,12 @@ module MagicMaze
           :joystick => {
             :button => {
               0 => :start_game,
+            }
+          },
+          :mouse => {
+            :click => {
+              [0,0,    320,150] => :start_game,
+              [80,160, 240,240] => :exit_game
             }
           }
         },
@@ -275,11 +295,15 @@ module MagicMaze
         case event
         when SDL::Event2::Quit then @callback.exit
         when SDL::Event2::KeyUp
-          check_key_press( event.sym )        
+          check_key_press( event.sym )
+        when SDL::Event2::MouseButtonDown
+          # Map mouse presses?
+          check_mouse_press( event )
         end
         check_key_hold
         check_modifier_keys
         check_joystick
+        # check_mouse_hold
       end
       
       ##
@@ -348,6 +372,26 @@ module MagicMaze
           call_callback( action ) if action
         end if joymap[:axis]
 
+      end
+
+      def check_mouse_press(event)
+        mousemap = @keymap[:mouse] || {click: []}
+        mx = event.x / ::MagicMaze::Graphics::SCALE_FACTOR
+        my = event.y / ::MagicMaze::Graphics::SCALE_FACTOR
+        mousemap[:click].each do |box, action|
+          if mx > box[0] && my > box[1] &&
+             mx < box[2] && my < box[3] then
+             puts action.to_s
+              call_callback(action)
+              break
+          end
+        end
+      end
+
+      def check_mouse_hold
+        mx, my, lmb, mmb, rmb = *SDL::Mouse.state
+        if lmb || mmb || rmb
+        end
       end
 
 
