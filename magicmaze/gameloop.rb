@@ -21,7 +21,7 @@ module MagicMaze
   # Methods for drawing the map.
   module DrawLoop
   
-     def follow_entity(leader)
+    def follow_entity(leader)
       # puts "Following #{leader}..."
       time_synchronized_drawing do
         draw(leader.location)
@@ -288,10 +288,10 @@ module MagicMaze
     end
 
 
-   def helpscreen
-     @graphics.show_help
-     @game_input.get_key_press
-     @graphics.put_screen( :background, false, false )
+    def helpscreen
+      @graphics.show_help
+      @game_input.get_key_press
+      @graphics.put_screen( :background, false, false )
     end
 
     def restart_level
@@ -302,7 +302,7 @@ module MagicMaze
 
 
     def process_entities
-      alive = @player.action_tick
+      @player.action_tick
       game_data = { 
         :player_location => @player.location
       }

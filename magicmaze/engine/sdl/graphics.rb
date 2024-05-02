@@ -23,15 +23,15 @@ module MagicMaze
 
     ##
     # Singleton graphics instance.
-    def self.get_graphics(options={})
-      @graphics_instance ||= MagicMaze::Graphics.new(options)
-      @graphics_instance
-    end
+    # def self.get_graphics(options={})
+    #   @graphics_instance ||= MagicMaze::Graphics.new(options)
+    #   @graphics_instance
+    # end
 
-    def self.shutdown_graphics
-      @graphics_instance.destroy
-      @graphics_instance = nil
-    end
+    # def self.shutdown_graphics
+    #   @graphics_instance.destroy
+    #   @graphics_instance = nil
+    # end
 
     def initialize(options={})
       puts "Starting Magic Maze..."
@@ -119,7 +119,6 @@ module MagicMaze
       # Free font found at: http://www.squaregear.net/fonts/ 
       fontfile = "data/gfx/fraktmod.ttf"
       fontsize = [16, 32]
-      tries = 0
       
       alternate_fonts = [
         "/usr/share/fonts/truetype/isabella/Isabella.ttf",
@@ -684,7 +683,7 @@ module MagicMaze
       y_offset = topy
       font = @font32
       curr_menu_items.each do |text|
-        tw, th = font.text_size( text )
+        tw, _ = font.text_size( text )
         color_intensity = 127
         if text == @menu_chosen_item then
           rect = [ 

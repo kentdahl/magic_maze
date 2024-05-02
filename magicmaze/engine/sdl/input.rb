@@ -336,7 +336,7 @@ module MagicMaze
         joymap[:button].each do |button, action|
           if( @@joystick.button( button ) )
              call_callback( action )
-           end
+          end
         end if joymap[:button]
 
         # Check axis

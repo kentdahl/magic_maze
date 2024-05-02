@@ -189,7 +189,7 @@ module MagicMaze
     # return object code for the position given.
     def get_object( x, y )
       row = convert_string_to_bytes(@map_rows[y])
-      object = row[x*2+1]
+      return row[x*2+1]
     end
     alias :get_object_data :get_object
 

@@ -63,7 +63,7 @@ module MagicMaze
                  begin
                    Sound.get_sound(@options) 
                  rescue => sound_error
-                   puts "ERROR: Could not initialize sound! Proceeding muted." 
+                   puts "ERROR: Could not initialize sound! Proceeding muted. (#{ sound_error })"
                    ::MagicMaze::NoSound.new
                  end
                else 
@@ -146,10 +146,11 @@ module MagicMaze
       puts "Starting loop..."
       if @graphics.respond_to?(:start_loop)
         # Gosu
+        puts "Gosu start loop"
         @graphics.start_loop(self)
       else
         # SDL - manual loop
-        puts "Started loop...."
+        puts "Started SDL loop...."
         while not @quit
           title_loop
         end

@@ -59,17 +59,17 @@ module MagicMaze
       :endscreen   => 'end.png',
     }
 
-    ##
-    # Singleton graphics instance.
-    def self.get_graphics(options={})
-      @graphics_instance ||= MagicMaze::Graphics.new(options)
-      @graphics_instance
-    end
+    # ##
+    # # Singleton graphics instance.
+    # def self.get_graphics(options={})
+    #   @graphics_instance ||= MagicMaze::Graphics.new(options)
+    #   @graphics_instance
+    # end
 
-    def self.shutdown_graphics
-      @graphics_instance.destroy
-      @graphics_instance = nil
-    end
+    # def self.shutdown_graphics
+    #   @graphics_instance.destroy
+    #   @graphics_instance = nil
+    # end
 
     def initialize(options={})
       puts "Starting Magic Maze..."
