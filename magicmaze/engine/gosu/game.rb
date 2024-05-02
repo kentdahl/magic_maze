@@ -37,7 +37,7 @@ module MagicMaze
     def button_down(id)
       puts "button down #{id}"
       @current_input.check_key_press(id)
-  	end
+    end
 
     def exit_game
       @graphics.destroy
