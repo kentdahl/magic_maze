@@ -21,6 +21,8 @@ module MagicMaze
   #
   class Sound
     ALL_CHANNELS = -1
+    MM_BASE_SOUND_PATH  = ''
+    DEB_BASE_SOUND_PATH = '/usr/share/magicmaze/sound/'
 
     ##
     # Singleton graphics instance.

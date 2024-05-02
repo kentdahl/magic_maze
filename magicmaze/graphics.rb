@@ -18,6 +18,9 @@ module MagicMaze
   class Graphics
     DEBUG = true
 
+    MM_BASE_GFX_PATH  = 'data/gfx/'
+    DEB_BASE_GFX_PATH = '/usr/share/magicmaze/gfx/'
+
     GFX_PATH = 'data/gfx/'
     SCREEN_IMAGES = {
       :titlescreen => 'title.png',
