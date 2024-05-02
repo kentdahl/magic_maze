@@ -24,7 +24,7 @@ module MagicMaze
     def follow_entity(leader)
       # puts "Following #{leader}..."
       time_synchronized_drawing do
-        draw(leader.location)
+        draw_where(leader.location)
       end
       return true
     end
