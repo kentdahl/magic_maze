@@ -19,6 +19,30 @@ module MagicMaze
   module Engine
     class GosuGameWindow < ::Gosu::Window
 
+      attr_accessor :drawer, :updater, :input_handler
+
+      def initialize(parent, xsize, ysize, fullscreen, delay)
+        super(xsize, ysize, fullscreen, delay)
+        @parent = parent
+      end
+
+      def needs_cursor?
+        true
+      end
+
+      def draw
+        @drawer.draw if @drawer
+      end
+
+      def update
+        @updater.update if @updater
+      end
+
+      def button_down(id)
+        @input_handler.button_down(id) if @input_handler
+      end
+
+
     end
   end
 
@@ -26,6 +50,8 @@ module MagicMaze
   #
   class Graphics
     include Images # Generic GFX.
+
+    attr_reader :window
 
     SCREEN_IMAGES = {
       :titlescreen => 'title.png',
@@ -70,6 +96,19 @@ module MagicMaze
       puts "Graphics initialized." if DEBUG
     end
 
+
+    def set_loop(game, drawer = nil, input = nil, updater = nil)
+      @game = game
+      @window.drawer        = drawer  || game
+      @window.input_handler = input   || game
+      @window.updater       = updater || game
+    end
+
+    def start_loop(game)
+      set_loop(game)
+      @window.show
+    end
+
     def destroy
       if @delay_stats && @delay_stats.size.nonzero? then
         puts "Delay average: " + 
@@ -77,6 +116,7 @@ module MagicMaze
         puts "Delay min/max: " + 
           @delay_stats.min.to_s + " / " + @delay_stats.max.to_s
       end
+      puts "closing window..."
       @window.close
     end
 
@@ -85,15 +125,19 @@ module MagicMaze
       @xsize = FULLSCREEN[2]
       @ysize = FULLSCREEN[3]
 
-      @delay = 200
+      @delay = 100
 
-      @window = ::MagicMaze::Engine::GosuGameWindow.new(@xsize, @ysize, !options[:fullscreen].nil?, @delay)
+      @window = ::MagicMaze::Engine::GosuGameWindow.new(self, @xsize, @ysize, !options[:fullscreen].nil?, @delay)
       @screen = @window
 
       early_progress
 
       early_progress
       
+    end
+
+    def draw
+      @curr_bg.draw(0,0,0) if @curr_bg
     end
 
 
@@ -224,12 +268,13 @@ module MagicMaze
 
 
     def write_score( score )
-      return if cached_drawing_valid?(:score, score )
+      # return if cached_drawing_valid?(:score, score )
 
       text = sprintf "%9d", score   # fails on EeePC
       # text = sprintf "%09d", score # old safe one.
       rect = SCORE_RECTANGLE
-      #@screen.fillRect(*rect) 
+      #@screen.fillRect(*rect)
+      @font16.draw(text, rect[0], rect[1]-2, 1, 0.5, 0.5, 0xFFFFFFFF) 
       #write_text( text, rect[0]+2*SCALE_FACTOR, rect[1]-2*SCALE_FACTOR ) 
     end
 
@@ -298,23 +343,33 @@ module MagicMaze
     ##
     # assumes life and mana are in range (0..100)
     def update_life_and_mana( life, mana )
-      return if cached_drawing_valid?(:life_and_mana, life.hash ^ mana.hash )
-
       rect = LIFE_MANA_RECTANGLE
-      @screen.fillRect(*rect) 
-      @screen.fillRect(rect[0], rect[1], 
+      col_red  = 0xFFFF0000
+      col_blue = 0xFF0000FF
+      draw_rectangle(rect[0], rect[1], 
                        rect[2]*life/100, rect[3]/2, 
-                       COL_RED)  if life.between?(0,100)
-      @screen.fillRect(rect[0], rect[1]+rect[3]/2, 
+                       col_red) # if life.between?(0,100)
+      draw_rectangle(rect[0], rect[1]+rect[3]/2, 
                        rect[2]*mana/100, rect[3]/2,
-                       COL_BLUE) if mana.between?(0,100)      
+                       col_blue) # if mana.between?(0,100)      
+    end
+
+    def draw_rectangle(ax,ay,w,h,col)
+      bx = ax+w
+      by = ay+h
+
+      @window.draw_quad(
+        ax, ay, col, 
+        bx, ay, col,
+        bx, by, col,
+        ax, by, col,
+        1 
+       )
     end
 
     def update_inventory( inventory )
       # FIXME: return if cached_drawing_valid?(:inventory, inventory.hash )
-
       rect = INVENTORY_RECTANGLE
-      @screen.fillRect(*rect) 
       currx = rect.first
       curry = rect[1]
       stepx = SPRITE_WIDTH / 4
@@ -325,13 +380,11 @@ module MagicMaze
     end
 
     def update_spells( primary, secondary )
-      return if cached_drawing_valid?(:spells, primary.hash ^ secondary.hash )
+      # return if cached_drawing_valid?(:spells, primary.hash ^ secondary.hash )
 
       rect1 = SPELL_RECTANGLE
       rect2 = ALT_SPELL_RECTANGLE
-      @screen.fillRect( *rect1 )
       put_sprite( primary, *rect1[0,2]) 
-      @screen.fillRect( *rect2 )
       put_sprite( secondary, *rect2[0,2]) 
     end
 
@@ -403,6 +456,7 @@ module MagicMaze
     ####################################
     #
     def draw_map( player, line_by_line = true )
+      return 
       map = player.location.map
 
       rect = MAZE_VIEW_RECTANGLE
@@ -543,7 +597,7 @@ module MagicMaze
       total_height = 0
       font = @font32
       @menu_items.each do |text|
-        tw, th = font.text_size( text )
+        tw, th = 16, 16 # font.text_size( text )
         max_width = [max_width,tw+16*SCALE_FACTOR].max
         total_height += th + 4*SCALE_FACTOR
       end

@@ -37,11 +37,11 @@ module MagicMaze
     end
 
     def draw_now
-      draw ; @graphics.flip
+      draw_where ; @graphics.flip
     end
 
 
-    def draw(where=@player.location)
+    def draw_where(where=@player.location)
       draw_maze( where.x, where.y )
       # @graphics.update_player( @player.direction.value )
       draw_hud
@@ -200,6 +200,7 @@ module MagicMaze
 
       @map = nil
       @player = nil
+      @movement = 0
     end
     
     def load_map( level = 1, saved = nil )
@@ -211,7 +212,7 @@ module MagicMaze
 
       @map_title = filemap.title
 
-      yield level, @map_title
+      yield level, @map_title if block_given?
 
       @map.purge if @map # Clean up old map, if any.
 
@@ -353,6 +354,26 @@ module MagicMaze
     protected :game_loop
 
     def start
+      load_map( @level )
+    end
+
+    def update
+      # @movement = 0
+      @game_config.current_input.check_input
+      calc_movement
+
+      @state = catch( :state_change ) do 
+        process_entities
+        @state
+      end
+    end
+
+    def draw
+      @graphics.put_screen :background
+      draw_where
+    end
+
+    def old_start
       begin
         @graphics.time_synchronized(1000) do
           load_map( @level ) do |level, map_title |
