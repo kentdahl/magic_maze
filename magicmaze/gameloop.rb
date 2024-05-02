@@ -262,7 +262,7 @@ module MagicMaze
     end
 
     def pause_game
-      @graphics.show_long_message( _("Paused!\n\nPress any key\nto resume game.") )
+      @graphics.show_long_message( _("Paused!\n \nPress any key\nto resume game.") )
       @game_input.get_key_press
     end
 
