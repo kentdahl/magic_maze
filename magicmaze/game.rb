@@ -206,7 +206,7 @@ module MagicMaze
       if not @saved_checkpoints.empty? then
         menu_items.unshift("Continue game") 
         menu_items.push("Replay level") if @saved_checkpoints.size>1
-        menu_items.push("Map Editor")
+        menu_items.push("Map Editor") if @options[:editor]
       end
       menu_items.push "Quit Magic Maze"
 
