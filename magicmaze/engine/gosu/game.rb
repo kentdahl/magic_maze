@@ -21,7 +21,7 @@ module MagicMaze
       # if menu...
     end
 
-  	def loop
+    def loop
       load_checkpoints
 
       puts "Starting loop..."
@@ -34,7 +34,7 @@ module MagicMaze
       destroy
     end
 
-  	def button_down(id)
+    def button_down(id)
       puts "button down #{id}"
       @current_input.check_key_press(id)
   	end
