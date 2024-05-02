@@ -25,7 +25,7 @@ module MagicMaze
       :endscreen   => 'end.png',
     }
 
-    SCALE_FACTOR = (self.constants.include?("OVERRIDE_GRAPHICS_SCALE_FACTOR") ? OVERRIDE_GRAPHICS_SCALE_FACTOR : 1)
+    SCALE_FACTOR = (self.constants.include?("OVERRIDE_GRAPHICS_SCALE_FACTOR") ? OVERRIDE_GRAPHICS_SCALE_FACTOR : 2)
 
     BACKGROUND_TILES_BEGIN = BackgroundTile::BACKGROUND_TILES_BEGIN
 
