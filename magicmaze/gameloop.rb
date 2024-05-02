@@ -354,6 +354,10 @@ module MagicMaze
     protected :game_loop
 
     def start
+      old_start
+    end
+
+    def todo_new_start
       load_map( @level )
     end
 
