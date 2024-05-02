@@ -122,8 +122,8 @@ module MagicMaze
       tries = 0
       
       alternate_fonts = [
-        "/usr/share/fonts/truetype/ttf-isabella/Isabella.ttf",
         "/usr/share/fonts/truetype/isabella/Isabella.ttf",
+        "/usr/share/fonts/truetype/ttf-isabella/Isabella.ttf",
         "/usr/share/fonts/truetype/Isabella.ttf"
       ]
       
