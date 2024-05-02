@@ -278,8 +278,8 @@ module MagicMaze
     def action_tick( *args )           
       @sleep -= 1
       if @sleep < 0    
-        ox = @location.x
-        oy = @location.y
+        # ox = @location.x
+        # oy = @location.y
         was_moved = move_forward
         if was_moved
           # puts "Monster#action_tick - #{@location.x-ox}, #{@location.y-oy}"

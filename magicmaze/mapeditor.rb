@@ -85,10 +85,10 @@ module MagicMaze
     end
 
     def process_entities
-      alive = @player.action_tick
-      game_data = { 
-        :player_location => @player.location
-      }
+      @player.action_tick
+      # game_data = { 
+      #   :player_location => @player.location
+      # }
       # @map.active_entities.each_tick( game_data )
     end
 

@@ -41,8 +41,8 @@ module MagicMaze
     end
     
     def follow_impulses
-      mf = @impulses[:move_forward]
-      ta = @impulses[:turn_around]
+      # mf = @impulses[:move_forward]
+      # ta = @impulses[:turn_around]
       IMPULSES.each{|key|
         value = @impulses[key]
         if value then

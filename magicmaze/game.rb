@@ -63,11 +63,11 @@ module MagicMaze
                  begin
                    Sound.get_sound(@options) 
                  rescue => sound_error
-                   puts "ERROR: Could not initialize sound! Proceeding muted." 
-                   NoSound.new
+                   puts "ERROR: Could not initialize sound! Proceeding muted. (#{ sound_error })"
+                   ::MagicMaze::NoSound.new
                  end
                else 
-                 NoSound.new 
+                 ::MagicMaze::NoSound.new 
                end
     end
 
@@ -132,6 +132,7 @@ module MagicMaze
       put_titlescreen
       @graphics.fade_in
       @state = :title_loop
+
       while @state == :title_loop
         @title_input.check_input
       end
@@ -141,8 +142,18 @@ module MagicMaze
       puts "Starting..."
       load_checkpoints
       start_map_editor if @options[:editor]
-      while not @quit
-        title_loop
+
+      puts "Starting loop..."
+      if @graphics.respond_to?(:start_loop)
+        # Gosu
+        puts "Gosu start loop"
+        @graphics.start_loop(self)
+      else
+        # SDL - manual loop
+        puts "Started SDL loop...."
+        while not @quit
+          title_loop
+        end
       end
       @graphics.fade_out
       save_checkpoints
@@ -195,7 +206,7 @@ module MagicMaze
       if not @saved_checkpoints.empty? then
         menu_items.unshift("Continue game") 
         menu_items.push("Replay level") if @saved_checkpoints.size>1
-        menu_items.push("Map Editor")
+        menu_items.push("Map Editor") if @options[:editor]
       end
       menu_items.push "Quit Magic Maze"
 

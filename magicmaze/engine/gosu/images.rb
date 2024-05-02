@@ -39,15 +39,18 @@ module MagicMaze
         x = (@xsize - image.width)/2
         y = (@ysize - image.height)/2        
       end
+      @curr_bg = image
+      @curr_bg.draw(x,y,0)
+      screen
     end
 
     def put_background( sprite, x, y )
       put_sprite( sprite, x, y )
     end
 
-    def put_sprite( sprite, x, y )
+    def put_sprite( sprite, x, y, layer = 1 )
       image = @sprite_images[sprite]
-      @screen.put( image, x, y ) if image   
+      image.draw(x, y, layer ) if image   
     end    
 
     def flip
