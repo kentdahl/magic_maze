@@ -9,7 +9,7 @@
  Copyright by Kent "MenThal" Dahl 
  
         (1995-1996) Version  1.2
-	(1999)      Version  1.22
+        (1999)      Version  1.22
         (2004)      Version  1.4.1
         (2008)      Version  1.4.3
 
@@ -113,12 +113,11 @@ ___________________________________________________
 ___________________________________________________
 *** Web-site ***
 
-Magic Maze 1.4.x:
-- http://magicmaze.rubyforge.org/
+Magic Maze >= 1.4.x:
+- https://github.com/kentdahl/magic_maze
 
 Magic Maze 1.2x:
-- http://www.bigfoot.com/~MenThal/coding/mmaze/mmaze.html
-
+- https://pvv.org/~kentda/ancient/geocities/coding/mmaze/
 
 
 
