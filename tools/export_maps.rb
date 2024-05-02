@@ -1,6 +1,7 @@
 require 'magicmaze/filemap'
 require 'json'
 
+require 'fileutils'
 
 class MapExporter
 
@@ -182,6 +183,8 @@ class MapExporter
     def perform
       output_dir = "data/maps/tiled/"
       map_count = 0
+
+      FileUtils.mkdir_p(output_dir)
 
       for_all_default_maps do |map|
         map_count +=1 
