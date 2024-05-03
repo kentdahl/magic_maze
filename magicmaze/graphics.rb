@@ -78,6 +78,10 @@ module MagicMaze
       options[:datadir] || DATA_DIR_PATH
     end
 
+    def get_data_dir_path_to(filename)
+      get_data_dir_path + filename
+    end
+
     def gfx_path
       @gfx_path ||= get_gfx_path
     end
