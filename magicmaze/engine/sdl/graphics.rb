@@ -34,8 +34,8 @@ module MagicMaze
     # end
 
     def initialize(options={})
-      super(options)
       puts "Starting Magic Maze..."
+      @options = options
       screen_init(options)
       early_progress
       font_init
@@ -85,7 +85,7 @@ module MagicMaze
       @screen = SDL::setVideoMode(@xsize,@ysize, @bpp, screen_mode)
       early_progress
 
-      SDL::WM.icon=( SDL::Surface.load("data/gfx/icon.png") )
+      SDL::WM.icon=( SDL::Surface.load(gfx_path_to("icon.png")) )
       early_progress
       
       unless @screen.respond_to? :draw_rect then
@@ -118,7 +118,7 @@ module MagicMaze
       ## Fonts
       SDL::TTF.init
       # Free font found at: http://www.squaregear.net/fonts/ 
-      fontfile = "data/gfx/fraktmod.ttf"
+      fontfile = gfx_path_to("fraktmod.ttf")
       fontsize = [16, 32]
       
       alternate_fonts = [
@@ -146,7 +146,7 @@ module MagicMaze
     def load_background_images
       @background_images = {}
       SCREEN_IMAGES.each{|key, filename|
-        source_image = SDL::Surface.load( GFX_PATH+filename ) 
+        source_image = SDL::Surface.load( gfx_path_to(filename) )
         @progress_msg += "." ; early_progress
         if SCALE_FACTOR != 1 then
           scaled_image = SDL::Surface.new(SDL::SWSURFACE, 
@@ -169,7 +169,7 @@ module MagicMaze
     #
     def load_old_sprites
       sprite_images = []
-      File.open( GFX_PATH+'sprites.dat', 'rb'){|file|
+      File.open( gfx_path_to('sprites.dat'), 'rb'){|file|
         # First 3*256 bytes is the palette, with values ranged (0...64).
         palette_data = file.read(768) 
         if palette_data.size == 768 then
@@ -221,7 +221,7 @@ module MagicMaze
       puts "Loading sprites..." if DEBUG
       sprite_images = []
       begin
-        spritemap = SDL::Surface.load( GFX_PATH + 'sprites.pcx' ) 
+        spritemap = SDL::Surface.load( gfx_path_to('sprites.pcx') )
       rescue
         return nil
       end

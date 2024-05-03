@@ -18,6 +18,7 @@ module MagicMaze
   class Graphics
     DEBUG = true
 
+    DATA_DIR_PATH='data/'
     GFX_PATH = 'data/gfx/'
     SCREEN_IMAGES = {
       :titlescreen => 'title.png',
@@ -63,15 +64,33 @@ module MagicMaze
       2 + SPRITE_WIDTH * VIEW_AREA_MAP_HEIGHT_CENTER ]
 
 
-    def initialize(options = {})
-      @options = options
 
-      @data_dir = @options[:datadir]
-
-      @gfx_path = @data_dir ? (@data_dir + 'gfx/') : GFX_PATH
+    def get_options
+      @options
     end
 
-    attr_reader :gfx_path, :data_dir
+    def data_dir_path
+      @data_dir_path ||= get_data_dir_path
+    end
+
+    def get_data_dir_path
+      options = get_options || {}
+      options[:datadir] || DATA_DIR_PATH
+    end
+
+    def gfx_path
+      @gfx_path ||= get_gfx_path
+    end
+
+    def get_gfx_path
+      data_dir = data_dir_path
+      data_dir ? (data_dir + 'gfx/') : GFX_PATH
+    end
+
+    def gfx_path_to(filename)
+      gfx_path + filename
+    end
+
 
 
 

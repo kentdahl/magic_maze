@@ -38,7 +38,7 @@ options = GetoptLong.new(["--help",     "-h", GetoptLong::NO_ARGUMENT ],
                          ["--volume",   "-v", GetoptLong::REQUIRED_ARGUMENT ],
                          ["--joystick", "-j", GetoptLong::OPTIONAL_ARGUMENT ],
                          ["--savedir",  "-D", GetoptLong::REQUIRED_ARGUMENT ],
-                         ["--datadir",  GetoptLong::REQUIRED_ARGUMENT ],
+                         ["--datadir",  "-A",   GetoptLong::REQUIRED_ARGUMENT ],
                          ["--editor", "-E", GetoptLong::NO_ARGUMENT ],
                          ["--map",  "-m", GetoptLong::REQUIRED_ARGUMENT ]
 
