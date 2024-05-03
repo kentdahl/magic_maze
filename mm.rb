@@ -33,23 +33,19 @@ options_data = cli.parse_options
 
 
 ## TODO: Needs special handling here? Changes done at top-level not propagating out?
-# when "--scale"
-#   scale = (argument || 1).to_i
-#   unless ((1..5).include? scale) then
-#     raise ArgumentError.new("Invalid scale.")
-#   end
-#   opt_hash[:scale] = scale
-#   # OVERRIDE_GRAPHICS_SCALE_FACTOR = scale
-#   # module ::MagicMaze
-#   #   class Graphics
-#   #     OVERRIDE_GRAPHICS_SCALE_FACTOR = OVERRIDE_GRAPHICS_SCALE_FACTOR
-#   #   end
-#   # end
-# when "--engine"
-#   engine = (argument)
-#   # OVERRIDE_GRAPHICS_ENGINE = engine
-# end             
-
+if options_data[:scale] then
+  scale = options_data[:scale]
+  OVERRIDE_GRAPHICS_SCALE_FACTOR = scale
+  module MagicMaze
+    class Graphics
+      OVERRIDE_GRAPHICS_SCALE_FACTOR = OVERRIDE_GRAPHICS_SCALE_FACTOR
+    end
+  end
+end
+if options_data[:engine] then
+  engine = options_data[:engine]
+  OVERRIDE_GRAPHICS_ENGINE = engine
+end
 
 
 require 'magicmaze/magicmaze'

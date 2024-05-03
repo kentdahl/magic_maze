@@ -98,7 +98,7 @@ module MagicMaze
             raise ArgumentError.new("Invalid scale.")
           end
           opt_hash[:scale] = scale
-          # ::OVERRIDE_GRAPHICS_SCALE_FACTOR = scale
+          # OVERRIDE_GRAPHICS_SCALE_FACTOR = scale
           # module ::MagicMaze
           #   class Graphics
           #     OVERRIDE_GRAPHICS_SCALE_FACTOR = OVERRIDE_GRAPHICS_SCALE_FACTOR
@@ -106,7 +106,8 @@ module MagicMaze
           # end
         when "--engine"
           engine = (argument)
-          # ::OVERRIDE_GRAPHICS_ENGINE = engine
+          opt_hash[:engine] = engine
+          # OVERRIDE_GRAPHICS_ENGINE = engine
         end
       end
 
