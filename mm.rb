@@ -38,6 +38,7 @@ options = GetoptLong.new(["--help",     "-h", GetoptLong::NO_ARGUMENT ],
                          ["--volume",   "-v", GetoptLong::REQUIRED_ARGUMENT ],
                          ["--joystick", "-j", GetoptLong::OPTIONAL_ARGUMENT ],
                          ["--savedir",  "-D", GetoptLong::REQUIRED_ARGUMENT ],
+                         ["--datadir",  "-A",   GetoptLong::REQUIRED_ARGUMENT ],
                          ["--editor", "-E", GetoptLong::NO_ARGUMENT ],
                          ["--map",  "-m", GetoptLong::REQUIRED_ARGUMENT ]
 
@@ -94,6 +95,8 @@ options.each do |option, argument|
     opt_hash[:map] = argument
   when "--savedir"
     opt_hash[:savedir] = argument
+  when "--datadir"
+    opt_hash[:datadir] = argument
   when "--scale"
     scale = (argument || 1).to_i
     unless ((1..5).include? scale) then 

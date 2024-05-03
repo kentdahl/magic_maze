@@ -198,15 +198,16 @@ module MagicMaze
       end
       @restart_status = player_status
 
+      @map_dir_path = @graphics.get_data_dir_path_to('maps/') || 'data/maps/'
       @map = nil
       @player = nil
       @movement = 0
     end
-    
+
     def load_map( level = 1, saved = nil )
       puts "Loading level: %s" % level
       filename = level
-      filename = sprintf("data/maps/mm_map.%03d",level
+      filename = sprintf(@map_dir_path + "mm_map.%03d",level
                          ) if level.kind_of? Numeric
       filemap = MagicMaze::FileMap.new( filename )
 

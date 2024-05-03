@@ -11,6 +11,9 @@
 
 require 'sdl'
 
+require 'magicmaze/sound'
+
+
 module MagicMaze
   ################################################
   #
@@ -36,10 +39,12 @@ module MagicMaze
 
 
     def initialize(options={})
+      @options = options
       SDL::Mixer.open
+
       @sounds = {}
       (1..4).each{|sound_no|
-        filename = sprintf "data/sound/sound%d.wav", sound_no
+        filename = snd_path_to(sprintf("sound%d.wav", sound_no))
         sound = SDL::Mixer::Wave.load( filename )
         @sounds[sound_no] = sound
       }
@@ -77,11 +82,11 @@ module MagicMaze
   ##
   # Mapping sound names to sound file index.
   #
-  SOUNDS = {
-    :argh  => 1,
-    :zap   => 2,
-    :punch => 3,
-    :bonus => 4,
-  }
+  # SOUNDS = {
+  #   :argh  => 1,
+  #   :zap   => 2,
+  #   :punch => 3,
+  #   :bonus => 4,
+  # }
 
 end

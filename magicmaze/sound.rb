@@ -32,4 +32,41 @@ module MagicMaze
     :bonus => 4,
   }
 
+
+  class Sound
+    DATA_DIR_PATH='data/'
+    SND_PATH = 'data/sound/'
+
+
+    def get_options
+      @options
+    end
+
+    def data_dir_path
+      @data_dir_path ||= get_data_dir_path
+    end
+
+    def get_data_dir_path
+      options = get_options || {}
+      options[:datadir] || DATA_DIR_PATH
+    end
+
+    def get_data_dir_path_to(filename)
+      get_data_dir_path + filename
+    end
+
+    def snd_path
+      @snd_path ||= get_snd_path
+    end
+
+    def get_snd_path
+      data_dir = data_dir_path
+      data_dir ? (data_dir + 'sound/') : SND_PATH
+    end
+
+    def snd_path_to(filename)
+      snd_path + filename
+    end
+  end
+
 end
