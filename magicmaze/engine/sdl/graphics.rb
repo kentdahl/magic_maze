@@ -34,6 +34,7 @@ module MagicMaze
     # end
 
     def initialize(options={})
+      super(options)
       puts "Starting Magic Maze..."
       screen_init(options)
       early_progress

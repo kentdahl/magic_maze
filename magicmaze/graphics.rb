@@ -63,6 +63,20 @@ module MagicMaze
       2 + SPRITE_WIDTH * VIEW_AREA_MAP_HEIGHT_CENTER ]
 
 
+    def initialize(options = {})
+      @options = options
+
+      @data_dir = @options[:datadir]
+
+      @gfx_path = @data_dir ? (@data_dir + 'gfx/') : GFX_PATH
+    end
+
+    attr_reader :gfx_path, :data_dir
+
+
+
+
+
     ##
     # Singleton graphics instance.
     def self.get_graphics(options={})
