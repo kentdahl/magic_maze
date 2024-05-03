@@ -12,6 +12,7 @@
         (1999)      Version  1.22
         (2004)      Version  1.4.1
         (2008)      Version  1.4.3
+        (202x)      Version  1.5.x
 
  This game is FREE as in both BEER and SPEECH.
       (Ruby and/or GPL licence)
