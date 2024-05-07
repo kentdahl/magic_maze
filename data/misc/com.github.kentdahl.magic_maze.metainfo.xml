@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>com.github.kentdahl.magic_maze</id>
+  <metadata_license>MIT</metadata_license>
+  <project_license>GPL-2.0+</project_license>
+  <name>Magic Maze</name>
+  <summary>rescue the maiden while avoiding the monsters</summary>
+  <description>
+    <p>This is a simple game where you are a wizard searching the evil
+    demon's tower to try and rescue the beautiful maiden.  Inspired by
+    Gauntlet II, your goal is to avoid/kill the monsters while trying
+    to find the exit and, eventually, the big boss who is holding your
+    girlfriend captive.  Includes support for playing in full-screen
+    and with a joystick.</p>
+  </description>
+  <launchable type="desktop-id">com.github.kentdahl.magic_maze.desktop</launchable>
+  <url type="homepage">https://github.com/kentdahl/magic_maze</url>
+  <provides>
+    <binary>magicmaze</binary>
+  </provides>
+</component>
