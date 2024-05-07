@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Magicmaze
+Comment=rescue the maiden while avoiding the monsters
+Comment[de]=Rette das Burgfräulein und weiche den Monstern aus
+Comment[nb]=Redd jomfruen mens du unngår monstrene
+Exec=magicmaze
+Icon=magicmaze
+Terminal=false
+Categories=Game;ActionGame;
+Keywords=maiden;monsters;wizard;joystick;gauntlet;
