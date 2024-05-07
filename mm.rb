@@ -38,7 +38,7 @@ if options_data[:scale] then
   OVERRIDE_GRAPHICS_SCALE_FACTOR = scale
   module MagicMaze
     class Graphics
-      OVERRIDE_GRAPHICS_SCALE_FACTOR = OVERRIDE_GRAPHICS_SCALE_FACTOR
+      OVERRIDE_GRAPHICS_SCALE_FACTOR = ::OVERRIDE_GRAPHICS_SCALE_FACTOR
     end
   end
 end
