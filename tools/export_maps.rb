@@ -75,7 +75,7 @@ class MapExporter
       tilesets: [
         {
           firstgid: 1,  # NOTE: Tiled editor won't open if this is 0....
-          image: "../../../data/gfx/sprites.png",
+          image: GFX_PATH+"sprites.png",
           imageheight: 288,
           imagewidth: 320,
           margin: 0,
@@ -174,14 +174,14 @@ class MapExporter
     # Iterate all default maps filenames.
     def for_all_default_map_filenames(upto=10)
       (1..upto).each do|level|
-        @filename = sprintf "data/maps/mm_map.%03d", level
+        @filename = sprintf MAP_PATH+"mm_map.%03d", level
         yield @filename
         @filename = nil
       end
     end
 
     def perform
-      output_dir = "data/maps/tiled/"
+      output_dir = MAP_PATH+"tiled/"
       map_count = 0
 
       FileUtils.mkdir_p(output_dir)

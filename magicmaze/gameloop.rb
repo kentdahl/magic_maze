@@ -16,6 +16,7 @@ require 'magicmaze/player'
 require 'magicmaze/graphics'
 
 module MagicMaze
+  MAP_PATH = "data/maps/"
 
   ##
   # Methods for drawing the map.
@@ -206,7 +207,7 @@ module MagicMaze
     def load_map( level = 1, saved = nil )
       puts "Loading level: %s" % level
       filename = level
-      filename = sprintf("data/maps/mm_map.%03d",level
+      filename = sprintf(MAP_PATH+"mm_map.%03d",level
                          ) if level.kind_of? Numeric
       filemap = MagicMaze::FileMap.new( filename )
 

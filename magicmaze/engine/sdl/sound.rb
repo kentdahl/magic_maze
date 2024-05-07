@@ -21,6 +21,7 @@ module MagicMaze
   #
   class Sound
     ALL_CHANNELS = -1
+    SOUND_PATH = "data/sound/"
 
     ##
     # Singleton graphics instance.
@@ -39,7 +40,7 @@ module MagicMaze
       SDL::Mixer.open
       @sounds = {}
       (1..4).each{|sound_no|
-        filename = sprintf "data/sound/sound%d.wav", sound_no
+        filename = sprintf SOUND_PATH+"sound%d.wav", sound_no
         sound = SDL::Mixer::Wave.load( filename )
         @sounds[sound_no] = sound
       }

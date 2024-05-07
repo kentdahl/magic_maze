@@ -76,7 +76,7 @@ module MagicMaze
       SDL.init( SDL::INIT_VIDEO )
       SDL::Mouse.hide
       SDL::WM.set_caption( _("Magic Maze"),"" )
-      # SDL::WM.icon=( SDL::Surface.load("data/gfx/icon.png") )
+      # SDL::WM.icon=( SDL::Surface.load(GFX_PATH+"icon.png") )
 
       screen_mode = SDL::HWSURFACE + SDL::DOUBLEBUF
       screen_mode += SDL::FULLSCREEN if options[:fullscreen] 
@@ -84,7 +84,7 @@ module MagicMaze
       @screen = SDL::setVideoMode(@xsize,@ysize, @bpp, screen_mode)
       early_progress
 
-      SDL::WM.icon=( SDL::Surface.load("data/gfx/icon.png") )
+      SDL::WM.icon=( SDL::Surface.load(GFX_PATH+"icon.png") )
       early_progress
       
       unless @screen.respond_to? :draw_rect then
@@ -117,7 +117,7 @@ module MagicMaze
       ## Fonts
       SDL::TTF.init
       # Free font found at: http://www.squaregear.net/fonts/ 
-      fontfile = "data/gfx/fraktmod.ttf"
+      fontfile = GFX_PATH+"fraktmod.ttf"
       fontsize = [16, 32]
       
       alternate_fonts = [

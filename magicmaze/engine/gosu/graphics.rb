@@ -158,7 +158,7 @@ module MagicMaze
     def font_init
       ## Fonts
       # Free font found at: http://www.squaregear.net/fonts/ 
-      fontfile = "data/gfx/fraktmod.ttf"
+      fontfile = GFX_PATH+"fraktmod.ttf"
       fontsize = [16, 32]
       tries = 0
       

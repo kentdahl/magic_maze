@@ -80,7 +80,7 @@ class TestFileMap < Test::Unit::TestCase
   # Iterate all default maps filenames.
   def for_all_default_map_filenames(upto=10)
     (1..upto).each do|level|
-      @filename = sprintf "data/maps/mm_map.%03d", level
+      @filename = sprintf MAP_PATH+"mm_map.%03d", level
       yield @filename
     end
   end

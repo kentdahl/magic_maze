@@ -52,7 +52,7 @@ module MagicMaze
     def choose_level_to_load
       menu_items = [
         Dir[@savedir+"/*.map"],
-        Dir["data/maps/mm_map.*"]
+        Dir[MAP_PATH+"mm_map.*"]
       ]
       menu_items.flatten!
       menu_items.push "Exit"
