@@ -9,7 +9,7 @@
 # Please see README.txt and COPYING_GPL.txt for details.
 ############################################################
 
-require 'sdl'
+require 'sdl2'
 
 require 'magicmaze/tile'
 
@@ -49,7 +49,7 @@ module MagicMaze
 
     ## put up a background screen
     def put_screen( screen, center = false, flip = true )
-      @screen.fillRect(0,0,@xsize,@ysize,0)
+      @screen.fill_rect(0,0,@xsize,@ysize,0)
       image = @background_images[ screen ]
       x,y=0,0
       if center
@@ -81,7 +81,7 @@ module MagicMaze
     def write_text( text, x, y, font = @font16 )
       begin
         font.drawSolidUTF8(@screen,text,x,y,255,255,255)
-      rescue SDL::Error # Original Asus EEE distro fails here...
+      rescue SDL2::Error # Original Asus EEE distro fails here...
         write_smooth_text(text,x,y,font)
       end
     end
@@ -92,7 +92,7 @@ module MagicMaze
 
     def set_palette( pal, start_color = 0 )
       pal ||= @sprite_palette
-      @screen.set_palette( SDL::PHYSPAL, pal, start_color )
+      @screen.set_palette( SDL2::PHYSPAL, pal, start_color )
     end
 
     FADE_DURATION = 16
@@ -137,11 +137,12 @@ module MagicMaze
     end
 
     def clear_screen
-      @screen.fillRect( 0, 0, @xsize, @ysize, 0 )
+      @screen.draw_color = [0,0,0]
+      @screen.fill_rect( SDL2::Rect.new(0, 0, @xsize, @ysize) )
     end
 
     def sleep_delay( sleep_ms = 1 )
-      SDL.delay( sleep_ms )
+      SDL2.delay( sleep_ms )
     end
     
     ##
@@ -149,9 +150,9 @@ module MagicMaze
     # Don't delay if it took too long.
     # 
     def time_synchronized( game_delay = 50 )
-      time_start = SDL.get_ticks
+      time_start = SDL2.get_ticks
       yield # Do actual work.
-      time_end = SDL.get_ticks
+      time_end = SDL2.get_ticks
       delay = game_delay + time_start - time_end
       # @delay_stats << delay # if debugging...
       sleep_delay(delay) if delay > 0 
