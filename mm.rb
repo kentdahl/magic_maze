@@ -29,6 +29,8 @@ require 'magicmaze/cli'
 
 cli = MagicMaze::CLI.new
 
+cli.default_option_settings = {sound: true}
+
 options_data = cli.parse_options
 
 

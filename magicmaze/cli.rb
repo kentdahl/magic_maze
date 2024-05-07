@@ -58,10 +58,12 @@ module MagicMaze
         USAGE
     end
 
+    attr_accessor :default_option_settings
+
     def parse_options
       options = get_cli_options
 
-      opt_hash = {
+      opt_hash = self.default_option_settings || {
         :sound => true
       }
 
