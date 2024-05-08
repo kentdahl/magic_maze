@@ -83,9 +83,21 @@ module MagicMaze
       screen_mode += SDL2::FULLSCREEN if options[:fullscreen] 
 
       # @screen = SDL2::setVideoMode(@xsize,@ysize, @bpp, screen_mode)
-      @window = SDL2::Window.create("Magic Maze", 0, 0, @xsize, @ysize, 0)
+      @window_pos_x = @window_pos_y = SDL2::Window::POS_UNDEFINED
+
+      window_flags = SDL2::Window::Flags::SHOWN
+
+      @window = SDL2::Window.create(_("Magic Maze"),
+          @window_pos_x, @window_pos_y,
+          @xsize, @ysize,
+          window_flags)
+      # @window.title = _("Magic Maze")
+      @window.icon = SDL2::Surface.load("data/gfx/icon.png")
+
       @screen = @window.create_renderer(-1, 0)
 
+      puts @window.inspect
+      @window.show
 
       early_progress
 
@@ -104,6 +116,36 @@ module MagicMaze
     end
 
 
+    def screen_fill_rect(x,y,w,h,col=nil)
+      with_draw_color(col) do
+        @screen.fill_rect(SDL2::Rect[x,y,w,h])
+      end
+    end
+
+    def screen_draw_rect(x,y,w,h,col=nil)
+      with_draw_color(col) do
+        @screen.draw_rect(SDL2::Rect[x,y,w,h])
+      end
+    end
+
+    def with_draw_color(col = nil)
+      if col
+        oldcol = @screen.draw_color
+        if col.is_a?(Numeric)
+          col = COLOR_MAP[col] || [col, col, col]
+        end
+        @screen.draw_color = col
+      end
+
+      result = yield
+
+      if col
+        @screen.draw_color = oldcol
+      end
+
+      return result
+    end
+
     # Simple progress indication before we can write etc to screen.
     def early_progress(progress=nil, flip=true, clear=true)
       @progress = progress || (@progress||0)+1
@@ -112,9 +154,9 @@ module MagicMaze
       clear_screen if clear
 
       @screen.draw_color = [c,c,c]
-      @screen.fill_rect( SDL2::Rect.new(@xsize-w,0, w,@ysize) )
+      screen_fill_rect( @xsize-w,0, w,@ysize )
       show_long_message(@progress_msg) if @progress_msg
-      # @screen.flip if flip
+      self.flip if flip
     end
 
 
@@ -154,18 +196,20 @@ module MagicMaze
         source_image = SDL2::Surface.load( gfx_path_to(filename) )
         @progress_msg += "." ; early_progress
         if SCALE_FACTOR != 1 then
-          scaled_image = SDL2::Surface.new(SDL2::SWSURFACE, 
+          scaled_image = SDL2::Surface.new( # SDL2::SWSURFACE, 
                                         source_image.w * SCALE_FACTOR, 
                                         source_image.h * SCALE_FACTOR,
-                                          @screen)
-          scaled_image.set_palette( SDL2::LOGPAL|SDL2::PHYSPAL, 
-                                    source_image.get_palette, 0 )
+                                        8)
+                                          # WAS: @screen)
+          # scaled_image.set_palette( SDL2::LOGPAL|SDL2::PHYSPAL, 
+          #                           source_image.get_palette, 0 )
+          scaled_image.color_key = source_image.pixel(0, 0)
           linear_scale_image(source_image,0,0, scaled_image, SCALE_FACTOR )
         else
           scaled_image = source_image
         end
         
-        @background_images[key] = scaled_image
+        @background_images[key] = @screen.create_texture_from(scaled_image)
       }
     end
 
@@ -231,41 +275,47 @@ module MagicMaze
         return nil
       end
 
-      palette = spritemap.get_palette
+      # WAS: palette = spritemap.get_palette
+      spritemap_colkey = spritemap.pixel(0, 0)
 
       lines = ( spritemap.h + 15 ) / 32 
 
-      @screen.set_palette( SDL2::LOGPAL|SDL2::PHYSPAL, palette, 0 )
+      # WAS: @screen.set_palette( SDL2::LOGPAL|SDL2::PHYSPAL, palette, 0 )
 
       (0...lines).each do|line| 
         @progress_msg += "." ; early_progress
         (0...10).each do|column|
           sprite = SDL2::Surface.new( # WAS: SDL2::HWSURFACE, #|SDL2::SRCCOLORKEY,
-                                    SPRITE_WIDTH, SPRITE_HEIGHT, @screen)
-          mode =  SDL2::LOGPAL|SDL2::PHYSPAL
+                                    SPRITE_WIDTH, SPRITE_HEIGHT, 8) # WAS: @screen)
+          # WAS: mode =  SDL2::LOGPAL|SDL2::PHYSPAL
 
           x =  column * 32
           y = line * 32
           w = h = 32
 
-          sprite.set_palette( mode, palette, 0 )
-          sprite.setColorKey( SDL2::SRCCOLORKEY || SDL2::RLEACCEL ,0)
-          sprite.fill_rect(0,0,SPRITE_WIDTH,SPRITE_HEIGHT,3)
+          # WAS: sprite.set_palette( mode, palette, 0 )
+          # WAS: sprite.setColorKey( SDL2::SRCCOLORKEY || SDL2::RLEACCEL ,0)
+          # WAS: sprite.fill_rect(0,0,SPRITE_WIDTH,SPRITE_HEIGHT,3)
 
           if SCALE_FACTOR == 1 then
-            SDL.blitSurface(spritemap,x,y,w,h,sprite, 0,0 )
+            SDL2::Surface.blit(spritemap,SDL2::Rect[x,y,w,h], sprite, nil )
           else
             linear_scale_image(spritemap,x,y, sprite, SCALE_FACTOR )
           end
 
-          sprite.set_palette( mode, palette, 0 )
-          sprite.setColorKey( SDL2::SRCCOLORKEY || SDL2::RLEACCEL ,0)
+          # sprite.set_palette( mode, palette, 0 )
+          # sprite.setColorKey( SDL2::SRCCOLORKEY || SDL2::RLEACCEL ,0)
+          sprite.color_key = spritemap_colkey
 
-          sprite_images << sprite.display_format
+          sprite_texture = @screen.create_texture_from(sprite)
+
+          sprite_images << sprite_texture # WAS: sprite.display_format
         end
       end
 
-      @sprite_palette = palette 
+      # @sprite_palette = palette 
+      @sprite_colorkey = spritemap_colkey
+
       puts "Sprites loaded: #{sprite_images.size}." if DEBUG
 
       sprite_images
@@ -304,7 +354,7 @@ module MagicMaze
       text = sprintf "%9d", score   # fails on EeePC
       # text = sprintf "%09d", score # old safe one.
       rect = SCORE_RECTANGLE
-      @screen.fill_rect(*rect) 
+      screen_fill_rect(*rect) 
       write_text( text, rect[0]+2*SCALE_FACTOR, rect[1]-2*SCALE_FACTOR ) 
     end
 
@@ -315,7 +365,7 @@ module MagicMaze
     #
     def show_message( text, flip = true )
       rect = MAZE_VIEW_RECTANGLE
-      @screen.fill_rect(*rect)
+      screen_fill_rect(*rect)
 
       tw, th = @font32.size_text( text )
 
@@ -328,7 +378,7 @@ module MagicMaze
                  x + (w-tw)/2,
                  y + (h-th)/2, 
                  @font32 ) 
-      # @screen.flip if flip
+      self.flip if flip
     end
 
     ##
@@ -336,7 +386,7 @@ module MagicMaze
     # maze view area.
     def show_long_message( text, flip = true, fullscreen = false )
       rect = ( fullscreen ? FULLSCREEN : MAZE_VIEW_RECTANGLE)[0..3]
-      @screen.fill_rect( SDL2::Rect.new(*rect) )
+      screen_fill_rect( *rect )
 
       gth = 0
       lines = text.split("\n").collect do |line| 
@@ -360,7 +410,7 @@ module MagicMaze
         y_offset += th
       end
 
-      # @screen.flip if flip
+      self.flip if flip
     end
 
     def cached_drawing_valid?(symbol, value)
@@ -376,11 +426,11 @@ module MagicMaze
       return if cached_drawing_valid?(:life_and_mana, life.hash ^ mana.hash )
 
       rect = LIFE_MANA_RECTANGLE
-      @screen.fill_rect(*rect) 
-      @screen.fill_rect(rect[0], rect[1], 
+      screen_fill_rect(*rect) 
+      screen_fill_rect(rect[0], rect[1], 
                        rect[2]*life/100, rect[3]/2, 
                        COL_RED)  if life.between?(0,100)
-      @screen.fill_rect(rect[0], rect[1]+rect[3]/2, 
+      screen_fill_rect(rect[0], rect[1]+rect[3]/2, 
                        rect[2]*mana/100, rect[3]/2,
                        COL_BLUE) if mana.between?(0,100)      
     end
@@ -389,7 +439,7 @@ module MagicMaze
       # FIXME: return if cached_drawing_valid?(:inventory, inventory.hash )
 
       rect = INVENTORY_RECTANGLE
-      @screen.fill_rect(*rect) 
+      screen_fill_rect(*rect) 
       currx = rect.first
       curry = rect[1]
       stepx = SPRITE_WIDTH / 4
@@ -404,9 +454,9 @@ module MagicMaze
 
       rect1 = SPELL_RECTANGLE
       rect2 = ALT_SPELL_RECTANGLE
-      @screen.fill_rect( *rect1 )
+      screen_fill_rect( *rect1 )
       put_sprite( primary, *rect1[0,2]) 
-      @screen.fill_rect( *rect2 )
+      screen_fill_rect( *rect2 )
       put_sprite( secondary, *rect2[0,2]) 
     end
 
@@ -481,11 +531,11 @@ module MagicMaze
       map = player.location.map
 
       rect = MAZE_VIEW_RECTANGLE
-      @screen.fill_rect(*rect)
+      screen_fill_rect(*rect)
       
       if line_by_line then
-        # @screen.flip 
-        @screen.fill_rect(*rect)
+        self.flip 
+        screen_fill_rect(*rect)
       end
 
       map_zoom_factor = 4
@@ -511,7 +561,7 @@ module MagicMaze
             col = COL_BLUE        if entity.kind_of?( Player )
           end
           if col then
-            @screen.fill_rect(rect[0] + ax*map_block_size,
+            screen_fill_rect(rect[0] + ax*map_block_size,
                               draw_y,
                               map_block_size,
                               map_block_size,
@@ -521,7 +571,7 @@ module MagicMaze
         end
 
         # The center.
-        @screen.draw_rect(rect[0] + map_width/2  * map_block_size,
+        screen_draw_rect(rect[0] + map_width/2  * map_block_size,
                           rect[1] + map_height/2 * map_block_size,
                           map_block_size,
                           map_block_size,
@@ -561,7 +611,8 @@ module MagicMaze
       @scrolltext.setColorKey( SDL2::SRCCOLORKEY || SDL2::RLEACCEL ,0)
 
 
-      font.drawBlendedUTF8( @scrolltext, text, 0, 0,  255, 255, 255 )
+      # TODO: font.drawBlendedUTF8( @scrolltext, text, 0, 0,  255, 255, 255 )
+      # => scrolltext_surface = font.render_blended( text, [0xFF, 0xFF, 0xFF])
       @scrolltext_index = - @xsize
     end
 
@@ -571,7 +622,7 @@ module MagicMaze
     #
     def update_scrolltext
       
-      @screen.fill_rect( 0, 200 * SCALE_FACTOR, @xsize, 40 * SCALE_FACTOR, 0 )
+      screen_fill_rect( 0, 200 * SCALE_FACTOR, @xsize, 40 * SCALE_FACTOR, 0 )
 
       SDL.blit_surface( @scrolltext, 
                        @scrolltext_index, 0, @xsize, @scrolltext.h,
@@ -684,12 +735,12 @@ module MagicMaze
         curr_menu_items = @menu_items
       end
 
-      @screen.fill_rect( topx, topy, @menu_width,@menu_height,0 )
-      @screen.draw_rect( topx, topy, @menu_width,@menu_height, COL_GRAY )
+      screen_fill_rect( topx, topy, @menu_width,@menu_height )
+      screen_draw_rect( topx, topy, @menu_width,@menu_height, COL_GRAY )
       y_offset = topy
       font = @font32
       curr_menu_items.each do |text|
-        tw, _ = font.text_size( text )
+        tw, _ = font.size_text( text )
         color_intensity = 127
         if text == @menu_chosen_item then
           rect = [ 
@@ -699,7 +750,7 @@ module MagicMaze
             font.height - 4*SCALE_FACTOR,
             COL_WHITE
           ]
-          @screen.draw_rect( *rect )
+          screen_draw_rect( *rect )
           color_intensity = 255
         end
         write_smooth_text(text, 

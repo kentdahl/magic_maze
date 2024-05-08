@@ -14,7 +14,7 @@
 #require 'magicmaze/sound'
 
 current_engine = OVERRIDE_GRAPHICS_ENGINE if defined?(OVERRIDE_GRAPHICS_ENGINE) # 'gosu'
-current_engine ||= 'sdl1'
+current_engine ||= 'sdl2'
 
 require "magicmaze/engine/#{current_engine}/images"
 require "magicmaze/engine/#{current_engine}/graphics"

@@ -32,7 +32,7 @@ module MagicMaze
 
       sh.times do |sdy|        
         sw.times do |sdx|
-          pixel = source_image.get_pixel(sx+sdx, sy+sdy)
+          pixel = source_image.pixel(sx+sdx, sy+sdy)
           scaled_image.fill_rect(sdx*factor, sdy*factor, factor, factor, pixel)
         end
       end
@@ -49,15 +49,17 @@ module MagicMaze
 
     ## put up a background screen
     def put_screen( screen, center = false, flip = true )
-      @screen.fill_rect(0,0,@xsize,@ysize,0)
+      puts "PUT SCREEN"
+      @screen.fill_rect(SDL2::Rect[0,0,@xsize,@ysize])
       image = @background_images[ screen ]
       x,y=0,0
       if center
         x = (@xsize - image.w)/2
         y = (@ysize - image.h)/2        
       end
-      @screen.put( image, x,y )
-      @screen.flip if flip
+      @screen.copy( image, nil, SDL2::Rect[x,y,image.w, image.h] )
+      self.flip
+      @window.show
       @cached_drawing.clear
     end
 
@@ -71,7 +73,7 @@ module MagicMaze
     end    
 
     def flip
-      @screen.flip
+      @screen.present
     end
 
     def toogle_fullscreen
@@ -80,14 +82,14 @@ module MagicMaze
 
     def write_text( text, x, y, font = @font16 )
       begin
-        font.drawSolidUTF8(@screen,text,x,y,255,255,255)
+        # TODO: font.drawSolidUTF8(@screen,text,x,y,255,255,255)
       rescue SDL2::Error # Original Asus EEE distro fails here...
         write_smooth_text(text,x,y,font)
       end
     end
 
     def write_smooth_text( text, x, y, font = @font16,r=255,g=255,b=255 )
-      font.drawBlendedUTF8(@screen, text, x,y, r,g,b) # Failed for RubySDL2.0.1 and Ruby1.9.1-p1 on multiline strings.
+      # TODO: font.drawBlendedUTF8(@screen, text, x,y, r,g,b) # Failed for RubySDL2.0.1 and Ruby1.9.1-p1 on multiline strings.
     end
 
     def set_palette( pal, start_color = 0 )
@@ -98,6 +100,15 @@ module MagicMaze
     FADE_DURATION = 16
 
     def fade_out( tr = 0, tg = 0, tb = 0, fade_duration = FADE_DURATION )
+      # TODO:
+    end
+
+    def fade_in( fade_duration = FADE_DURATION )
+      # TODO:
+    end
+
+
+    def old_fade_out( tr = 0, tg = 0, tb = 0, fade_duration = FADE_DURATION )
       mypal = @sprite_palette.dup
       @old_palette = mypal
       range = fade_duration
@@ -113,7 +124,7 @@ module MagicMaze
       @fade_color = [ tr, tg, tb ]
     end
 
-    def fade_in( fade_duration = FADE_DURATION )
+    def old_fade_in( fade_duration = FADE_DURATION )
       mypal = @old_palette || @sprite_palette
       tr, tg, tb = *(@fade_color || [0,0,0])
       range = fade_duration

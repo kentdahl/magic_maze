@@ -34,6 +34,11 @@ module MagicMaze
     COL_YELLOW = 50;
     COL_DARKGRAY=3;    COL_GRAY=5;  COL_LIGHTGRAY=7;
 
+    COLOR_MAP = [
+      COL_GRAY => [0xAA, 0xAA, 0xAA],
+    ]
+
+
     SPRITE_WIDTH = 32 * SCALE_FACTOR; SPRITE_HEIGHT = 32 * SCALE_FACTOR;
 
     # the *_AREA_MAP_* variables are map coordinate related, not screen coordinate.
