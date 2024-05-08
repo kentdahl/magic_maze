@@ -58,9 +58,9 @@ module MagicMaze
         y = (@ysize - image.h)/2        
       end
       @screen.copy( image, nil, SDL2::Rect[x,y,image.w, image.h] )
-      self.flip
-      @window.show
-      @cached_drawing.clear
+      @screen.present
+      @screen.copy( image, nil, SDL2::Rect[x,y,image.w, image.h] )
+      # @cached_drawing.clear
     end
 
     def put_background( sprite, x, y )
@@ -82,6 +82,10 @@ module MagicMaze
 
     def write_text( text, x, y, font = @font16 )
       begin
+        scribbles = font.render_solid(text, [0xFF, 0xFF, 0xFF])
+        tribbles  = @screen.create_texture_from(scribbles)
+        dims = font.size_text(text)
+        @screen.copy(tribbles, nil, SDL2::Rect[x,y,dims.first,dims.last])
         # TODO: font.drawSolidUTF8(@screen,text,x,y,255,255,255)
       rescue SDL2::Error # Original Asus EEE distro fails here...
         write_smooth_text(text,x,y,font)
@@ -90,6 +94,11 @@ module MagicMaze
 
     def write_smooth_text( text, x, y, font = @font16,r=255,g=255,b=255 )
       # TODO: font.drawBlendedUTF8(@screen, text, x,y, r,g,b) # Failed for RubySDL2.0.1 and Ruby1.9.1-p1 on multiline strings.
+      scribbles = font.render_solid(text, [r, g, b])
+      tribbles  = @screen.create_texture_from(scribbles)
+      dims = font.size_text(text)
+      @screen.copy(tribbles, nil, SDL2::Rect[x,y,dims.first,dims.last])
+
     end
 
     def set_palette( pal, start_color = 0 )

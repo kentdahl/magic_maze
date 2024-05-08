@@ -21,6 +21,8 @@ module MagicMaze
   class Graphics
     include Images # Generic GFX.
 
+    attr_reader :scale_factor
+
     ##
     # Singleton graphics instance.
     # def self.get_graphics(options={})
@@ -71,33 +73,39 @@ module MagicMaze
 
     def screen_init(options)
       puts "Setting up graphics..." if DEBUG
-      @xsize = FULLSCREEN[2]
-      @ysize = FULLSCREEN[3]
+
+      @scale_factor ||= SCALE_FACTOR
+      @screen_scale_factor ||= @scale_factor
+
+      @xsize = FULLSCREEN[2] * @screen_scale_factor
+      @ysize = FULLSCREEN[3] * @screen_scale_factor
       @bpp = 8 # 16 wont work
       SDL2.init( SDL2::INIT_VIDEO )
       # TODO: SDL2::Mouse.hide
       # TODO: SDL2::WM.set_caption( _("Magic Maze"),"" )
       # SDL2::WM.icon=( SDL2::Surface.load("data/gfx/icon.png") )
 
-      screen_mode = 0 # SDL2::HWSURFACE + SDL2::DOUBLEBUF
-      screen_mode += SDL2::FULLSCREEN if options[:fullscreen] 
+      window_flags  = SDL2::Window::Flags::SHOWN
+      window_flags |= SDL2::Window::Flags::FULLSCREEN if options[:fullscreen] 
+      window_flags |= SDL2::Window::Flags::RESIZABLE
 
-      # @screen = SDL2::setVideoMode(@xsize,@ysize, @bpp, screen_mode)
-      @window_pos_x = @window_pos_y = SDL2::Window::POS_UNDEFINED
-
-      window_flags = SDL2::Window::Flags::SHOWN
+      @window_pos_x = @window_pos_y = SDL2::Window::POS_CENTERED # WAS: UNDEFINED
 
       @window = SDL2::Window.create(_("Magic Maze"),
           @window_pos_x, @window_pos_y,
           @xsize, @ysize,
           window_flags)
       # @window.title = _("Magic Maze")
-      @window.icon = SDL2::Surface.load("data/gfx/icon.png")
+      @window.icon = SDL2::Surface.load(gfx_path_to("icon.png"))
 
       @screen = @window.create_renderer(-1, 0)
 
-      puts @window.inspect
-      @window.show
+      if self.scale_factor > 1
+        @screen.scale = [@scale_factor, @scale_factor]
+        @screen_scale_factor = @scale_factor
+        @scale_factor = 1
+      end
+
 
       early_progress
 
@@ -149,7 +157,7 @@ module MagicMaze
     # Simple progress indication before we can write etc to screen.
     def early_progress(progress=nil, flip=true, clear=true)
       @progress = progress || (@progress||0)+1
-      w = SCALE_FACTOR * (64 - @progress*8)
+      w = self.scale_factor * (64 - @progress*8)
       c = 255 - (@progress**2)
       clear_screen if clear
 
@@ -175,8 +183,8 @@ module MagicMaze
       ]
       
       begin
-        @font16 = SDL2::TTF.open( fontfile, fontsize.first * SCALE_FACTOR )
-        @font32 = SDL2::TTF.open( fontfile, fontsize.last  * SCALE_FACTOR )
+        @font16 = SDL2::TTF.open( fontfile, fontsize.first * self.scale_factor )
+        @font32 = SDL2::TTF.open( fontfile, fontsize.last  * self.scale_factor )
       rescue SDL2::Error => err
         # Debian font
         fontfile = alternate_fonts.shift # "/usr/share/fonts/truetype/Isabella.ttf"
@@ -195,16 +203,16 @@ module MagicMaze
       SCREEN_IMAGES.each{|key, filename|
         source_image = SDL2::Surface.load( gfx_path_to(filename) )
         @progress_msg += "." ; early_progress
-        if SCALE_FACTOR != 1 then
+        if self.scale_factor != 1 then
           scaled_image = SDL2::Surface.new( # SDL2::SWSURFACE, 
-                                        source_image.w * SCALE_FACTOR, 
-                                        source_image.h * SCALE_FACTOR,
+                                        source_image.w * self.scale_factor, 
+                                        source_image.h * self.scale_factor,
                                         8)
                                           # WAS: @screen)
           # scaled_image.set_palette( SDL2::LOGPAL|SDL2::PHYSPAL, 
           #                           source_image.get_palette, 0 )
           scaled_image.color_key = source_image.pixel(0, 0)
-          linear_scale_image(source_image,0,0, scaled_image, SCALE_FACTOR )
+          linear_scale_image(source_image,0,0, scaled_image, self.scale_factor )
         else
           scaled_image = source_image
         end
@@ -246,7 +254,7 @@ module MagicMaze
             # The first six bytes is garbage?
             sprite_data[6,1024].each_byte{|pixel|
               sprite.put_pixel(x,y,pixel)
-              x += 1 # *SCALE_FACTOR
+              x += 1 # *self.scale_factor
               if x>31
                 x = 0
                 y += 1
@@ -297,10 +305,10 @@ module MagicMaze
           # WAS: sprite.setColorKey( SDL2::SRCCOLORKEY || SDL2::RLEACCEL ,0)
           # WAS: sprite.fill_rect(0,0,SPRITE_WIDTH,SPRITE_HEIGHT,3)
 
-          if SCALE_FACTOR == 1 then
+          if self.scale_factor == 1 then
             SDL2::Surface.blit(spritemap,SDL2::Rect[x,y,w,h], sprite, nil )
           else
-            linear_scale_image(spritemap,x,y, sprite, SCALE_FACTOR )
+            linear_scale_image(spritemap,x,y, sprite, self.scale_factor )
           end
 
           # sprite.set_palette( mode, palette, 0 )
@@ -355,7 +363,7 @@ module MagicMaze
       # text = sprintf "%09d", score # old safe one.
       rect = SCORE_RECTANGLE
       screen_fill_rect(*rect) 
-      write_text( text, rect[0]+2*SCALE_FACTOR, rect[1]-2*SCALE_FACTOR ) 
+      write_text( text, rect[0]+2*self.scale_factor, rect[1]-2*self.scale_factor ) 
     end
 
 
@@ -622,13 +630,13 @@ module MagicMaze
     #
     def update_scrolltext
       
-      screen_fill_rect( 0, 200 * SCALE_FACTOR, @xsize, 40 * SCALE_FACTOR, 0 )
+      screen_fill_rect( 0, 200 * self.scale_factor, @xsize, 40 * self.scale_factor, 0 )
 
       SDL.blit_surface( @scrolltext, 
                        @scrolltext_index, 0, @xsize, @scrolltext.h,
-                       @screen, 0, 200 * SCALE_FACTOR )
+                       @screen, 0, 200 * self.scale_factor )
 
-      @scrolltext_index += 1 * SCALE_FACTOR
+      @scrolltext_index += 1 * self.scale_factor
 
       if @scrolltext_index > @scrolltext.w + @xsize
         @scrolltext_index = - @xsize
@@ -670,14 +678,14 @@ module MagicMaze
       font = @font32
       @menu_items.each do |text|
         tw, th = font.size_text( text )
-        max_width = [max_width,tw+16*SCALE_FACTOR].max
-        total_height += th + 4*SCALE_FACTOR
+        max_width = [max_width,tw+16*self.scale_factor].max
+        total_height += th + 4*self.scale_factor
       end
       @menu_width = max_width
       @menu_chosen_item = chosen || @menu_items.first
       
       # Truncate if the items can fit on screen.
-      scr_height = 200 * SCALE_FACTOR
+      scr_height = 200 * self.scale_factor
       if total_height > scr_height then
         @menu_height = scr_height
         @menu_truncate_size = (@menu_items.size * scr_height / (total_height)).to_i
@@ -711,8 +719,8 @@ module MagicMaze
     ##
     # Draw an updated menu.
     def draw_menu
-      topx = 160 * SCALE_FACTOR - @menu_width  / (2)
-      topy = 120 * SCALE_FACTOR - @menu_height / (2)
+      topx = 160 * self.scale_factor - @menu_width  / (2)
+      topy = 120 * self.scale_factor - @menu_height / (2)
 
       #TODO: Save the old background.
 
@@ -744,10 +752,10 @@ module MagicMaze
         color_intensity = 127
         if text == @menu_chosen_item then
           rect = [ 
-            topx + 4*SCALE_FACTOR, 
-            y_offset + 4*SCALE_FACTOR,
-            @menu_width - 8*SCALE_FACTOR, 
-            font.height - 4*SCALE_FACTOR,
+            topx + 4*self.scale_factor, 
+            y_offset + 4*self.scale_factor,
+            @menu_width - 8*self.scale_factor, 
+            font.height - 4*self.scale_factor,
             COL_WHITE
           ]
           screen_draw_rect( *rect )
@@ -755,9 +763,9 @@ module MagicMaze
         end
         write_smooth_text(text, 
                           topx + (@menu_width-tw)/2, 
-                          y_offset + 2*SCALE_FACTOR, 
+                          y_offset + 2*self.scale_factor, 
                           font, *[color_intensity]*3 )
-        y_offset+= font.height + 4*SCALE_FACTOR
+        y_offset+= font.height + 4*self.scale_factor
       end
       flip
     end

@@ -122,7 +122,7 @@ module MagicMaze
     end
     
     def put_titlescreen
-      @graphics.put_screen( :titlescreen, true )
+      @graphics.put_screen( :titlescreen, false ) # WAS: true )
     end
     
     

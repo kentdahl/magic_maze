@@ -26,7 +26,8 @@ module MagicMaze
       :endscreen   => 'end.png',
     }
 
-    SCALE_FACTOR = (self.const_defined?("OVERRIDE_GRAPHICS_SCALE_FACTOR") ? OVERRIDE_GRAPHICS_SCALE_FACTOR : 2)
+    SCALE_FACTOR = (self.const_defined?("OVERRIDE_GRAPHICS_SCALE_FACTOR") ? OVERRIDE_GRAPHICS_SCALE_FACTOR : 1)
+    DEPRECATED_SCALE_FACTOR = 1
 
     BACKGROUND_TILES_BEGIN = BackgroundTile::BACKGROUND_TILES_BEGIN
 
@@ -35,11 +36,19 @@ module MagicMaze
     COL_DARKGRAY=3;    COL_GRAY=5;  COL_LIGHTGRAY=7;
 
     COLOR_MAP = [
-      COL_GRAY => [0xAA, 0xAA, 0xAA],
+      COL_RED    => [0xFF, 0x00, 0x00],
+      COL_GREEN  => [0x00, 0xFF, 0x00],
+      COL_BLUE   => [0x00, 0x00, 0xFF],
+      COL_YELLOW => [0xAA, 0xAA, 0x00],
+
+      COL_GRAY      => [0x44, 0x44, 0x44],
+      COL_DARKGRAY  => [0x88, 0x88, 0x88],
+      COL_LIGHTGRAY => [0xAA, 0xAA, 0xAA],
+      COL_WHITE     => [0xFF, 0xFF, 0xFF],
     ]
 
 
-    SPRITE_WIDTH = 32 * SCALE_FACTOR; SPRITE_HEIGHT = 32 * SCALE_FACTOR;
+    SPRITE_WIDTH = 32 * DEPRECATED_SCALE_FACTOR; SPRITE_HEIGHT = 32 * DEPRECATED_SCALE_FACTOR;
 
     # the *_AREA_MAP_* variables are map coordinate related, not screen coordinate.
     VIEW_AREA_MAP_WIDTH  = 7
@@ -48,16 +57,16 @@ module MagicMaze
     VIEW_AREA_MAP_HEIGHT_CENTER = VIEW_AREA_MAP_HEIGHT / 2
 
 
-    VIEW_AREA_UPPER_LEFT_X = 2 * SCALE_FACTOR
-    VIEW_AREA_UPPER_LEFT_Y = 2 * SCALE_FACTOR
+    VIEW_AREA_UPPER_LEFT_X = 2 * DEPRECATED_SCALE_FACTOR
+    VIEW_AREA_UPPER_LEFT_Y = 2 * DEPRECATED_SCALE_FACTOR
 
     # rectangles on the display. [startx, starty, width, height, colour]  
-    FULLSCREEN          = [ 0, 0, 320, 240,0].collect{|i| i*SCALE_FACTOR}
-    INVENTORY_RECTANGLE = [230, 16, 87,32, 0].collect{|i| i*SCALE_FACTOR} 
-    LIFE_MANA_RECTANGLE = [230, 63, 87,16, 0].collect{|i| i*SCALE_FACTOR}
-    SCORE_RECTANGLE     = [230+8, 93, 87-8,14, 0].collect{|i| i*SCALE_FACTOR}
-    SPELL_RECTANGLE     = [230,126, 32,32, 0].collect{|i| i*SCALE_FACTOR} 
-    ALT_SPELL_RECTANGLE = [285,126, 32,32, 0].collect{|i| i*SCALE_FACTOR} 
+    FULLSCREEN          = [ 0, 0, 320, 240,0].collect{|i| i*DEPRECATED_SCALE_FACTOR}
+    INVENTORY_RECTANGLE = [230, 16, 87,32, 0].collect{|i| i*DEPRECATED_SCALE_FACTOR} 
+    LIFE_MANA_RECTANGLE = [230, 63, 87,16, 0].collect{|i| i*DEPRECATED_SCALE_FACTOR}
+    SCORE_RECTANGLE     = [230+8, 93, 87-8,14, 0].collect{|i| i*DEPRECATED_SCALE_FACTOR}
+    SPELL_RECTANGLE     = [230,126, 32,32, 0].collect{|i| i*DEPRECATED_SCALE_FACTOR} 
+    ALT_SPELL_RECTANGLE = [285,126, 32,32, 0].collect{|i| i*DEPRECATED_SCALE_FACTOR} 
     MAZE_VIEW_RECTANGLE = [
       VIEW_AREA_UPPER_LEFT_X, VIEW_AREA_UPPER_LEFT_Y, 
       SPRITE_WIDTH*VIEW_AREA_MAP_WIDTH, SPRITE_HEIGHT*VIEW_AREA_MAP_HEIGHT, 0
