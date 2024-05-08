@@ -34,8 +34,10 @@ module MagicMaze
     COL_WHITE=10;   COL_RED = 20;   COL_GREEN = 30;  COL_BLUE = 40; 
     COL_YELLOW = 50;
     COL_DARKGRAY=3;    COL_GRAY=5;  COL_LIGHTGRAY=7;
+    COL_BLACK=0;
 
-    COLOR_MAP = [
+    COLOR_MAP = {
+      COL_BLACK  => [0x00, 0x00, 0x00],
       COL_RED    => [0xFF, 0x00, 0x00],
       COL_GREEN  => [0x00, 0xFF, 0x00],
       COL_BLUE   => [0x00, 0x00, 0xFF],
@@ -45,7 +47,7 @@ module MagicMaze
       COL_DARKGRAY  => [0x88, 0x88, 0x88],
       COL_LIGHTGRAY => [0xAA, 0xAA, 0xAA],
       COL_WHITE     => [0xFF, 0xFF, 0xFF],
-    ]
+    }
 
 
     SPRITE_WIDTH = 32 * DEPRECATED_SCALE_FACTOR; SPRITE_HEIGHT = 32 * DEPRECATED_SCALE_FACTOR;

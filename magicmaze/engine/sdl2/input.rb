@@ -70,21 +70,21 @@ module MagicMaze
        
       }
       DEFAULT_ACTION_KEY_MAP = {
-        SDL2::Key::SPACE  => :cast_alternative_spell,
-        SDL2::Key::UP     => :move_up,
-        SDL2::Key::DOWN   => :move_down,
-        SDL2::Key::LEFT   => :move_left,
-        SDL2::Key::RIGHT  => :move_right,   
+        SDL2::Key::Scan::SPACE  => :cast_alternative_spell,
+        SDL2::Key::Scan::UP     => :move_up,
+        SDL2::Key::Scan::DOWN   => :move_down,
+        SDL2::Key::Scan::LEFT   => :move_left,
+        SDL2::Key::Scan::RIGHT  => :move_right,   
         
         # For OLPC 
-        SDL2::Key::KP_8   => :move_up,
-        SDL2::Key::KP_2   => :move_down,
-        SDL2::Key::KP_4   => :move_left,
-        SDL2::Key::KP_6   => :move_right,      
+        SDL2::Key::Scan::KP_8   => :move_up,
+        SDL2::Key::Scan::KP_2   => :move_down,
+        SDL2::Key::Scan::KP_4   => :move_left,
+        SDL2::Key::Scan::KP_6   => :move_right,      
 
         # For OLPC 
-        SDL2::Key::KP_1   => :cast_primary_spell,     # V
-        SDL2::Key::KP_9   => :cast_alternative_spell, # O
+        SDL2::Key::Scan::KP_1   => :cast_primary_spell,     # V
+        SDL2::Key::Scan::KP_9   => :cast_alternative_spell, # O
 
   
 
@@ -203,7 +203,7 @@ module MagicMaze
       
       attr_accessor :callback
       def initialize( callback, key_mode = :titlescreen )
-        SDL::Key.enable_key_repeat( 10, 10 )
+        # WAS: SDL2::Key.enable_key_repeat( 10, 10 )
         @callback = callback
         set_key_mode( key_mode )
 
@@ -298,9 +298,9 @@ module MagicMaze
       # Check for action keys that often will be pressed
       # and may be held down.
       def check_key_hold
-        SDL::Key.scan
+        # WAS: SDL2::Key.scan
         @keymap[:action_keys].each do |key, action|
-          if SDL::Key.press?( key )
+          if SDL2::Key.pressed?( key )
             call_callback( action )
           end
         end
@@ -309,7 +309,7 @@ module MagicMaze
       ##
       # Check for modifier keys (Ctrl, Shift etc)
       def check_modifier_keys
-        mod_state = SDL::Key.mod_state
+        mod_state = SDL2::Key::Mod.state
         @keymap[:modifier_keys].each do |key, action|
           if (mod_state & key) != 0 then
              call_callback( action )

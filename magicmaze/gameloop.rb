@@ -317,6 +317,7 @@ module MagicMaze
       # Fade in the background
       @graphics.put_screen( :background, false, false )
       draw_now
+      @graphics.put_screen( :background, false, false )
       @graphics.fade_in
 
       @state = :game_loop
@@ -374,8 +375,9 @@ module MagicMaze
     end
 
     def draw
-      @graphics.put_screen :background
+      @graphics.put_screen :background, false, false
       draw_where
+      @graphics.put_screen :background, false, false
     end
 
     def old_start

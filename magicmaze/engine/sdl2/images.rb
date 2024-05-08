@@ -49,7 +49,7 @@ module MagicMaze
 
     ## put up a background screen
     def put_screen( screen, center = false, flip = true )
-      puts "PUT SCREEN"
+      @screen.clear
       @screen.fill_rect(SDL2::Rect[0,0,@xsize,@ysize])
       image = @background_images[ screen ]
       x,y=0,0
@@ -58,9 +58,7 @@ module MagicMaze
         y = (@ysize - image.h)/2        
       end
       @screen.copy( image, nil, SDL2::Rect[x,y,image.w, image.h] )
-      @screen.present
-      @screen.copy( image, nil, SDL2::Rect[x,y,image.w, image.h] )
-      # @cached_drawing.clear
+      self.flip if flip
     end
 
     def put_background( sprite, x, y )
@@ -69,7 +67,7 @@ module MagicMaze
 
     def put_sprite( sprite, x, y )
       image = @sprite_images[sprite]
-      @screen.put( image, x, y ) if image   
+      @screen.copy( image, nil, SDL2::Rect[x, y, image.w, image.h] ) if image   
     end    
 
     def flip

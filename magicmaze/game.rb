@@ -129,7 +129,8 @@ module MagicMaze
     def title_loop
       puts "Title loop..."
       @graphics.fade_out
-      put_titlescreen
+      @graphics.put_screen( :titlescreen, false, true)
+      @graphics.put_screen( :titlescreen, false, false)
       @graphics.fade_in
       @state = :title_loop
 

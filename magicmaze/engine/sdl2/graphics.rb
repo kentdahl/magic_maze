@@ -140,9 +140,10 @@ module MagicMaze
       if col
         oldcol = @screen.draw_color
         if col.is_a?(Numeric)
-          col = COLOR_MAP[col] || [col, col, col]
+          newcol = COLOR_MAP[col]
+          newcol ||= [col, col / 2 , col]
         end
-        @screen.draw_color = col
+        @screen.draw_color = newcol || col
       end
 
       result = yield
@@ -600,7 +601,7 @@ module MagicMaze
     #
     def draw_immediately_twice
       yield
-      # @screen.flip
+      self.flip
       yield
     end
 
