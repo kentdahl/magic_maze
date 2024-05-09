@@ -46,7 +46,7 @@ module MagicMaze
       @graphics.put_screen( :background, false, false )
 
       draw_maze( where.x, where.y )
-      @graphics.update_player( @player.direction.value )
+      # @graphics.update_player( @player.direction.value )
       draw_hud
     end
 
@@ -394,6 +394,7 @@ module MagicMaze
             puts loading_message
             @graphics.clear_screen
             @graphics.show_long_message(loading_message, false, :fullscreen )
+            @graphics.flip
             @graphics.fade_in
           end
         end
