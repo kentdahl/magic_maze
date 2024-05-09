@@ -83,8 +83,6 @@ module MagicMaze
       @bpp = 8 # 16 wont work
       SDL2.init( SDL2::INIT_VIDEO )
       SDL2::Mouse::Cursor.hide
-      # TODO: SDL2::WM.set_caption( _("Magic Maze"),"" )
-      # SDL2::WM.icon=( SDL2::Surface.load("data/gfx/icon.png") )
 
       window_flags  = SDL2::Window::Flags::SHOWN
       window_flags |= SDL2::Window::Flags::FULLSCREEN if options[:fullscreen] 
@@ -110,7 +108,6 @@ module MagicMaze
 
       early_progress
 
-      # TODO: SDL2::WM.icon=( SDL2::Surface.load(gfx_path_to("icon.png")) )
       early_progress
       
       unless @screen.respond_to? :draw_rect then
