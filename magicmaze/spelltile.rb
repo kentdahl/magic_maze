@@ -84,8 +84,11 @@ module MagicMaze
     include SuperInit
 
     def draw_map_at( location = @caster, flip = true )
-      @caster.game_config.graphics.draw_map( location, flip )
+      gfx = @caster.game_config.graphics
+      gfx.put_screen(:background, false, false)
+      gfx.draw_map( location, false )
       @caster.game_config.draw_hud
+      gfx.flip if flip
     end
 
     def do_old_magic 

@@ -142,8 +142,13 @@ module MagicMaze
         old_entity = @grid.get(oldx, oldy) if oldx && oldy
         replaced_entity = @grid.get(x,y)       
 
-        warn_could_not_find_old_entity unless not old_entity or old_entity == @entity
-        warn_replacing_existing_entity  unless not replaced_entity
+        begin
+          warn_could_not_find_old_entity unless not old_entity or old_entity == @entity
+          warn_replacing_existing_entity  unless not replaced_entity
+        rescue Exception => err
+          puts "ERROR: " + err.to_s
+          return false
+        end
 
         # Remove our previous position on the map
         @grid.set(oldx,oldy, nil) if oldx&&oldy

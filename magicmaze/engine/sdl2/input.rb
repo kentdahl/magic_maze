@@ -65,41 +65,41 @@ module MagicMaze
         SDL2::Key::KP_MINUS  => :decrease_speed,
 
         # For OLPC 
-        SDL2::Key::KP3   => :next_primary_spell,     # X
-        SDL2::Key::KP7   => :next_secondary_spell,   # []
+        SDL2::Key::KP_3   => :next_primary_spell,     # X
+        SDL2::Key::KP_7   => :next_secondary_spell,   # []
        
       }
       DEFAULT_ACTION_KEY_MAP = {
-        SDL2::Key::SPACE  => :cast_alternative_spell,
-        SDL2::Key::UP     => :move_up,
-        SDL2::Key::DOWN   => :move_down,
-        SDL2::Key::LEFT   => :move_left,
-        SDL2::Key::RIGHT  => :move_right,   
+        SDL2::Key::Scan::SPACE  => :cast_alternative_spell,
+        SDL2::Key::Scan::UP     => :move_up,
+        SDL2::Key::Scan::DOWN   => :move_down,
+        SDL2::Key::Scan::LEFT   => :move_left,
+        SDL2::Key::Scan::RIGHT  => :move_right,   
         
         # For OLPC 
-        SDL2::Key::KP8   => :move_up,
-        SDL2::Key::KP2   => :move_down,
-        SDL2::Key::KP4   => :move_left,
-        SDL2::Key::KP6   => :move_right,      
+        SDL2::Key::Scan::KP_8   => :move_up,
+        SDL2::Key::Scan::KP_2   => :move_down,
+        SDL2::Key::Scan::KP_4   => :move_left,
+        SDL2::Key::Scan::KP_6   => :move_right,      
 
         # For OLPC 
-        SDL2::Key::KP1   => :cast_primary_spell,     # V
-        SDL2::Key::KP9   => :cast_alternative_spell, # O
+        SDL2::Key::Scan::KP_1   => :cast_primary_spell,     # V
+        SDL2::Key::Scan::KP_9   => :cast_alternative_spell, # O
 
   
 
       }
       DEFAULT_MODIFIER_KEY_MAP = {
-        SDL2::Key::MOD_LCTRL  => :cast_primary_spell,
-        SDL2::Key::MOD_LALT   => :cast_alternative_spell,
+        SDL2::Key::Mod::LCTRL  => :cast_primary_spell,
+        SDL2::Key::Mod::LALT   => :cast_alternative_spell,
 
       }
       DEFAULT_JOYSTICK_MAP = {
         :hat => {
-          SDL2::Joystick::HAT_UP    => :move_up,
-          SDL2::Joystick::HAT_DOWN  => :move_down,
-          SDL2::Joystick::HAT_LEFT  => :move_left,
-          SDL2::Joystick::HAT_RIGHT => :move_right,
+          SDL2::Joystick::Hat::UP    => :move_up,
+          SDL2::Joystick::Hat::DOWN  => :move_down,
+          SDL2::Joystick::Hat::LEFT  => :move_left,
+          SDL2::Joystick::Hat::RIGHT => :move_right,
         },
         :button => {
           0 => :cast_primary_spell,
@@ -151,9 +151,9 @@ module MagicMaze
             SDL2::Key::SPACE  => :open_game_menu,
 
             # For OLPC:
-            SDL2::Key::KP3   => :exit_game,      # X
-            SDL2::Key::KP1   => :open_game_menu, # V
-            SDL2::Key::KP7   => :start_game,     # 
+            SDL2::Key::KP_3   => :exit_game,      # X
+            SDL2::Key::KP_1   => :open_game_menu, # V
+            SDL2::Key::KP_7   => :start_game,     # 
 
 
           },
@@ -171,7 +171,7 @@ module MagicMaze
             SDL2::Key::Q      => :break,
             SDL2::Key::RETURN => :break,
             SDL2::Key::SPACE  => :break,
-            SDL2::Key::KP3    => :break,     # X
+            SDL2::Key::KP_3    => :break,     # X
 
           },
           :action_keys => EMPTY_KEY_MAP,
@@ -203,7 +203,7 @@ module MagicMaze
       
       attr_accessor :callback
       def initialize( callback, key_mode = :titlescreen )
-        SDL2::Key.enable_key_repeat( 10, 10 )
+        # WAS: SDL2::Key.enable_key_repeat( 10, 10 )
         @callback = callback
         set_key_mode( key_mode )
 
@@ -218,8 +218,8 @@ module MagicMaze
 
       def get_key_press
         begin
-          event = SDL2::Event2.poll
-        end until event.kind_of? SDL2::Event2::KeyUp
+          event = SDL2::Event.poll
+        end until event.kind_of? SDL2::Event::KeyUp
         return event
       end
 
@@ -231,8 +231,8 @@ module MagicMaze
         SDL2::Key::Y => true,
         SDL2::Key::J => true,
         # For OLPC:
-        SDL2::Key::KP3   => false,    # X
-        SDL2::Key::KP1   => true,     # V
+        SDL2::Key::KP_3   => false,    # X
+        SDL2::Key::KP_1   => true,     # V
       }
 
       def get_yes_no_answer
@@ -252,10 +252,10 @@ module MagicMaze
         SDL2::Key::RETURN => :select_menu_item,
         SDL2::Key::SPACE  => :select_menu_item,
         # For OLPC:
-        SDL2::Key::KP3   => :exit_menu,         # X
-        SDL2::Key::KP1   => :select_menu_item,  # V
-        SDL2::Key::KP8   => :previous_menu_item,
-        SDL2::Key::KP2   => :next_menu_item,
+        SDL2::Key::KP_3   => :exit_menu,         # X
+        SDL2::Key::KP_1   => :select_menu_item,  # V
+        SDL2::Key::KP_8   => :previous_menu_item,
+        SDL2::Key::KP_2   => :next_menu_item,
       }
 
       def get_menu_item_navigation_event
@@ -270,11 +270,11 @@ module MagicMaze
 
 
       
-      def check_input      
-        event = SDL2::Event2.poll
+      def check_input
+        event = SDL2::Event.poll
         case event
-        when SDL2::Event2::Quit then @callback.exit
-        when SDL2::Event2::KeyUp
+        when SDL2::Event::Quit then @callback.exit
+        when SDL2::Event::KeyUp
           check_key_press( event.sym )        
         end
         check_key_hold
@@ -298,9 +298,9 @@ module MagicMaze
       # Check for action keys that often will be pressed
       # and may be held down.
       def check_key_hold
-        SDL2::Key.scan
+        # WAS: SDL2::Key.scan
         @keymap[:action_keys].each do |key, action|
-          if SDL2::Key.press?( key )
+          if SDL2::Key.pressed?( key )
             call_callback( action )
           end
         end
@@ -309,7 +309,7 @@ module MagicMaze
       ##
       # Check for modifier keys (Ctrl, Shift etc)
       def check_modifier_keys
-        mod_state = SDL2::Key.mod_state
+        mod_state = SDL2::Key::Mod.state
         @keymap[:modifier_keys].each do |key, action|
           if (mod_state & key) != 0 then
              call_callback( action )
@@ -336,7 +336,7 @@ module MagicMaze
         joymap[:button].each do |button, action|
           if( @@joystick.button( button ) )
              call_callback( action )
-           end
+          end
         end if joymap[:button]
 
         # Check axis

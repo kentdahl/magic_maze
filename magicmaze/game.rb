@@ -14,7 +14,7 @@
 #require 'magicmaze/sound'
 
 current_engine = OVERRIDE_GRAPHICS_ENGINE if defined?(OVERRIDE_GRAPHICS_ENGINE) # 'gosu'
-current_engine ||= 'sdl'
+current_engine ||= 'sdl2'
 
 require "magicmaze/engine/#{current_engine}/images"
 require "magicmaze/engine/#{current_engine}/graphics"
@@ -64,6 +64,7 @@ module MagicMaze
                    Sound.get_sound(@options) 
                  rescue => sound_error
                    puts "ERROR: Could not initialize sound! Proceeding muted. (#{ sound_error })"
+                   raise sound_error
                    ::MagicMaze::NoSound.new
                  end
                else 
@@ -103,7 +104,7 @@ module MagicMaze
     def test_fade
       # THIS IS FOR TESTING!
       @graphics.fade_out
-      @graphics.put_screen( :titlescreen, true )
+      @graphics.put_screen( :titlescreen, false )
 
       @graphics.fade_out
       put_titlescreen
@@ -122,14 +123,15 @@ module MagicMaze
     end
     
     def put_titlescreen
-      @graphics.put_screen( :titlescreen, true )
+      @graphics.put_screen( :titlescreen, false ) # WAS: true )
     end
     
     
     def title_loop
       puts "Title loop..."
       @graphics.fade_out
-      put_titlescreen
+      @graphics.put_screen( :titlescreen, false, true)
+      @graphics.put_screen( :titlescreen, false, false)
       @graphics.fade_in
       @state = :title_loop
 
@@ -302,11 +304,13 @@ module MagicMaze
       input = Input::BreakCallback.make_control{ loop_active = false }
 
       @graphics.prepare_scrolltext( END_GAME_TEXT )
+      @graphics.put_screen( :endscreen, false, false)
 
       
       # Cycle some of the colours.
       while loop_active do
         @graphics.sleep_delay(10)
+        @graphics.put_screen( :endscreen, false, false)
         @graphics.update_scrolltext
         @graphics.rotate_palette
         @graphics.flip
