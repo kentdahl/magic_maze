@@ -141,7 +141,7 @@ module MagicMaze
         oldcol = @screen.draw_color
         if col.is_a?(Numeric)
           newcol = COLOR_MAP[col]
-          newcol ||= [col, col / 2 , col]
+          newcol ||= [col, col / 4 , col / 2]
         end
         @screen.draw_color = newcol || col
       end
@@ -175,9 +175,11 @@ module MagicMaze
       SDL2::TTF.init
       # Free font found at: http://www.squaregear.net/fonts/ 
       fontfile = gfx_path_to("fraktmod.ttf")
-      fontsize = [16, 32]
+      fontsize = [16, 24, 32]
       
       alternate_fonts = [
+        gfx_path_to("Isabella.ttf"),
+        # gfx_path_to("fraktmod.ttf"),
         "/usr/share/fonts/truetype/isabella/Isabella.ttf",
         "/usr/share/fonts/truetype/ttf-isabella/Isabella.ttf",
         "/usr/share/fonts/truetype/Isabella.ttf"
@@ -185,6 +187,7 @@ module MagicMaze
       
       begin
         @font16 = SDL2::TTF.open( fontfile, fontsize.first * self.scale_factor )
+        @font24 = SDL2::TTF.open( fontfile, fontsize[1]    * self.scale_factor )
         @font32 = SDL2::TTF.open( fontfile, fontsize.last  * self.scale_factor )
       rescue SDL2::Error => err
         # Debian font
@@ -219,6 +222,7 @@ module MagicMaze
         # end
         
         @background_images[key] = @screen.create_texture_from(source_image)
+        source_image.destroy
       }
     end
 
@@ -327,6 +331,8 @@ module MagicMaze
       @sprite_colorkey = spritemap_colkey
 
       puts "Sprites loaded: #{sprite_images.size}." if DEBUG
+
+      spritemap.destroy
 
       sprite_images
     end
@@ -526,10 +532,10 @@ module MagicMaze
       ]
       
       y_offset = 0
-      font = @font16
+      font = @font24
       lines.each{|line|
         write_smooth_text( line, 5, y_offset, font ) if line.size.nonzero? # Failed for RubySDL2.0.1 and Ruby1.9.1-p1 on empty string.
-        y_offset+= font.height
+        y_offset+= font.height * 3 / 4 
       }
       
       flip
@@ -759,7 +765,7 @@ module MagicMaze
         curr_menu_items = @menu_items
       end
 
-      screen_fill_rect( topx, topy, @menu_width,@menu_height )
+      screen_fill_rect( topx, topy, @menu_width,@menu_height, COL_BLACK )
       screen_draw_rect( topx, topy, @menu_width,@menu_height, COL_GRAY )
       y_offset = topy
       font = @font32
