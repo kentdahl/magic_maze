@@ -9,7 +9,7 @@
 # Please see README.txt and COPYING_GPL.txt for details.
 ############################################################
 
-require 'sdl'
+require 'sdl2'
 
 
 module MagicMaze
@@ -96,10 +96,10 @@ module MagicMaze
       }
       DEFAULT_JOYSTICK_MAP = {
         :hat => {
-          SDL::Joystick::HAT_UP    => :move_up,
-          SDL::Joystick::HAT_DOWN  => :move_down,
-          SDL::Joystick::HAT_LEFT  => :move_left,
-          SDL::Joystick::HAT_RIGHT => :move_right,
+          SDL2::Joystick::Hat::UP    => :move_up,
+          SDL2::Joystick::Hat::DOWN  => :move_down,
+          SDL2::Joystick::Hat::LEFT  => :move_left,
+          SDL2::Joystick::Hat::RIGHT => :move_right,
         },
         :button => {
           0 => :cast_primary_spell,
@@ -192,11 +192,11 @@ module MagicMaze
 
       def self.init_joystick( joy_num = 0)
         puts "Checking for joystick"
-        SDL.init( SDL::INIT_JOYSTICK )
-        if SDL::Joystick.num > joy_num then
+        SDL2.init( SDL2::INIT_JOYSTICK )
+        if SDL2::Joystick.num > joy_num then
           puts "Enabling joystick"
-          @@joystick = SDL::Joystick.open( joy_num )
-          puts "Joystick: " + SDL::Joystick.indexName( @@joystick.index )
+          @@joystick = SDL2::Joystick.open( joy_num )
+          puts "Joystick: " + SDL2::Joystick.indexName( @@joystick.index )
         end
       end
 
@@ -321,7 +321,7 @@ module MagicMaze
       # Check for joystick movement
       def check_joystick
         return unless @@joystick
-        SDL::Joystick.updateAll
+        SDL2::Joystick.updateAll
         joymap = @keymap[:joystick]
         
         # Check hat state...

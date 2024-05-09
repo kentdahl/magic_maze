@@ -68,7 +68,8 @@ module MagicMaze
         puts "Delay min/max: " + 
           @delay_stats.min.to_s + " / " + @delay_stats.max.to_s
       end
-      SDL.quit
+      @window.destroy ; @window = nil
+      # SDL2.quit
     end
 
     def screen_init(options)
@@ -81,7 +82,7 @@ module MagicMaze
       @ysize = FULLSCREEN[3] * @screen_scale_factor
       @bpp = 8 # 16 wont work
       SDL2.init( SDL2::INIT_VIDEO )
-      # TODO: SDL2::Mouse.hide
+      SDL2::Mouse::Cursor.hide
       # TODO: SDL2::WM.set_caption( _("Magic Maze"),"" )
       # SDL2::WM.icon=( SDL2::Surface.load("data/gfx/icon.png") )
 

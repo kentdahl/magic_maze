@@ -9,7 +9,7 @@
 # Please see README.txt and COPYING_GPL.txt for details.
 ############################################################
 
-require 'sdl'
+require 'sdl2'
 
 
 module MagicMaze
@@ -192,7 +192,7 @@ module MagicMaze
 
       def self.init_joystick( joy_num = 0)
         puts "Checking for joystick"
-        SDL.init( SDL::INIT_JOYSTICK )
+        SDL2.init( SDL::INIT_JOYSTICK )
         if SDL::Joystick.num > joy_num then
           puts "Enabling joystick"
           @@joystick = SDL::Joystick.open( joy_num )

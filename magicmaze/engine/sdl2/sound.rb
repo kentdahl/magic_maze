@@ -9,7 +9,7 @@
 # Please see README.txt and COPYING_GPL.txt for details.
 ############################################################
 
-require 'sdl'
+require 'sdl2'
 
 require 'magicmaze/sound'
 
@@ -40,33 +40,35 @@ module MagicMaze
 
     def initialize(options={})
       @options = options
-      SDL::Mixer.open
+      mix_flags = 0
+      SDL2::Mixer.init(mix_flags)
+      SDL2::Mixer.open
 
       @sounds = {}
       (1..4).each{|sound_no|
         filename = snd_path_to(sprintf("sound%d.wav", sound_no))
-        sound = SDL::Mixer::Wave.load( filename )
+        sound = SDL2::Mixer::Chunk.load( filename )
         @sounds[sound_no] = sound
       }
       volume = options[:volume] || 8
-      SDL::Mixer.set_volume( ALL_CHANNELS, 64*volume/10 )
+      SDL2::Mixer::Channels.set_volume( ALL_CHANNELS, 64*volume/10 )
     end
     
     def destroy
-      SDL::Mixer.set_volume( ALL_CHANNELS, 0 )
+      SDL2::Mixer::Channels.set_volume( ALL_CHANNELS, 0 )
     end
 
     def play_sound( sound_no )
       sound_no = SOUNDS[sound_no] unless sound_no.kind_of? Numeric
       wave = @sounds[sound_no]
-      SDL::Mixer.playChannel(sound_no,wave,0)
+      SDL2::Mixer::Channels.play(sound_no,wave,0)
     end
 
     def change_volume( way = 1, step = 8 )
-      old_vol = SDL::Mixer.set_volume( ALL_CHANNELS, -1 )
+      old_vol = SDL2::Mixer::Channels.set_volume( ALL_CHANNELS, -1 )
       new_vol = old_vol + way * step
       if new_vol.between?( 1, 128 )
-        SDL::Mixer.set_volume( ALL_CHANNELS, new_vol )
+        SDL2::Mixer::Channels.set_volume( ALL_CHANNELS, new_vol )
       end
     end
     

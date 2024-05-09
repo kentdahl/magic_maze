@@ -64,6 +64,7 @@ module MagicMaze
                    Sound.get_sound(@options) 
                  rescue => sound_error
                    puts "ERROR: Could not initialize sound! Proceeding muted. (#{ sound_error })"
+                   raise sound_error
                    ::MagicMaze::NoSound.new
                  end
                else 
@@ -103,7 +104,7 @@ module MagicMaze
     def test_fade
       # THIS IS FOR TESTING!
       @graphics.fade_out
-      @graphics.put_screen( :titlescreen, true )
+      @graphics.put_screen( :titlescreen, false )
 
       @graphics.fade_out
       put_titlescreen
