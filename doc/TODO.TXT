@@ -1,4 +1,5 @@
-TO DO
+## TO DO ##
+
 - ideas, suggestions, plans etc for Magic Maze.
 
 
@@ -16,9 +17,11 @@ MOVEMENT
 * filter diagonal input for OLPC rocker game pad.
 
 * mouse-aim
+- replace mouse pointer with "wand" or "sparkly star"
 
 * transform sprite (rotate) along movement/aim direction.
 - realtime would require SGE...
+  -- SDL2 copy_ex probably does this.
 
 
 GAMEPLAY
@@ -53,6 +56,7 @@ GAMEPLAY
 
 * Map editor
 - Educational; sharing maps?
+-- experimental map editor exists, give '-E' option to try it out.
 
 
 * Training level
@@ -73,13 +77,14 @@ MULTIPLAYER
     ("Can I move here? Can I shoot?") and
     and distributes diffs of the gameplay
     (Change tile X,Y from A to B etc)
+  -> separate project idea: "Magic Maze: Arcane Arena"
 
 
 
 JOYSTICK SUPPORT
-- should be easy, since SDL already provides it.
-
-- In Linux on my home system, as root:
+- needs proper testing on SDL2 version
+- Old instructions: 
+  -- In Linux on my home system, as root:
         modprobe emu10k1-gp
         modprobe analog
         modprobe joydev
