@@ -9,9 +9,6 @@
 # Please see README.txt and COPYING_GPL.txt for details.
 ############################################################
 
-#require 'magicmaze/graphics'
-#require 'magicmaze/input'
-#require 'magicmaze/sound'
 
 current_engine = OVERRIDE_GRAPHICS_ENGINE if defined?(OVERRIDE_GRAPHICS_ENGINE) # 'gosu'
 current_engine ||= 'sdl2'
@@ -102,7 +99,6 @@ module MagicMaze
     end
 
     def test_fade
-      # THIS IS FOR TESTING!
       @graphics.fade_out
       @graphics.put_screen( :titlescreen, false )
 
@@ -145,17 +141,9 @@ module MagicMaze
       load_checkpoints
       start_map_editor if @options[:editor]
 
-      puts "Starting loop..."
-      if @graphics.respond_to?(:start_loop)
-        # Gosu
-        puts "Gosu start loop"
-        @graphics.start_loop(self)
-      else
-        # SDL - manual loop
-        puts "Started SDL loop...."
-        while not @quit
-          title_loop
-        end
+      puts "Started SDL loop...."
+      while not @quit
+        title_loop
       end
       @graphics.fade_out
       save_checkpoints
@@ -290,12 +278,12 @@ module MagicMaze
     
 
     def show_end_game
-      @graphics.setup_rotating_palette( 193..255, :endscreen )
+      # TODO: setup_rotating_palette( 193..255, :endscreen )
 
       @graphics.put_screen( :endscreen)
       @graphics.fade_in do 
         @graphics.sleep_delay(10)
-        @graphics.rotate_palette
+        # TODO: rotate_palette
       end
       
       puts "Looping end game."
@@ -312,7 +300,7 @@ module MagicMaze
         @graphics.sleep_delay(10)
         @graphics.put_screen( :endscreen, false, false)
         @graphics.update_scrolltext
-        @graphics.rotate_palette
+        # TODO: rotate_palette
         @graphics.flip
         input.check_input
       end
@@ -323,7 +311,7 @@ module MagicMaze
       @graphics.put_screen( :endscreen )
       @graphics.fade_out do 
         @graphics.sleep_delay(10)
-        @graphics.rotate_palette
+        # TODO: rotate_palette
 
       end
       @graphics.clear_screen

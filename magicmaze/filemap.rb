@@ -77,7 +77,7 @@ module MagicMaze
     # Extract various data from the header part of the map.
     def extract_from_header( header_data_str )
       header_data = convert_string_to_bytes( header_data_str )
-      @checksum = header_data[16] + (header_data[17]<<8)
+      @checksum = header_data[16] + (header_data[17] << 8)
       @startx =   header_data[24]
       @starty =   header_data[25]
       @default_wall_tile = header_data[30]
