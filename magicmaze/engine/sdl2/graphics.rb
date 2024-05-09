@@ -287,8 +287,8 @@ module MagicMaze
 
       height = ( (@sprite_images.size / 10) + 1 ) * 32
 
-      spritemap = SDL2::Surface.new( SDL2::SRCCOLORKEY, @xsize, height, @screen )
-      spritemap.set_palette( SDL2::LOGPAL, @sprite_palette, 0 )
+      # spritemap = SDL2::Surface.new( SDL2::SRCCOLORKEY, @xsize, height, @screen )
+      # spritemap.set_palette( SDL2::LOGPAL, @sprite_palette, 0 )
 
       @sprite_images.each_with_index do|sprite, index|
         y = (index / 10)  * 32
@@ -414,6 +414,7 @@ module MagicMaze
     # Experimental view updating trying 
     # to refactor and separate view logic
     # from the GameLoop as much as possible.
+    ####################################
 
     def update_view_rows( center_row )
       @curr_view_y = MAZE_VIEW_RECTANGLE[1]

@@ -317,8 +317,6 @@ module MagicMaze
       @graphics.clear_screen
       @graphics.flip
 
-      @graphics.set_palette( nil )
-
       @state = :stopped_game
       
     end

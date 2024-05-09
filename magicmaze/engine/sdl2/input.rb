@@ -112,6 +112,7 @@ module MagicMaze
       # - :action_keys are triggered when held (nice for movement etc)
       # - :modifier_keys are also triggered when held, but is reserved for
       #   modifier keys (such as Ctrl, Alt, Shift etc)
+      #
       KEY_MAPS = {
         :in_game => { 
           :normal_keys => DEFAULT_KEY_MAP, 
@@ -154,7 +155,7 @@ module MagicMaze
             SDL2::Key::Q      => :break,
             SDL2::Key::RETURN => :break,
             SDL2::Key::SPACE  => :break,
-            SDL2::Key::KP_3    => :break,     # X
+            SDL2::Key::KP_3   => :break,     # X
 
           },
           :action_keys => EMPTY_KEY_MAP,

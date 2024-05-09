@@ -37,6 +37,7 @@ module MagicMaze
     # Cast a spell if there is enough mana.
     # Restore the mana if the spell fails.
     # The actual magic is relegated to do_magic.
+    #
     def cast_spell( caster, *args )
       @caster = caster
       if have_mana? then 
@@ -44,13 +45,16 @@ module MagicMaze
       end
     end      
 
+    ##
     # Consume release of trigger key...
+    #
     def consume_key_press
       @caster.game_config.input.get_key_press
     end
 
     ##
     # Return a true value if magic was done.
+    #
     def do_magic
       abstract_method_called
     end
@@ -179,7 +183,6 @@ module MagicMaze
     :spell_heal           => HealSpellTile.new( 14, 2, 2 ),
     :spell_summon_mana    => SummonManaSpellTile.new( 15, 0, 3, 2 ),
     :spell_spy_eye        => SpyEyeSpellTile.new( 16, 1 ),
-    # :spell_x2              => SpellTile.new( 18 ),
   }
 
 end

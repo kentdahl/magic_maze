@@ -118,6 +118,7 @@ module MagicMaze
 
     ##
     # Singleton graphics instance.
+    #
     def self.get_graphics(options={})
       @graphics_instance ||= MagicMaze::Graphics.new(options)
       @graphics_instance

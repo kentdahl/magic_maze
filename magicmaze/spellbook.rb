@@ -23,6 +23,7 @@ module MagicMaze
         
       ##
       # takes two hashes containing spell tiles.
+      #
       def initialize( primary_spells  = DEFAULT_ATTACK_SPELL_TILES, 
                      secondary_spells = DEFAULT_OTHER_SPELL_TILES,
                      spell_names = SPELL_NAMES)
@@ -36,9 +37,6 @@ module MagicMaze
         @spell_names[:primary].each(&insertion)
         tiles = secondary_spells
         @spell_names[:secondary].each(&insertion)
-        #:primary => primary_spells,
-        #  :secondary => secondary_spells
-        #}
         @spell_index = Hash.new(0)
       end
 

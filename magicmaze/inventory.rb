@@ -15,6 +15,7 @@ module MagicMaze
 
   ##
   # the backpack of our ol' wizard.
+  #
   class Inventory
     MAX_KEYS = 3
     tiles = DEFAULT_KEY_TILES
@@ -22,10 +23,6 @@ module MagicMaze
     tiles.each{|hashkey, keytile|
       KEY_TILES[keytile.color] = keytile
     }
-    #  :red =>    tiles[:red_key],
-    #  :blue =>   tiles[:blue_key], 
-    #  :yellow => tiles[:yellow_key]
-    #}
 
     def initialize
       @keys = Hash.new(0)

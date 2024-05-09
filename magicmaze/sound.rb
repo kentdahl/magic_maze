@@ -11,12 +11,10 @@
 
 
 module MagicMaze
-  ################################################
-  #
-  # SOUND_ENABLED = true unless defined? SOUND_ENABLED 
 
   ##
   # Dummy class for when we want no sound.
+  #
   class NoSound
     def method_missing(*a)
     end

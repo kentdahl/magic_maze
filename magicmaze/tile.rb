@@ -40,6 +40,7 @@ module MagicMaze
 
   ##
   # Man, I'm lazy...
+  #
   module SuperInit
     def initialize(*a)
       super(*a)
@@ -73,10 +74,14 @@ module MagicMaze
 
   end
 
+
   ########################################
+
+
   ## 
   # An in-game object tile type, 
   # such as keys, doors, etc.
+  #
   class ObjectTile < Tile
     include SuperInit
 
@@ -85,6 +90,7 @@ module MagicMaze
     # and the player.
     # Return true if the object has been "consumed"
     # and needs to be removed from the map.
+    #
     def collide_with_player( *args )
       false
     end
@@ -218,6 +224,7 @@ module MagicMaze
 
   ##
   # a Tile that is part of the background
+  #
   class BackgroundTile < Tile
     BACKGROUND_TILES_BEGIN = 58
     
@@ -235,8 +242,11 @@ module MagicMaze
 
 
   ########################################
+
+
   ## 
   # Some default object tiles.
+  #
   DEFAULT_KEY_TILES = {
     :red_key    => KeyTile.new(30, :red),
     :blue_key   => KeyTile.new(31, :blue),
@@ -273,18 +283,20 @@ module MagicMaze
     DEFAULT_DOOR_TILES,
   ].each{|i| DEFAULT_ALL_OBJECT_TILES.update(i) }
 
+  ##
   # gather them all i DEFAULT_TILES
+  #
   DEFAULT_TILES = Hash.new
   [ DEFAULT_OBJECT_TILES,
     DEFAULT_KEY_TILES,     
     DEFAULT_DOOR_TILES,
     DEFAULT_MONSTER_TILES
-    # DEFAULT_ATTACK_SPELL_TILES,
-    # DEFAULT_OTHER_SPELL_TILES,
   ].each{|i| DEFAULT_TILES.update(i) }
 
+  ##
   # Create reverse lookup hash for tiles.
   # No two tiles may have same sprite id!
+  #
   DEFAULT_TILES_ID_LOOKUP = Hash.new
   DEFAULT_TILES.each{|key,value|
     DEFAULT_TILES_ID_LOOKUP[ value.sprite_id ] = value
