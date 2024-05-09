@@ -193,7 +193,7 @@ module MagicMaze
       def self.init_joystick( joy_num = 0)
         puts "Checking for joystick"
         SDL2.init( SDL2::INIT_JOYSTICK )
-        if SDL2::Joystick.num > joy_num then
+        if SDL2::Joystick.num_connected_joysticks > joy_num then
           puts "Enabling joystick"
           @@joystick = SDL2::Joystick.open( joy_num )
           puts "Joystick: " + SDL2::Joystick.indexName( @@joystick.index )
