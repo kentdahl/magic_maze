@@ -41,65 +41,65 @@ module MagicMaze
     #
     class Control
       DEFAULT_KEY_MAP = {
-        SDL::Key::F1     => :helpscreen,
-        SDL::Key::H      => :helpscreen,
-        SDL::Key::F4     => :load_game,
-        SDL::Key::F5     => :save_game,
-        SDL::Key::F9     => :restart_level,
-        SDL::Key::R      => :restart_level,
+        SDL2::Key::F1     => :helpscreen,
+        SDL2::Key::H      => :helpscreen,
+        SDL2::Key::F4     => :load_game,
+        SDL2::Key::F5     => :save_game,
+        SDL2::Key::F9     => :restart_level,
+        SDL2::Key::R      => :restart_level,
 
-        SDL::Key::F12    => :toogle_fullscreen,
-        SDL::Key::ESCAPE => :escape,
-        SDL::Key::Q      => :escape,
-        SDL::Key::X      => :next_primary_spell,
-        SDL::Key::Z      => :previous_primary_spell,
-        SDL::Key::S      => :next_secondary_spell,
-        SDL::Key::A      => :previous_secondary_spell,
-        SDL::Key::P      => :pause_game,
-        SDL::Key::R      => :restart_level,
+        SDL2::Key::F12    => :toogle_fullscreen,
+        SDL2::Key::ESCAPE => :escape,
+        SDL2::Key::Q      => :escape,
+        SDL2::Key::X      => :next_primary_spell,
+        SDL2::Key::Z      => :previous_primary_spell,
+        SDL2::Key::S      => :next_secondary_spell,
+        SDL2::Key::A      => :previous_secondary_spell,
+        SDL2::Key::P      => :pause_game,
+        SDL2::Key::R      => :restart_level,
 
-        SDL::Key::PAGEUP   => :increase_volume,
-        SDL::Key::PAGEDOWN => :decrease_volume,
+        SDL2::Key::PAGEUP   => :increase_volume,
+        SDL2::Key::PAGEDOWN => :decrease_volume,
 
-        SDL::Key::KP_PLUS   => :increase_speed,
-        SDL::Key::KP_MINUS  => :decrease_speed,
+        SDL2::Key::KP_PLUS   => :increase_speed,
+        SDL2::Key::KP_MINUS  => :decrease_speed,
 
         # For OLPC 
-        SDL::Key::KP3   => :next_primary_spell,     # X
-        SDL::Key::KP7   => :next_secondary_spell,   # []
+        SDL2::Key::KP3   => :next_primary_spell,     # X
+        SDL2::Key::KP7   => :next_secondary_spell,   # []
        
       }
       DEFAULT_ACTION_KEY_MAP = {
-        SDL::Key::SPACE  => :cast_alternative_spell,
-        SDL::Key::UP     => :move_up,
-        SDL::Key::DOWN   => :move_down,
-        SDL::Key::LEFT   => :move_left,
-        SDL::Key::RIGHT  => :move_right,   
+        SDL2::Key::SPACE  => :cast_alternative_spell,
+        SDL2::Key::UP     => :move_up,
+        SDL2::Key::DOWN   => :move_down,
+        SDL2::Key::LEFT   => :move_left,
+        SDL2::Key::RIGHT  => :move_right,   
         
         # For OLPC 
-        SDL::Key::KP8   => :move_up,
-        SDL::Key::KP2   => :move_down,
-        SDL::Key::KP4   => :move_left,
-        SDL::Key::KP6   => :move_right,      
+        SDL2::Key::KP8   => :move_up,
+        SDL2::Key::KP2   => :move_down,
+        SDL2::Key::KP4   => :move_left,
+        SDL2::Key::KP6   => :move_right,      
 
         # For OLPC 
-        SDL::Key::KP1   => :cast_primary_spell,     # V
-        SDL::Key::KP9   => :cast_alternative_spell, # O
+        SDL2::Key::KP1   => :cast_primary_spell,     # V
+        SDL2::Key::KP9   => :cast_alternative_spell, # O
 
   
 
       }
       DEFAULT_MODIFIER_KEY_MAP = {
-        SDL::Key::MOD_LCTRL  => :cast_primary_spell,
-        SDL::Key::MOD_LALT   => :cast_alternative_spell,
+        SDL2::Key::MOD_LCTRL  => :cast_primary_spell,
+        SDL2::Key::MOD_LALT   => :cast_alternative_spell,
 
       }
       DEFAULT_JOYSTICK_MAP = {
         :hat => {
-          SDL::Joystick::HAT_UP    => :move_up,
-          SDL::Joystick::HAT_DOWN  => :move_down,
-          SDL::Joystick::HAT_LEFT  => :move_left,
-          SDL::Joystick::HAT_RIGHT => :move_right,
+          SDL2::Joystick::HAT_UP    => :move_up,
+          SDL2::Joystick::HAT_DOWN  => :move_down,
+          SDL2::Joystick::HAT_LEFT  => :move_left,
+          SDL2::Joystick::HAT_RIGHT => :move_right,
         },
         :button => {
           0 => :cast_primary_spell,
@@ -138,22 +138,22 @@ module MagicMaze
         },
         :titlescreen => {
           :normal_keys => {
-            SDL::Key::F1     => :test_helpscreen,
-            SDL::Key::F4     => :select_game_checkpoint,
-            SDL::Key::F6     => :test_fade,
-            SDL::Key::F7     => :test_endgame,
-            SDL::Key::F8     => :test_menu,
+            SDL2::Key::F1     => :test_helpscreen,
+            SDL2::Key::F4     => :select_game_checkpoint,
+            SDL2::Key::F6     => :test_fade,
+            SDL2::Key::F7     => :test_endgame,
+            SDL2::Key::F8     => :test_menu,
 
-            SDL::Key::F12    => :toogle_fullscreen,
-            SDL::Key::ESCAPE => :exit_game,
-            SDL::Key::Q      => :exit_game,
-            SDL::Key::RETURN => :open_game_menu,
-            SDL::Key::SPACE  => :open_game_menu,
+            SDL2::Key::F12    => :toogle_fullscreen,
+            SDL2::Key::ESCAPE => :exit_game,
+            SDL2::Key::Q      => :exit_game,
+            SDL2::Key::RETURN => :open_game_menu,
+            SDL2::Key::SPACE  => :open_game_menu,
 
             # For OLPC:
-            SDL::Key::KP3   => :exit_game,      # X
-            SDL::Key::KP1   => :open_game_menu, # V
-            SDL::Key::KP7   => :start_game,     # 
+            SDL2::Key::KP3   => :exit_game,      # X
+            SDL2::Key::KP1   => :open_game_menu, # V
+            SDL2::Key::KP7   => :start_game,     # 
 
 
           },
@@ -167,11 +167,11 @@ module MagicMaze
         },
         :break => {
           :normal_keys => {
-            SDL::Key::ESCAPE => :break,
-            SDL::Key::Q      => :break,
-            SDL::Key::RETURN => :break,
-            SDL::Key::SPACE  => :break,
-            SDL::Key::KP3    => :break,     # X
+            SDL2::Key::ESCAPE => :break,
+            SDL2::Key::Q      => :break,
+            SDL2::Key::RETURN => :break,
+            SDL2::Key::SPACE  => :break,
+            SDL2::Key::KP3    => :break,     # X
 
           },
           :action_keys => EMPTY_KEY_MAP,
@@ -192,18 +192,18 @@ module MagicMaze
 
       def self.init_joystick( joy_num = 0)
         puts "Checking for joystick"
-        SDL2.init( SDL::INIT_JOYSTICK )
-        if SDL::Joystick.num > joy_num then
+        SDL2.init( SDL2::INIT_JOYSTICK )
+        if SDL2::Joystick.num_connected_joysticks > joy_num then
           puts "Enabling joystick"
-          @@joystick = SDL::Joystick.open( joy_num )
-          puts "Joystick: " + SDL::Joystick.indexName( @@joystick.index )
+          @@joystick = SDL2::Joystick.open( joy_num )
+          puts "Joystick: " + SDL2::Joystick.indexName( @@joystick.index )
         end
       end
 
       
       attr_accessor :callback
       def initialize( callback, key_mode = :titlescreen )
-        SDL::Key.enable_key_repeat( 10, 10 )
+        SDL2::Key.enable_key_repeat( 10, 10 )
         @callback = callback
         set_key_mode( key_mode )
 
@@ -218,21 +218,21 @@ module MagicMaze
 
       def get_key_press
         begin
-          event = SDL::Event2.poll
-        end until event.kind_of? SDL::Event2::KeyUp
+          event = SDL2::Event2.poll
+        end until event.kind_of? SDL2::Event2::KeyUp
         return event
       end
 
 
       YES_NO_ANSWERS = {
-        SDL::Key::ESCAPE => false,
-        SDL::Key::Q => false,
-        SDL::Key::N => false,
-        SDL::Key::Y => true,
-        SDL::Key::J => true,
+        SDL2::Key::ESCAPE => false,
+        SDL2::Key::Q => false,
+        SDL2::Key::N => false,
+        SDL2::Key::Y => true,
+        SDL2::Key::J => true,
         # For OLPC:
-        SDL::Key::KP3   => false,    # X
-        SDL::Key::KP1   => true,     # V
+        SDL2::Key::KP3   => false,    # X
+        SDL2::Key::KP1   => true,     # V
       }
 
       def get_yes_no_answer
@@ -245,17 +245,17 @@ module MagicMaze
 
 
       MENU_NAVIGATION = {
-        SDL::Key::ESCAPE => :exit_menu,
-        SDL::Key::Q      => :exit_menu,
-        SDL::Key::UP     => :previous_menu_item,
-        SDL::Key::DOWN   => :next_menu_item,
-        SDL::Key::RETURN => :select_menu_item,
-        SDL::Key::SPACE  => :select_menu_item,
+        SDL2::Key::ESCAPE => :exit_menu,
+        SDL2::Key::Q      => :exit_menu,
+        SDL2::Key::UP     => :previous_menu_item,
+        SDL2::Key::DOWN   => :next_menu_item,
+        SDL2::Key::RETURN => :select_menu_item,
+        SDL2::Key::SPACE  => :select_menu_item,
         # For OLPC:
-        SDL::Key::KP3   => :exit_menu,         # X
-        SDL::Key::KP1   => :select_menu_item,  # V
-        SDL::Key::KP8   => :previous_menu_item,
-        SDL::Key::KP2   => :next_menu_item,
+        SDL2::Key::KP3   => :exit_menu,         # X
+        SDL2::Key::KP1   => :select_menu_item,  # V
+        SDL2::Key::KP8   => :previous_menu_item,
+        SDL2::Key::KP2   => :next_menu_item,
       }
 
       def get_menu_item_navigation_event
@@ -271,10 +271,10 @@ module MagicMaze
 
       
       def check_input      
-        event = SDL::Event2.poll
+        event = SDL2::Event2.poll
         case event
-        when SDL::Event2::Quit then @callback.exit
-        when SDL::Event2::KeyUp
+        when SDL2::Event2::Quit then @callback.exit
+        when SDL2::Event2::KeyUp
           check_key_press( event.sym )        
         end
         check_key_hold
@@ -298,9 +298,9 @@ module MagicMaze
       # Check for action keys that often will be pressed
       # and may be held down.
       def check_key_hold
-        SDL::Key.scan
+        SDL2::Key.scan
         @keymap[:action_keys].each do |key, action|
-          if SDL::Key.press?( key )
+          if SDL2::Key.press?( key )
             call_callback( action )
           end
         end
@@ -309,7 +309,7 @@ module MagicMaze
       ##
       # Check for modifier keys (Ctrl, Shift etc)
       def check_modifier_keys
-        mod_state = SDL::Key.mod_state
+        mod_state = SDL2::Key.mod_state
         @keymap[:modifier_keys].each do |key, action|
           if (mod_state & key) != 0 then
              call_callback( action )
@@ -321,7 +321,7 @@ module MagicMaze
       # Check for joystick movement
       def check_joystick
         return unless @@joystick
-        SDL::Joystick.updateAll
+        SDL2::Joystick.updateAll
         joymap = @keymap[:joystick]
         
         # Check hat state...
