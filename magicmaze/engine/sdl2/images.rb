@@ -111,12 +111,34 @@ module MagicMaze
 
     FADE_DURATION = 16
 
-    def fade_out( tr = 0, tg = 0, tb = 0, fade_duration = FADE_DURATION )
+    def fade_out( tr = 0, tg = 0, tb = 0, fade_duration = FADE_DURATION, ms_delay = 10 )
       # TODO:
+      range = fade_duration
+      (0...range).each {|i|
+        factor = (range-i).to_f / range
+        @window.brightness = factor
+        if block_given?
+          yield i, range
+        else
+          sleep_delay(ms_delay)
+        end
+      }
+      @window.brightness = 0.0
     end
 
-    def fade_in( fade_duration = FADE_DURATION )
+    def fade_in( fade_duration = FADE_DURATION, ms_delay = 10 )
       # TODO:
+      range = fade_duration
+      (0..range).each {|i|
+        factor = i.to_f / range
+        @window.brightness = factor
+        if block_given?
+          yield i, range
+        else
+          sleep_delay(ms_delay)
+        end
+      }
+      @window.brightness = 1.0
     end
 
 
