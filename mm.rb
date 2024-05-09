@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby
+#!/usr/bin/env ruby -I.
 
 ############################################################
 # This game is FREE as in both BEER and SPEECH. It is available and can 
