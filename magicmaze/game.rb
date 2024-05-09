@@ -303,11 +303,13 @@ module MagicMaze
       input = Input::BreakCallback.make_control{ loop_active = false }
 
       @graphics.prepare_scrolltext( END_GAME_TEXT )
+      @graphics.put_screen( :endscreen, false, false)
 
       
       # Cycle some of the colours.
       while loop_active do
         @graphics.sleep_delay(10)
+        @graphics.put_screen( :endscreen, false, false)
         @graphics.update_scrolltext
         @graphics.rotate_palette
         @graphics.flip

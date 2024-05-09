@@ -100,8 +100,8 @@ module MagicMaze
     end
 
     def set_palette( pal, start_color = 0 )
-      pal ||= @sprite_palette
-      @screen.set_palette( SDL2::PHYSPAL, pal, start_color )
+      # pal ||= @sprite_palette
+      # @screen.set_palette( SDL2::PHYSPAL, pal, start_color )
     end
 
     FADE_DURATION = 16

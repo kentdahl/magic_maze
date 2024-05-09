@@ -633,14 +633,22 @@ module MagicMaze
     # Update the scrolltext area at the bottom of the screen.
     #
     def update_scrolltext
+
+      w = @xsize
+      h = 40 * self.scale_factor
+
       
-      screen_fill_rect( 0, 200 * self.scale_factor, @xsize, 40 * self.scale_factor, 0 )
+      screen_fill_rect( 0, 200 * self.scale_factor, w, h, 0 )
 
       # SDL2::Surface.blit( @scrolltext, 
       #                  SDL2::Rect[@scrolltext_index, 0, @xsize, @scrolltext.h],
       #                  @screen, nil) # WAS: 0, 200 * self.scale_factor )
 
-      @screen.copy(@scrolltext, nil, SDL2::Rect[0, 200 * self.scale_factor, @scrolltext.w, @scrolltext.h])
+
+
+      @screen.copy(@scrolltext,
+        SDL2::Rect[@scrolltext_index, 0, w, h],
+        SDL2::Rect[0, 200 * self.scale_factor, w, h])
 
       @scrolltext_index += 1 * self.scale_factor
 
@@ -652,6 +660,8 @@ module MagicMaze
 
 
     def setup_rotating_palette( range, screen = nil )
+      puts "TODO: Rotating palette..."
+      return
       pal = @sprite_palette
       if screen
         pal = @background_images[ screen ].get_palette
