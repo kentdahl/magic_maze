@@ -75,7 +75,12 @@ module MagicMaze
     end
 
     def toogle_fullscreen
-      @screen.toggle_fullscreen
+      fsmode = @window.fullscreen_mode
+      if fsmode == 0 then
+        @window.fullscreen_mode = ::SDL2::Window::Flags::FULLSCREEN
+      else
+        @window.fullscreen_mode = 0
+      end
     end
 
     def write_text( text, x, y, font = @font16 )
