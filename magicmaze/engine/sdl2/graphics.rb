@@ -544,10 +544,10 @@ module MagicMaze
       rect = MAZE_VIEW_RECTANGLE
       screen_fill_rect(*rect)
       
-      if line_by_line then
-        self.flip 
-        screen_fill_rect(*rect)
-      end
+      # if line_by_line then
+      #   self.flip 
+      #   screen_fill_rect(*rect)
+      # end
 
       map_zoom_factor = 4
 
@@ -588,7 +588,7 @@ module MagicMaze
                           map_block_size,
                           COL_WHITE)
 
-        flip if line_by_line
+        # flip if line_by_line
 
       end
 

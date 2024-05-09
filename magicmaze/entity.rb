@@ -253,9 +253,11 @@ module MagicMaze
 
     def run
       @caster.game_config.time_synchronized_drawing do
-        if @old_loc && @old_loc.to_a != self.location.to_a then
+        if true # WAS: @old_loc && @old_loc.to_a != self.location.to_a then
+          gfx = @caster.game_config.graphics
+          gfx.put_screen(:background, false, false)
           @tile.draw_map_at(self, false)
-          @caster.game_config.graphics.flip
+          # gfx.flip
         end
         @old_loc = self.location.dup
         super # checks input
