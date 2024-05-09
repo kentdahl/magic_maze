@@ -7,7 +7,7 @@
 # Please see README.txt and COPYING_GPL.txt for details.
 #
 #  Magic Maze - a simple and low-tech monster-bashing maze game.
-#  Copyright (C) 2004-2008 Kent Dahl
+#  Copyright (C) 2004-2024 Kent Dahl
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
