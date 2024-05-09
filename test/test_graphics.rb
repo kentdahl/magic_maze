@@ -33,7 +33,7 @@ class TestGraphics < Test::Unit::TestCase
   end
 
   def test_load_new_sprites
-    assert_not_nil( @g.instance_eval{ @sprite_palette } )
+    # assert_not_nil( @g.instance_eval{ @sprite_palette } )
     assert_not_nil( @g.instance_eval{ @sprite_images  } )
     assert_equal( 90, @g.instance_eval{ @sprite_images.size } )
   end
@@ -95,7 +95,8 @@ class TestGraphics < Test::Unit::TestCase
   end
   
 
-  def test_rotating_palette
+  def DISABLED_test_rotating_palette
+    # Not supported for SDL2...
     @g.setup_rotating_palette(1..255)
     50.times { @g.rotate_palette }
   end

@@ -615,15 +615,16 @@ module MagicMaze
       font = @font32
       textsize = font.size_text( text )
 
-      @scrolltext = SDL2::Surface.new( # WAS: SDL2::HWSURFACE, #|SDL2::SRCCOLORKEY,
-                                    textsize.first, textsize.last, @screen)
+      # @scrolltext = SDL2::Surface.new( # WAS: SDL2::HWSURFACE, #|SDL2::SRCCOLORKEY,
+      #                              textsize.first, textsize.last, 16) # @screen)
 
-      @scrolltext.set_palette( SDL2::LOGPAL|SDL2::PHYSPAL, @sprite_palette, 0 )
-      @scrolltext.setColorKey( SDL2::SRCCOLORKEY || SDL2::RLEACCEL ,0)
+      # @scrolltext.set_palette( SDL2::LOGPAL|SDL2::PHYSPAL, @sprite_palette, 0 )
+      # @scrolltext.setColorKey( SDL2::SRCCOLORKEY || SDL2::RLEACCEL ,0)
 
 
       # TODO: font.drawBlendedUTF8( @scrolltext, text, 0, 0,  255, 255, 255 )
-      # => scrolltext_surface = font.render_blended( text, [0xFF, 0xFF, 0xFF])
+      @scrolltext_surf = font.render_blended( text, [0xFF, 0xFF, 0xFF])
+      @scrolltext = @screen.create_texture_from(@scrolltext_surf)
       @scrolltext_index = - @xsize
     end
 
@@ -635,9 +636,11 @@ module MagicMaze
       
       screen_fill_rect( 0, 200 * self.scale_factor, @xsize, 40 * self.scale_factor, 0 )
 
-      SDL.blit_surface( @scrolltext, 
-                       @scrolltext_index, 0, @xsize, @scrolltext.h,
-                       @screen, 0, 200 * self.scale_factor )
+      # SDL2::Surface.blit( @scrolltext, 
+      #                  SDL2::Rect[@scrolltext_index, 0, @xsize, @scrolltext.h],
+      #                  @screen, nil) # WAS: 0, 200 * self.scale_factor )
+
+      @screen.copy(@scrolltext, nil, SDL2::Rect[0, 200 * self.scale_factor, @scrolltext.w, @scrolltext.h])
 
       @scrolltext_index += 1 * self.scale_factor
 

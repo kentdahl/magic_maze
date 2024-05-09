@@ -60,7 +60,7 @@ class TestSpellTile < Test::Unit::TestCase
     assert_equal nil, @used_cost
   end
 
-  def test_spell_fail_have_mana 
+  def test_spell_fail_have_mana
     @have_mana = false
     @spell.should_do_magic = true
     @spell.cast_spell( self )
@@ -69,7 +69,7 @@ class TestSpellTile < Test::Unit::TestCase
     assert_equal nil, @used_cost
   end
 
-  def test_spell_fail_have_mana 
+  def test_spell_fail_have_mana_dupe
     @have_mana = false
     @spell.should_do_magic = true
     @spell.cast_spell( self )
