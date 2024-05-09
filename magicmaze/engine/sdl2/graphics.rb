@@ -87,7 +87,7 @@ module MagicMaze
 
       window_flags  = SDL2::Window::Flags::SHOWN
       window_flags |= SDL2::Window::Flags::FULLSCREEN if options[:fullscreen] 
-      window_flags |= SDL2::Window::Flags::RESIZABLE
+      # window_flags |= SDL2::Window::Flags::RESIZABLE
 
       @window_pos_x = @window_pos_y = SDL2::Window::POS_CENTERED # WAS: UNDEFINED
 
@@ -204,21 +204,21 @@ module MagicMaze
       SCREEN_IMAGES.each{|key, filename|
         source_image = SDL2::Surface.load( gfx_path_to(filename) )
         @progress_msg += "." ; early_progress
-        if self.scale_factor != 1 then
-          scaled_image = SDL2::Surface.new( # SDL2::SWSURFACE, 
-                                        source_image.w * self.scale_factor, 
-                                        source_image.h * self.scale_factor,
-                                        8)
-                                          # WAS: @screen)
-          # scaled_image.set_palette( SDL2::LOGPAL|SDL2::PHYSPAL, 
-          #                           source_image.get_palette, 0 )
-          scaled_image.color_key = source_image.pixel(0, 0)
-          linear_scale_image(source_image,0,0, scaled_image, self.scale_factor )
-        else
-          scaled_image = source_image
-        end
+        # if self.scale_factor != 1 then
+        #   scaled_image = SDL2::Surface.new( # SDL2::SWSURFACE, 
+        #                                 source_image.w * self.scale_factor, 
+        #                                 source_image.h * self.scale_factor,
+        #                                 8)
+        #                                   # WAS: @screen)
+        #   # scaled_image.set_palette( SDL2::LOGPAL|SDL2::PHYSPAL, 
+        #   #                           source_image.get_palette, 0 )
+        #   scaled_image.color_key = source_image.pixel(0, 0)
+        #   linear_scale_image(source_image,0,0, scaled_image, self.scale_factor )
+        # else
+        #   scaled_image = source_image
+        # end
         
-        @background_images[key] = @screen.create_texture_from(scaled_image)
+        @background_images[key] = @screen.create_texture_from(source_image)
       }
     end
 
@@ -279,8 +279,9 @@ module MagicMaze
       puts "Loading sprites..." if DEBUG
       sprite_images = []
       begin
-        spritemap = SDL2::Surface.load( gfx_path_to('sprites.pcx') )
+        spritemap = SDL2::Surface.load( gfx_path_to('sprites.png') )
       rescue
+        puts "FAILED: loading sprites!"
         return nil
       end
 
@@ -295,7 +296,7 @@ module MagicMaze
         @progress_msg += "." ; early_progress
         (0...10).each do|column|
           sprite = SDL2::Surface.new( # WAS: SDL2::HWSURFACE, #|SDL2::SRCCOLORKEY,
-                                    SPRITE_WIDTH, SPRITE_HEIGHT, 8) # WAS: @screen)
+                                    SPRITE_WIDTH, SPRITE_HEIGHT, spritemap.bits_per_pixel) # WAS: @screen)
           # WAS: mode =  SDL2::LOGPAL|SDL2::PHYSPAL
 
           x =  column * 32
@@ -307,7 +308,7 @@ module MagicMaze
           # WAS: sprite.fill_rect(0,0,SPRITE_WIDTH,SPRITE_HEIGHT,3)
 
           if self.scale_factor == 1 then
-            SDL2::Surface.blit(spritemap,SDL2::Rect[x,y,w,h], sprite, nil )
+            SDL2::Surface.blit(spritemap,SDL2::Rect[x,y,w,h], sprite, SDL2::Rect[0,0,w,h] )
           else
             linear_scale_image(spritemap,x,y, sprite, self.scale_factor )
           end
@@ -358,7 +359,7 @@ module MagicMaze
 
 
     def write_score( score )
-      return if cached_drawing_valid?(:score, score )
+      # return if cached_drawing_valid?(:score, score )
 
       text = sprintf "%9d", score   # fails on EeePC
       # text = sprintf "%09d", score # old safe one.
@@ -432,7 +433,7 @@ module MagicMaze
     ##
     # assumes life and mana are in range (0..100)
     def update_life_and_mana( life, mana )
-      return if cached_drawing_valid?(:life_and_mana, life.hash ^ mana.hash )
+      # return if cached_drawing_valid?(:life_and_mana, life.hash ^ mana.hash )
 
       rect = LIFE_MANA_RECTANGLE
       screen_fill_rect(*rect) 
@@ -459,10 +460,11 @@ module MagicMaze
     end
 
     def update_spells( primary, secondary )
-      return if cached_drawing_valid?(:spells, primary.hash ^ secondary.hash )
+      # return if cached_drawing_valid?(:spells, primary.hash ^ secondary.hash )
 
       rect1 = SPELL_RECTANGLE
       rect2 = ALT_SPELL_RECTANGLE
+      # @screen.draw_color = [255,0,128]
       screen_fill_rect( *rect1 )
       put_sprite( primary, *rect1[0,2]) 
       screen_fill_rect( *rect2 )

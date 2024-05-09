@@ -67,7 +67,7 @@ module MagicMaze
 
     def put_sprite( sprite, x, y )
       image = @sprite_images[sprite]
-      @screen.copy( image, nil, SDL2::Rect[x, y, image.w, image.h] ) if image   
+      @screen.copy( image, nil, SDL2::Rect[x, y, image.w, image.h] ) # if image   
     end    
 
     def flip
@@ -156,7 +156,8 @@ module MagicMaze
 
     def clear_screen
       @screen.draw_color = [0,0,0]
-      @screen.fill_rect( SDL2::Rect.new(0, 0, @xsize, @ysize) )
+      @screen.clear
+      # @screen.fill_rect( SDL2::Rect.new(0, 0, @xsize, @ysize) )
     end
 
     def sleep_delay( sleep_ms = 1 )

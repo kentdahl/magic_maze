@@ -37,13 +37,16 @@ module MagicMaze
     end
 
     def draw_now
-      draw_where ; @graphics.flip
+      draw_where; @graphics.flip
     end
 
 
     def draw_where(where=@player.location)
+      @graphics.clear_screen
+      @graphics.put_screen( :background, false, false )
+
       draw_maze( where.x, where.y )
-      # @graphics.update_player( @player.direction.value )
+      @graphics.update_player( @player.direction.value )
       draw_hud
     end
 
@@ -315,15 +318,16 @@ module MagicMaze
       puts "Game loop"  
       
       # Fade in the background
-      @graphics.put_screen( :background, false, false )
+#      @graphics.put_screen( :background, false, false )
       draw_now
-      @graphics.put_screen( :background, false, false )
+#      @graphics.put_screen( :background, false, false )
       @graphics.fade_in
 
       @state = :game_loop
       while @state == :game_loop
 
         @graphics.time_synchronized(@game_delay) do 
+          # @graphics.put_screen( :background, false, false ) # TODO: needed?
           draw_now
 
           @movement = 0
@@ -377,7 +381,7 @@ module MagicMaze
     def draw
       @graphics.put_screen :background, false, false
       draw_where
-      @graphics.put_screen :background, false, false
+      @graphics.put_screen :background, false, true
     end
 
     def old_start
@@ -387,6 +391,7 @@ module MagicMaze
             # Loading message as soon as title has been loaded.
             loading_message = _("Entering level %s") % level.to_s + 
               "\n" + _(map_title) + "\n"+ _("Get ready!")
+            puts loading_message
             @graphics.clear_screen
             @graphics.show_long_message(loading_message, false, :fullscreen )
             @graphics.fade_in
