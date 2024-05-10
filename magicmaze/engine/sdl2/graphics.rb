@@ -59,12 +59,12 @@ module MagicMaze
     def screen_init(options)
       puts "Setting up graphics..." if DEBUG
 
-      @scale_factor ||= SCALE_FACTOR
+      @scale_factor ||= options[:scale] || SCALE_FACTOR
       @screen_scale_factor ||= @scale_factor
 
       @xsize = FULLSCREEN[2] * @screen_scale_factor
       @ysize = FULLSCREEN[3] * @screen_scale_factor
-      @bpp = 8 # 16 wont work
+
       SDL2.init( SDL2::INIT_VIDEO )
       SDL2::Mouse::Cursor.hide
 
@@ -84,6 +84,7 @@ module MagicMaze
       if self.scale_factor > 1
         @screen.scale = [@scale_factor, @scale_factor]
         @screen_scale_factor = @scale_factor
+        # Leave the scaling to the screen renderer.
         @scale_factor = 1
       end
 
