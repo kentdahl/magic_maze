@@ -147,7 +147,7 @@ module MagicMaze
             :button => {
               1 => :start_game,
             }
-          }
+          },
           :joystick => {
             :button => {
               0 => :start_game,
