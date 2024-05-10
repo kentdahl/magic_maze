@@ -23,18 +23,25 @@ module MagicMaze
   ## 
   # an object representing a simple
   # tile sprite in the game.
+  #
   class Tile
     include Abstract
     attr_reader :sprite_id
     def initialize( sprite_id = nil )
       @sprite_id = sprite_id
     end
+
     ##
     # Used by the map editor (or Dungeon Master player)
+    #
     def cast_spell( caster, *args )
       loc = caster.location
       dx, dy = caster.direction.to_2D_vector
-      loc.map.set_any_object(loc.x + dx, loc.y + dy, self) rescue puts "Outside map!"
+      loc.map.set_any_object(loc.x + dx, loc.y + dy, self) rescue log_tile_error("Tile outside map!")
+    end
+
+    def log_tile_error(error, comment = nil)
+      puts "TILE ERROR: " + error.to_s 
     end
   end
 
@@ -212,7 +219,7 @@ module MagicMaze
     def cast_spell( caster, *args )
       loc = caster.location
       dx, dy = caster.direction.to_2D_vector
-      loc.map.set_any_object(loc.x + dx, loc.y + dy, self) rescue puts "Outside map!"
+      loc.map.set_any_object(loc.x + dx, loc.y + dy, self) rescue puts "Door outside map!"
     end
 
   end
@@ -235,6 +242,17 @@ module MagicMaze
       super( sprite_id + BACKGROUND_TILES_BEGIN )
       @blocked = blocked
     end
+
+
+    ##
+    # Used by the map editor (or Dungeon Master player)
+    #
+    def cast_spell( caster, *args )
+      loc = caster.location
+      dx, dy = caster.direction.to_2D_vector
+      loc.map.set_background(loc.x + dx, loc.y + dy, self) rescue log_tile_error("Floor outside map!")
+    end
+
   end
 
 
@@ -283,6 +301,12 @@ module MagicMaze
     DEFAULT_DOOR_TILES,
   ].each{|i| DEFAULT_ALL_OBJECT_TILES.update(i) }
 
+
+  DEFAULT_FLOOR_TILES = Hash.new
+  (0..29).each_with_index do |index|
+    DEFAULT_FLOOR_TILES[ ("floor%02d"%index).intern ] = BackgroundTile.new(index)
+  end
+
   ##
   # gather them all i DEFAULT_TILES
   #
@@ -290,7 +314,8 @@ module MagicMaze
   [ DEFAULT_OBJECT_TILES,
     DEFAULT_KEY_TILES,     
     DEFAULT_DOOR_TILES,
-    DEFAULT_MONSTER_TILES
+    DEFAULT_MONSTER_TILES,
+    DEFAULT_FLOOR_TILES,
   ].each{|i| DEFAULT_TILES.update(i) }
 
   ##
