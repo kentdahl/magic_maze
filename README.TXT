@@ -104,7 +104,7 @@ The following command-line options are available:
 ___________________________________________________
 *** Requirements ***
 
-* Ruby 3.x (or higher)
+* Ruby 2.5.x, 3.2.x or higher
   - http://www.ruby-lang.org/
 
 * SDL, SDL_image, SDL_mixer (version 2.25 or higher?)
@@ -112,7 +112,8 @@ ___________________________________________________
 
 * Ruby-SDL 0.3.6 (or higher)
   - https://ohai.github.io/ruby-sdl2/
-
+  - Install using rubygems:
+       gem install ruby-sdl2
 ___________________________________________________
 *** Web-site ***
 
