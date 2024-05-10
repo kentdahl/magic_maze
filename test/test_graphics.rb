@@ -93,13 +93,6 @@ class TestGraphics < Test::Unit::TestCase
     @g.prepare_scrolltext("This is a" + "long, " * 50 + " long text string... ")
     500.times { @g.update_scrolltext; }
   end
-  
-
-  def DISABLED_test_rotating_palette
-    # Not supported for SDL2...
-    @g.setup_rotating_palette(1..255)
-    50.times { @g.rotate_palette }
-  end
 
   def test_setup_menu
     @g.setup_menu( %w{OK Cancel} )

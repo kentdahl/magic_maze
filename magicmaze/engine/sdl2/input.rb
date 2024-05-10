@@ -1,6 +1,6 @@
 ############################################################
 # Magic Maze - a simple and low-tech monster-bashing maze game.
-# Copyright (C) 2004-2008 Kent Dahl
+# Copyright (C) 2004-2024 Kent Dahl
 #
 # This game is FREE as in both BEER and SPEECH. 
 # It is available and can be distributed under the terms of 
@@ -11,30 +11,13 @@
 
 require 'sdl2'
 
+require 'magicmaze/input'
 
 module MagicMaze
 
   ##
   # module for handling input from the user.
   module Input
-
-
-    ##
-    # Callback for implementing states where 
-    # keys can only be used to break out of a loop or similar
-    #
-    class BreakCallback
-      def initialize( block )
-        @block = block
-      end
-      def callback
-        @block.call
-      end
-      alias :break :callback
-      def self.make_control( key_mode = :break, &block )
-        Control.new( self.new( block ), key_mode )
-      end
-    end
 
     ##
     # Control input.
@@ -129,6 +112,7 @@ module MagicMaze
       # - :action_keys are triggered when held (nice for movement etc)
       # - :modifier_keys are also triggered when held, but is reserved for
       #   modifier keys (such as Ctrl, Alt, Shift etc)
+      #
       KEY_MAPS = {
         :in_game => { 
           :normal_keys => DEFAULT_KEY_MAP, 
@@ -171,7 +155,7 @@ module MagicMaze
             SDL2::Key::Q      => :break,
             SDL2::Key::RETURN => :break,
             SDL2::Key::SPACE  => :break,
-            SDL2::Key::KP_3    => :break,     # X
+            SDL2::Key::KP_3   => :break,     # X
 
           },
           :action_keys => EMPTY_KEY_MAP,

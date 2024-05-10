@@ -1,6 +1,6 @@
 ############################################################
 # Magic Maze - a simple and low-tech monster-bashing maze game.
-# Copyright (C) 2004-2008 Kent Dahl
+# Copyright (C) 2004-2024 Kent Dahl
 #
 # This game is FREE as in both BEER and SPEECH. 
 # It is available and can be distributed under the terms of 
@@ -26,7 +26,7 @@ module MagicMaze
       :endscreen   => 'end.png',
     }
 
-    SCALE_FACTOR = (self.const_defined?("OVERRIDE_GRAPHICS_SCALE_FACTOR") ? OVERRIDE_GRAPHICS_SCALE_FACTOR : 1)
+    SCALE_FACTOR = (self.const_defined?("OVERRIDE_GRAPHICS_SCALE_FACTOR") ? OVERRIDE_GRAPHICS_SCALE_FACTOR : 2)
     DEPRECATED_SCALE_FACTOR = 1
 
     BACKGROUND_TILES_BEGIN = BackgroundTile::BACKGROUND_TILES_BEGIN
@@ -118,6 +118,7 @@ module MagicMaze
 
     ##
     # Singleton graphics instance.
+    #
     def self.get_graphics(options={})
       @graphics_instance ||= MagicMaze::Graphics.new(options)
       @graphics_instance

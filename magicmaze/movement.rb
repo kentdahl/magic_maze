@@ -1,6 +1,6 @@
 ############################################################
 # Magic Maze - a simple and low-tech monster-bashing maze game.
-# Copyright (C) 2004-2008 Kent Dahl
+# Copyright (C) 2004-2024 Kent Dahl
 #
 # This game is FREE as in both BEER and SPEECH. 
 # It is available and can be distributed under the terms of 
@@ -24,7 +24,7 @@ module MagicMaze
     # value of the location!
     # It must return a value that evaluates to true 
     # if coordinates were altered and false if not.
-    # 
+    #
     def set_coords!( x, y )
       @x = x
       @y = y
@@ -67,6 +67,7 @@ module MagicMaze
 
   ##
   # a 2D location inside and constrained by a map.
+  #
   class MapLocation < Location
     attr_reader :map
     def initialize( map, *args)
@@ -78,6 +79,7 @@ module MagicMaze
     # conditional setting of coordinates.
     # Returns self if coordinates were set.
     # Returns nil if new coordinates were disallowed.
+    #
     def set_coords!(x,y)
       if @map.is_within?( x, y ) and allowed_access_to?( x, y )
         super(x,y)
@@ -88,6 +90,7 @@ module MagicMaze
 
     ##
     # may someone go to x,y?
+    #
     def allowed_access_to?( x, y )
       not @map.get_background(x,y).blocked? 
     end
@@ -99,6 +102,7 @@ module MagicMaze
     ## 
     # get the tile/object/entity from the given grid
     # at the current location on the map.
+    #
     def get(grid_type = :object)
       @map.send(grid_type).get( @x, @y )
     end
@@ -117,6 +121,7 @@ module MagicMaze
 
   ## 
   # an entity on the map.
+  #
   class GeneralEntityLocation < MapLocation
     attr_reader :entity
     def initialize( entity_type, entity, *args)
@@ -221,6 +226,7 @@ module MagicMaze
 
   ##
   # a 4-way compass direction.
+  #
   class Direction
     MAX = 3
     MIN = 0
@@ -292,6 +298,7 @@ module MagicMaze
 
     ##
     # Constant directions.
+    ##
     N = NORTH = constant(N_ID)
     E = EAST  = constant(E_ID)
     S = SOUTH = constant(S_ID)

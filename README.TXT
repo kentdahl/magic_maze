@@ -12,7 +12,7 @@
         (1999)      Version  1.22
         (2004)      Version  1.4.1
         (2008)      Version  1.4.3
-        (202x)      Version  1.5.x
+        (2024)      Version  1.5.x
 
  This game is FREE as in both BEER and SPEECH.
       (Ruby and/or GPL licence)
@@ -30,15 +30,16 @@ It was originally inspired by playing Gauntlet II on the Atari ST.
 ___________________________________________________
 *** Magic Maze and a Half ***
 
-The 1.4.x (and subsequent 1.5.x) versions of 
-Magic Maze is dubbed "Magic Maze and a Half", 
-and is a port of MM to the language Ruby using SDL. 
+The 1.4.x versions of Magic Maze is dubbed "Magic Maze and a Half",
+and was the initial port of MM to Ruby using SDL.
 
+Subsequent 1.5.x versions are for porting to Ruby-SDL2 and
+updating Ruby version.
 It does not aim to introduce major new gameplay changes,
 but some upgrades and improvements will rear their heads.
 
 Hopefully there will be a playable version by the time
-of the 10 year anniversary of the development start of
+of the 30 year anniversary of the development start of
 the original Turbo Pascal version, which began in
 November 1994. 
 
@@ -96,21 +97,23 @@ The following command-line options are available:
 --fullscreen    Start in fullscreen mode
 --scale         Scale the graphics and resolution up (1-5)
 --savedir       Directory to put savegame.
+--datadir       Asset data directory path.
 --loadgame      Automatically load the savegame.
 
 
 ___________________________________________________
 *** Requirements ***
 
-* Ruby 1.8 (or higher)
+* Ruby 2.5.x, 3.2.x or higher
   - http://www.ruby-lang.org/
 
-* SDL, SDL_image, SDL_mixer (version 1.2 or higher?)
+* SDL, SDL_image, SDL_mixer (version 2.25 or higher?)
   - http://www.libsdl.org/
 
-* Ruby-SDL 1.3.x (or higher)
-  - http://www.kmc.gr.jp/~ohai/rubysdl.en.html
-
+* Ruby-SDL 0.3.6 (or higher)
+  - https://ohai.github.io/ruby-sdl2/
+  - Install using rubygems:
+       gem install ruby-sdl2
 ___________________________________________________
 *** Web-site ***
 

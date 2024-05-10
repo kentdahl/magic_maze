@@ -1,6 +1,6 @@
 ############################################################
 # Magic Maze - a simple and low-tech monster-bashing maze game.
-# Copyright (C) 2004-2008 Kent Dahl
+# Copyright (C) 2004-2024 Kent Dahl
 #
 # This game is FREE as in both BEER and SPEECH. 
 # It is available and can be distributed under the terms of 
@@ -22,7 +22,6 @@ module MagicMaze
   module DrawLoop
   
     def follow_entity(leader)
-      # puts "Following #{leader}..."
       time_synchronized_drawing do
         draw_where(leader.location)
       end
@@ -46,7 +45,6 @@ module MagicMaze
       @graphics.put_screen( :background, false, false )
 
       draw_maze( where.x, where.y )
-      # @graphics.update_player( @player.direction.value )
       draw_hud
     end
 
@@ -73,11 +71,8 @@ module MagicMaze
     def alternative_inner_drawing
       @map.all_tiles_at( current_x, current_y ) do
         |background, object, entity, spiritual|
-        # background = @map.background.get(current_x,current_y)
         @graphics.update_view_background_block( background.sprite_id )
-        # object = @map.object.get(current_x,current_y)
         @graphics.update_view_block( object.sprite_id ) if object
-        # entity = @map.entity.get(current_x,current_y)
         @graphics.update_view_block( entity.sprite_id ) if entity
       end
     end
@@ -315,19 +310,14 @@ module MagicMaze
 
 
     def game_loop
-      puts "Game loop"  
-      
-      # Fade in the background
-#      @graphics.put_screen( :background, false, false )
       draw_now
-#      @graphics.put_screen( :background, false, false )
       @graphics.fade_in
 
       @state = :game_loop
       while @state == :game_loop
 
         @graphics.time_synchronized(@game_delay) do 
-          # @graphics.put_screen( :background, false, false ) # TODO: needed?
+
           draw_now
 
           @movement = 0
@@ -345,7 +335,7 @@ module MagicMaze
       # Fade out.
       @graphics.put_screen( :background, false, false )
       draw_now
-      puts "Game loop fade out..."
+
       @graphics.fade_out do  
         @graphics.sleep_delay(1)
       end
@@ -360,15 +350,10 @@ module MagicMaze
     protected :game_loop
 
     def start
-      old_start
-    end
-
-    def todo_new_start
-      load_map( @level )
+      start_game_loop
     end
 
     def update
-      # @movement = 0
       @game_config.current_input.check_input
       calc_movement
 
@@ -384,7 +369,7 @@ module MagicMaze
       @graphics.put_screen :background, false, true
     end
 
-    def old_start
+    def start_game_loop
       begin
         @graphics.time_synchronized(1000) do
           load_map( @level ) do |level, map_title |
@@ -399,8 +384,6 @@ module MagicMaze
           end
         end
         @graphics.fade_out
-
-
 
         game_loop
         case @state

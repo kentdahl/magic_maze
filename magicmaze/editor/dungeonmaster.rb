@@ -15,10 +15,11 @@ module MagicMaze
   
   ########################################
   # The Dungeon Master - or map-editor player...
+  #
   class DungeonMaster < Player
     DM_SPELL_NAMES = {
-      :primary => DEFAULT_ALL_OBJECT_TILES.keys.sort{|a,b| a.to_s<=>b.to_s},
-      :secondary => DEFAULT_MONSTER_TILES.keys.sort{|a,b| a.to_s<=>b.to_s}
+      :primary   => DEFAULT_ALL_OBJECT_TILES.keys.sort{|a,b| a.to_s<=>b.to_s },
+      :secondary => DEFAULT_MONSTER_TILES.keys.sort{|a,b|    a.to_s<=>b.to_s }
     }
 
     DM_CREATE_SPELL_TILES = DEFAULT_ALL_OBJECT_TILES
@@ -41,8 +42,6 @@ module MagicMaze
     end
     
     def follow_impulses
-      # mf = @impulses[:move_forward]
-      # ta = @impulses[:turn_around]
       IMPULSES.each{|key|
         value = @impulses[key]
         if value then

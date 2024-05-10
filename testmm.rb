@@ -1,2 +1,2 @@
-#!/usr/bin/ruby -I. -Itest
+#!/usr/bin/env ruby -I. -Itest
 require 'test/test_magicmaze'

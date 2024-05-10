@@ -1,6 +1,6 @@
 ############################################################
 # Magic Maze - a simple and low-tech monster-bashing maze game.
-# Copyright (C) 2008-2010 Kent Dahl
+# Copyright (C) 2008-2024 Kent Dahl
 #
 # This game is FREE as in both BEER and SPEECH. 
 # It is available and can be distributed under the terms of 
@@ -30,8 +30,6 @@ module MagicMaze
       @input = @game_input  = Input::Control.new( self, :in_game )
       @game_delay  = 50
       @savedir = savedir
-      #@level = level
-      #@restart_status = player_status
 
       @map = nil
       @player = nil
@@ -86,10 +84,6 @@ module MagicMaze
 
     def process_entities
       @player.action_tick
-      # game_data = { 
-      #   :player_location => @player.location
-      # }
-      # @map.active_entities.each_tick( game_data )
     end
 
     def start_editor_loop

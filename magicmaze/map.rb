@@ -1,6 +1,6 @@
 ############################################################
 # Magic Maze - a simple and low-tech monster-bashing maze game.
-# Copyright (C) 2004-2008 Kent Dahl
+# Copyright (C) 2004-2024 Kent Dahl
 #
 # This game is FREE as in both BEER and SPEECH. 
 # It is available and can be distributed under the terms of 
@@ -27,6 +27,7 @@ module MagicMaze
       # The default tiles are:
       # inner - used to fill all empty blocks.
       # outer - returned for blocks outside the map.
+      #
       def initialize(map, tile_type = Tile, 
                      default_inner_tile = nil,
                      default_outer_tile = nil )
@@ -43,7 +44,8 @@ module MagicMaze
       end
 
       ##
-      # return the object tile for the given coordinate. 
+      # return the object tile for the given coordinate.
+      #
       def get( x, y )
         if is_within?( x, y ) then
           self[y][x]
@@ -53,7 +55,8 @@ module MagicMaze
       end
     
       ##
-      # set the entity tile for the given coordinate. 
+      # set the entity tile for the given coordinate.
+      #
       def set( x, y, object )
         unless !object or object.kind_of? @tile_type
           raise ArgumentError, "Expected #{@tile_type}."
@@ -67,8 +70,9 @@ module MagicMaze
     end
 
     ##
-    # holds a list of active entities that 
+    # holds a list of active entities that
     # need to recieve regular action_tick calls.
+    #
     class ActiveEntities 
       def initialize
         @entities = Array.new
@@ -107,22 +111,27 @@ module MagicMaze
     # object - objects on the floor; keys, chests etc
     # entity - solid blocking objects; monsters, doors
     # spiritual - ephemeral objects; spells, etc.
+    #
     attr_reader :background, :object, :entity, :spiritual
 
     ##
     # the walkable area all in-map tiles default to.
+    #
     attr_reader :default_background_tile
 
     ##
     # the non-walkable tile any reference outside the map default to.
+    #
     attr_reader :default_surrounding_wall
 
     ##
     # active entities that may move.
+    #
     attr_reader :active_entities
 
     ##
     # create an empty map.
+    #
     def initialize(default_background_tile, default_surrounding_wall,
                    startx = 0, starty = 0)
       raise ArgumentError, "Expected Tile." unless 
@@ -156,36 +165,42 @@ module MagicMaze
 
     ##
     # is the coordinate within our map area?
+    #
     def is_within?( x, y )
       x.between?(0, @max_x) && y.between?(0, @max_y)
     end
 
     ##
-    # return the background tile for the given coordinate. 
+    # return the background tile for the given coordinate.
+    #
     def get_background( x, y )
       return @background.get(x,y)
     end
+
     ##
-    # set the background tile for the given coordinate. 
+    # set the background tile for the given coordinate.
+    #
     def set_background( x, y, background )
       return @background.set(x,y,background)
     end
 
     ##
-    # return the object tile for the given coordinate. 
+    # return the object tile for the given coordinate.
+    #
     def get_object( x, y )
       return @object.get(x,y)
     end
 
     ##
-    # set the object tile for the given coordinate. 
+    # set the object tile for the given coordinate.
+    #
     def set_object( x, y, object )
       return @object.set(x,y,object)
     end
 
-
     ##
     # insert object into correct grid depending on type.
+    #
     def set_any_object( x, y, object )
       if object.kind_of? EntityTile
         entity = object.create_entity(self,x,y)
@@ -198,6 +213,7 @@ module MagicMaze
 
     ##
     # yields all tiles, from background to front.
+    #
     def each_tile_at( x, y )
       yield @background.get(x,y)
       yield @object.get(x,y)
@@ -212,10 +228,10 @@ module MagicMaze
     ##
     # add an Entity that needs to have its action_tick called
     # during the game loop.
+    #
     def add_active_entity( entity )
       @active_entities.add_entity( entity )
     end
-    # protected :add_active_entity
 
 
     def purge

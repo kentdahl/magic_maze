@@ -1,6 +1,6 @@
 ############################################################
 # Magic Maze - a simple and low-tech monster-bashing maze game.
-# Copyright (C) 2004-2008 Kent Dahl
+# Copyright (C) 2004-2024 Kent Dahl
 #
 # This game is FREE as in both BEER and SPEECH. 
 # It is available and can be distributed under the terms of 
@@ -19,6 +19,7 @@ module MagicMaze
 
   ##################################################
   # Game object representing the player.
+  #
   class Player < Being
     attr_reader :impulses
     attr_reader :spellbook
@@ -41,7 +42,6 @@ module MagicMaze
 
     def initialize( map, game_config, *args )
       super( map, map.start_x, map.start_y, *args )
-      print "init: Player#location: ", @location.x, " ", @location.y, "\n"
 
       @game_config = game_config
       @score = 0
@@ -86,6 +86,7 @@ module MagicMaze
 
     ##
     # return hash with saved game status... Only restart point of level so far.
+    #
     def get_saved
       {
         :mana => @mana,
@@ -97,6 +98,7 @@ module MagicMaze
 
     ##################################################
     # Impulses
+    #
     def move_forward( *args )
       if super
         # movement successful
@@ -120,6 +122,7 @@ module MagicMaze
     ##################################
     # Action ticks - what to check 
     # each and every game tick.
+    #
     def action_tick( *args )      
       follow_impulses      
       check_floor

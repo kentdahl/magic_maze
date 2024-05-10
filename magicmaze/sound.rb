@@ -1,6 +1,6 @@
 ############################################################
 # Magic Maze - a simple and low-tech monster-bashing maze game.
-# Copyright (C) 2004-2008 Kent Dahl
+# Copyright (C) 2004-2024 Kent Dahl
 #
 # This game is FREE as in both BEER and SPEECH. 
 # It is available and can be distributed under the terms of 
@@ -11,12 +11,10 @@
 
 
 module MagicMaze
-  ################################################
-  #
-  # SOUND_ENABLED = true unless defined? SOUND_ENABLED 
 
   ##
   # Dummy class for when we want no sound.
+  #
   class NoSound
     def method_missing(*a)
     end

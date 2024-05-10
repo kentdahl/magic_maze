@@ -1,6 +1,6 @@
 ############################################################
 # Magic Maze - a simple and low-tech monster-bashing maze game.
-# Copyright (C) 2004-2008 Kent Dahl
+# Copyright (C) 2004-2024 Kent Dahl
 #
 # This game is FREE as in both BEER and SPEECH. 
 # It is available and can be distributed under the terms of 
@@ -23,18 +23,6 @@ module MagicMaze
 
     attr_reader :scale_factor
 
-    ##
-    # Singleton graphics instance.
-    # def self.get_graphics(options={})
-    #   @graphics_instance ||= MagicMaze::Graphics.new(options)
-    #   @graphics_instance
-    # end
-
-    # def self.shutdown_graphics
-    #   @graphics_instance.destroy
-    #   @graphics_instance = nil
-    # end
-
     def initialize(options={})
       puts "Starting Magic Maze..."
       @options = options
@@ -52,10 +40,6 @@ module MagicMaze
 
       @sprite_images = load_new_sprites || load_old_sprites 
 
-      # show_message("Enter!")
-      
-      # Cached values for what is already drawn.
-      @cached_drawing = Hash.new
       @delay_stats = Array.new
 
       puts "Graphics initialized." if DEBUG
@@ -75,26 +59,24 @@ module MagicMaze
     def screen_init(options)
       puts "Setting up graphics..." if DEBUG
 
-      @scale_factor ||= SCALE_FACTOR
+      @scale_factor ||= options[:scale] || SCALE_FACTOR
       @screen_scale_factor ||= @scale_factor
 
       @xsize = FULLSCREEN[2] * @screen_scale_factor
       @ysize = FULLSCREEN[3] * @screen_scale_factor
-      @bpp = 8 # 16 wont work
+
       SDL2.init( SDL2::INIT_VIDEO )
       SDL2::Mouse::Cursor.hide
 
       window_flags  = SDL2::Window::Flags::SHOWN
       window_flags |= SDL2::Window::Flags::FULLSCREEN if options[:fullscreen] 
-      # window_flags |= SDL2::Window::Flags::RESIZABLE
 
-      @window_pos_x = @window_pos_y = SDL2::Window::POS_CENTERED # WAS: UNDEFINED
+      @window_pos_x = @window_pos_y = SDL2::Window::POS_CENTERED
 
       @window = SDL2::Window.create(_("Magic Maze"),
           @window_pos_x, @window_pos_y,
           @xsize, @ysize,
           window_flags)
-      # @window.title = _("Magic Maze")
       @window.icon = SDL2::Surface.load(gfx_path_to("icon.png"))
 
       @screen = @window.create_renderer(-1, 0)
@@ -102,23 +84,13 @@ module MagicMaze
       if self.scale_factor > 1
         @screen.scale = [@scale_factor, @scale_factor]
         @screen_scale_factor = @scale_factor
+        # Leave the scaling to the screen renderer.
         @scale_factor = 1
       end
 
 
       early_progress
 
-      early_progress
-      
-      unless @screen.respond_to? :draw_rect then
-        def @screen.draw_rect(x,y,w,h,c)
-          # Workaround for older Ruby/SDL...
-          fill_rect( SDL2::Rect.new(x,y,   w,1, c) )
-          fill_rect( SDL2::Rect.new(x,y,   1,h, c) )
-          fill_rect( SDL2::Rect.new(x,y+h, w,1, c) )
-          fill_rect( SDL2::Rect.new(x+w,y, 1,h, c) )
-        end
-      end
     end
 
 
@@ -189,8 +161,8 @@ module MagicMaze
         @font32 = SDL2::TTF.open( fontfile, fontsize.last  * self.scale_factor )
       rescue SDL2::Error => err
         # Debian font
-        fontfile = alternate_fonts.shift # "/usr/share/fonts/truetype/Isabella.ttf"
-        fontsize = [12, 28]
+        fontfile = alternate_fonts.shift
+        fontsize = [12, 16, 28]
         if fontfile then 
           retry 
         else 
@@ -205,19 +177,6 @@ module MagicMaze
       SCREEN_IMAGES.each{|key, filename|
         source_image = SDL2::Surface.load( gfx_path_to(filename) )
         @progress_msg += "." ; early_progress
-        # if self.scale_factor != 1 then
-        #   scaled_image = SDL2::Surface.new( # SDL2::SWSURFACE, 
-        #                                 source_image.w * self.scale_factor, 
-        #                                 source_image.h * self.scale_factor,
-        #                                 8)
-        #                                   # WAS: @screen)
-        #   # scaled_image.set_palette( SDL2::LOGPAL|SDL2::PHYSPAL, 
-        #   #                           source_image.get_palette, 0 )
-        #   scaled_image.color_key = source_image.pixel(0, 0)
-        #   linear_scale_image(source_image,0,0, scaled_image, self.scale_factor )
-        # else
-        #   scaled_image = source_image
-        # end
         
         @background_images[key] = @screen.create_texture_from(source_image)
         source_image.destroy
@@ -244,11 +203,8 @@ module MagicMaze
 
         # Loop over 1030 byte segments, which each is a sprite.
         begin
-          sprite = SDL2::Surface.new( # WAS: SDL2::HWSURFACE, # SDL2::SRCCOLORKEY,
-                                    SPRITE_WIDTH,SPRITE_HEIGHT,@screen)
-          mode =  SDL2::LOGPAL|SDL2::PHYSPAL
-          sprite.set_palette( mode, palette, 0 )
-          @screen.set_palette(mode, palette, 0 )
+          sprite = SDL2::Surface.new(SPRITE_WIDTH,SPRITE_HEIGHT,@screen)
+
           sprite_data = file.read(1030)
           if sprite_data && sprite_data.size==1030 then
             x = 0
@@ -263,8 +219,8 @@ module MagicMaze
                 y += 1
               end              
             }
-            sprite.unlock
-            sprite.setColorKey( SDL2::SRCCOLORKEY || SDL2::RLEACCEL ,0)
+            # sprite.unlock
+            # sprite.setColorKey( SDL2::SRCCOLORKEY || SDL2::RLEACCEL ,0)
             sprite_images << sprite.display_format
           end
         end while sprite_data
@@ -287,27 +243,18 @@ module MagicMaze
         return nil
       end
 
-      # WAS: palette = spritemap.get_palette
       spritemap_colkey = spritemap.pixel(0, 0)
 
       lines = ( spritemap.h + 15 ) / 32 
 
-      # WAS: @screen.set_palette( SDL2::LOGPAL|SDL2::PHYSPAL, palette, 0 )
-
       (0...lines).each do|line| 
         @progress_msg += "." ; early_progress
         (0...10).each do|column|
-          sprite = SDL2::Surface.new( # WAS: SDL2::HWSURFACE, #|SDL2::SRCCOLORKEY,
-                                    SPRITE_WIDTH, SPRITE_HEIGHT, spritemap.bits_per_pixel) # WAS: @screen)
-          # WAS: mode =  SDL2::LOGPAL|SDL2::PHYSPAL
+          sprite = SDL2::Surface.new(SPRITE_WIDTH, SPRITE_HEIGHT, spritemap.bits_per_pixel)
 
           x =  column * 32
           y = line * 32
           w = h = 32
-
-          # WAS: sprite.set_palette( mode, palette, 0 )
-          # WAS: sprite.setColorKey( SDL2::SRCCOLORKEY || SDL2::RLEACCEL ,0)
-          # WAS: sprite.fill_rect(0,0,SPRITE_WIDTH,SPRITE_HEIGHT,3)
 
           if self.scale_factor == 1 then
             SDL2::Surface.blit(spritemap,SDL2::Rect[x,y,w,h], sprite, SDL2::Rect[0,0,w,h] )
@@ -315,8 +262,6 @@ module MagicMaze
             linear_scale_image(spritemap,x,y, sprite, self.scale_factor )
           end
 
-          # sprite.set_palette( mode, palette, 0 )
-          # sprite.setColorKey( SDL2::SRCCOLORKEY || SDL2::RLEACCEL ,0)
           sprite.color_key = spritemap_colkey
 
           sprite_texture = @screen.create_texture_from(sprite)
@@ -325,7 +270,6 @@ module MagicMaze
         end
       end
 
-      # @sprite_palette = palette 
       @sprite_colorkey = spritemap_colkey
 
       puts "Sprites loaded: #{sprite_images.size}." if DEBUG
@@ -344,8 +288,8 @@ module MagicMaze
 
       height = ( (@sprite_images.size / 10) + 1 ) * 32
 
-      spritemap = SDL2::Surface.new( SDL2::SRCCOLORKEY, @xsize, height, @screen )
-      spritemap.set_palette( SDL2::LOGPAL, @sprite_palette, 0 )
+      # spritemap = SDL2::Surface.new( SDL2::SRCCOLORKEY, @xsize, height, @screen )
+      # spritemap.set_palette( SDL2::LOGPAL, @sprite_palette, 0 )
 
       @sprite_images.each_with_index do|sprite, index|
         y = (index / 10)  * 32
@@ -363,10 +307,7 @@ module MagicMaze
 
 
     def write_score( score )
-      # return if cached_drawing_valid?(:score, score )
-
       text = sprintf "%9d", score   # fails on EeePC
-      # text = sprintf "%09d", score # old safe one.
       rect = SCORE_RECTANGLE
       screen_fill_rect(*rect) 
       write_text( text, rect[0]+2*self.scale_factor, rect[1]-2*self.scale_factor ) 
@@ -398,6 +339,7 @@ module MagicMaze
     ##
     # Show a multi-line message centered in the
     # maze view area.
+    #
     def show_long_message( text, flip = true, fullscreen = false )
       rect = ( fullscreen ? FULLSCREEN : MAZE_VIEW_RECTANGLE)[0..3]
       screen_fill_rect( *rect )
@@ -427,18 +369,11 @@ module MagicMaze
       self.flip if flip
     end
 
-    def cached_drawing_valid?(symbol, value)
-      return true if value == @cached_drawing[symbol]
-      @cached_drawing[symbol] = value
-      false
-    end
-
     
     ##
     # assumes life and mana are in range (0..100)
+    #
     def update_life_and_mana( life, mana )
-      # return if cached_drawing_valid?(:life_and_mana, life.hash ^ mana.hash )
-
       rect = LIFE_MANA_RECTANGLE
       screen_fill_rect(*rect) 
       screen_fill_rect(rect[0], rect[1], 
@@ -450,8 +385,6 @@ module MagicMaze
     end
 
     def update_inventory( inventory )
-      # FIXME: return if cached_drawing_valid?(:inventory, inventory.hash )
-
       rect = INVENTORY_RECTANGLE
       screen_fill_rect(*rect) 
       currx = rect.first
@@ -464,11 +397,8 @@ module MagicMaze
     end
 
     def update_spells( primary, secondary )
-      # return if cached_drawing_valid?(:spells, primary.hash ^ secondary.hash )
-
       rect1 = SPELL_RECTANGLE
       rect2 = ALT_SPELL_RECTANGLE
-      # @screen.draw_color = [255,0,128]
       screen_fill_rect( *rect1 )
       put_sprite( primary, *rect1[0,2]) 
       screen_fill_rect( *rect2 )
@@ -485,6 +415,7 @@ module MagicMaze
     # Experimental view updating trying 
     # to refactor and separate view logic
     # from the GameLoop as much as possible.
+    ####################################
 
     def update_view_rows( center_row )
       @curr_view_y = MAZE_VIEW_RECTANGLE[1]
@@ -542,16 +473,11 @@ module MagicMaze
 
     ####################################
     #
-    def draw_map( player, line_by_line = true )
+    def draw_map( player, line_by_line = false )
       map = player.location.map
 
       rect = MAZE_VIEW_RECTANGLE
       screen_fill_rect(*rect)
-      
-      # if line_by_line then
-      #   self.flip 
-      #   screen_fill_rect(*rect)
-      # end
 
       map_zoom_factor = 4
 
@@ -592,8 +518,6 @@ module MagicMaze
                           map_block_size,
                           COL_WHITE)
 
-        # flip if line_by_line
-
       end
 
     end
@@ -619,14 +543,6 @@ module MagicMaze
       font = @font32
       textsize = font.size_text( text )
 
-      # @scrolltext = SDL2::Surface.new( # WAS: SDL2::HWSURFACE, #|SDL2::SRCCOLORKEY,
-      #                              textsize.first, textsize.last, 16) # @screen)
-
-      # @scrolltext.set_palette( SDL2::LOGPAL|SDL2::PHYSPAL, @sprite_palette, 0 )
-      # @scrolltext.setColorKey( SDL2::SRCCOLORKEY || SDL2::RLEACCEL ,0)
-
-
-      # TODO: font.drawBlendedUTF8( @scrolltext, text, 0, 0,  255, 255, 255 )
       @scrolltext_surf = font.render_blended( text, [0xFF, 0xFF, 0xFF])
       @scrolltext = @screen.create_texture_from(@scrolltext_surf)
       @scrolltext_index = - @xsize
@@ -637,18 +553,10 @@ module MagicMaze
     # Update the scrolltext area at the bottom of the screen.
     #
     def update_scrolltext
-
       w = @xsize
       h = 40 * self.scale_factor
-
       
       screen_fill_rect( 0, 200 * self.scale_factor, w, h, 0 )
-
-      # SDL2::Surface.blit( @scrolltext, 
-      #                  SDL2::Rect[@scrolltext_index, 0, @xsize, @scrolltext.h],
-      #                  @screen, nil) # WAS: 0, 200 * self.scale_factor )
-
-
 
       @screen.copy(@scrolltext,
         SDL2::Rect[@scrolltext_index, 0, w, h],
@@ -660,31 +568,6 @@ module MagicMaze
         @scrolltext_index = - @xsize
       end
 
-    end
-
-
-    def setup_rotating_palette( range, screen = nil )
-      puts "TODO: Rotating palette..."
-      return
-      pal = @sprite_palette
-      if screen
-        pal = @background_images[ screen ].get_palette
-      end
-      @rotating_palette = pal[ range ]
-      @rotating_palette_range = range
-    end
-
-    ##
-    #
-    def rotate_palette # _ENABLED
-      # DISABLED
-    end
-    def rotate_palette_DISABLED
-      pal = @rotating_palette 
-      col = pal.shift
-      pal.push col
-
-      @screen.set_palette( SDL2::PHYSPAL|SDL2::LOGPAL, pal, @rotating_palette_range.first )
     end
 
     ##
@@ -741,8 +624,6 @@ module MagicMaze
     def draw_menu
       topx = 160 * self.scale_factor - @menu_width  / (2)
       topy = 120 * self.scale_factor - @menu_height / (2)
-
-      #TODO: Save the old background.
 
       # Handle the case of truncated menu. Not too nice.
       if @menu_truncate_size then

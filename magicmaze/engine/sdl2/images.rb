@@ -1,6 +1,6 @@
 ############################################################
 # Magic Maze - a simple and low-tech monster-bashing maze game.
-# Copyright (C) 2004-2008 Kent Dahl
+# Copyright (C) 2004-2024 Kent Dahl
 #
 # This game is FREE as in both BEER and SPEECH. 
 # It is available and can be distributed under the terms of 
@@ -89,14 +89,12 @@ module MagicMaze
         tribbles  = @screen.create_texture_from(scribbles)
         dims = font.size_text(text)
         @screen.copy(tribbles, nil, SDL2::Rect[x,y,dims.first,dims.last])
-        # TODO: font.drawSolidUTF8(@screen,text,x,y,255,255,255)
       rescue SDL2::Error # Original Asus EEE distro fails here...
         write_smooth_text(text,x,y,font)
       end
     end
 
     def write_smooth_text( text, x, y, font = @font16,r=255,g=255,b=255 )
-      # TODO: font.drawBlendedUTF8(@screen, text, x,y, r,g,b) # Failed for RubySDL2.0.1 and Ruby1.9.1-p1 on multiline strings.
       scribbles = font.render_blended(text, [r, g, b])
       tribbles  = @screen.create_texture_from(scribbles)
       dims = font.size_text(text)
@@ -104,10 +102,6 @@ module MagicMaze
 
     end
 
-    def set_palette( pal, start_color = 0 )
-      # pal ||= @sprite_palette
-      # @screen.set_palette( SDL2::PHYSPAL, pal, start_color )
-    end
 
     FADE_DURATION = 16
 

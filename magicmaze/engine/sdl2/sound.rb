@@ -1,6 +1,6 @@
 ############################################################
 # Magic Maze - a simple and low-tech monster-bashing maze game.
-# Copyright (C) 2004-2008 Kent Dahl
+# Copyright (C) 2004-2024 Kent Dahl
 #
 # This game is FREE as in both BEER and SPEECH. 
 # It is available and can be distributed under the terms of 
@@ -15,9 +15,6 @@ require 'magicmaze/sound'
 
 
 module MagicMaze
-  ################################################
-  #
-  # SOUND_ENABLED = true unless defined? SOUND_ENABLED 
 
   ##
   # Use SDL for sound
@@ -27,6 +24,7 @@ module MagicMaze
 
     ##
     # Singleton graphics instance.
+    #
     def self.get_sound(options={})
       @sound_instance ||= MagicMaze::Sound.new(options)
       @sound_instance
@@ -74,21 +72,5 @@ module MagicMaze
     
   end
 
-  ##
-  # Dummy class for when we want no sound.
-  class NoSound
-    def method_missing(*a)
-    end
-  end
-    
-  ##
-  # Mapping sound names to sound file index.
-  #
-  # SOUNDS = {
-  #   :argh  => 1,
-  #   :zap   => 2,
-  #   :punch => 3,
-  #   :bonus => 4,
-  # }
 
 end
