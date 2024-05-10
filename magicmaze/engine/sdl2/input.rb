@@ -143,6 +143,11 @@ module MagicMaze
           },
           :action_keys => { },
           :modifier_keys => EMPTY_KEY_MAP,
+          :mouse => {
+            :button => {
+              1 => :start_game,
+            }
+          }
           :joystick => {
             :button => {
               0 => :start_game,
@@ -203,8 +208,14 @@ module MagicMaze
       def get_key_press
         begin
           event = SDL2::Event.poll
-        end until event.kind_of? SDL2::Event::KeyUp
+        end until got_any_key_up_event?(event)
         return event
+      end
+
+      def got_any_key_up_event?(event)
+        ok   = event.kind_of? SDL2::Event::KeyUp
+        ok ||= event.kind_of? SDL2::Event::MouseButtonUp
+        ok
       end
 
 
@@ -260,6 +271,8 @@ module MagicMaze
         when SDL2::Event::Quit then @callback.exit
         when SDL2::Event::KeyUp
           check_key_press( event.sym )        
+        when SDL2::Event::MouseButtonUp
+          check_mouse_button_press( event )
         end
         check_key_hold
         check_modifier_keys
@@ -276,6 +289,13 @@ module MagicMaze
       def check_key_press( key )
         method_name = @keymap[:normal_keys][ key ]
         call_callback( method_name )
+      end
+
+      def check_mouse_button_press( event )
+        mouse_map = @keymap[:mouse]     || {}
+        button_map = mouse_map[:button] || {}
+        method_name = button_map[ event.button ] || nil
+        call_callback( method_name ) if method_name
       end
       
       ## 
