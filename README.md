@@ -18,6 +18,13 @@ It was originally inspired by playing Gauntlet II on the Atari ST.
 Ruby, SDL2 and Ruby-SDL2.
 
 
+## Screenshots
+
+
+![Title screen](https://github.com/kentdahl/magic_maze/blob/main/data/gfx/title.png?raw=true)
+
+
+
 ## Credits
 
 Idea, design & coding:  Kent Dahl
