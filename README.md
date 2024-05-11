@@ -21,7 +21,7 @@ Ruby, SDL2 and Ruby-SDL2.
 ## Screenshots
 
 
-![Title screen](https://github.com/kentdahl/magic_maze/blob/main/data/gfx/title.png?raw=true) ![Game UI](https://github.com/kentdahl/magic_maze/blob/main/data/gfx/background.png?raw=true)
+![In-game](https://github.com/kentdahl/magic_maze/blob/readme-md/doc/images/screenshots/mm_screenshot1.png?raw=true) ![Title screen](https://github.com/kentdahl/magic_maze/blob/main/data/gfx/title.png?raw=true) ![Game UI](https://github.com/kentdahl/magic_maze/blob/main/data/gfx/background.png?raw=true)
 
 
 
