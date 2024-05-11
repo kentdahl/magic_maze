@@ -67,6 +67,14 @@ module MagicMaze
       return menu_hash[selection]
     end
 
+    def get_modified_map_files
+      Dir[@map_save_dir + "/*.map"]
+    end
+
+    def get_official_map_files
+      Dir[@map_dir_path + "mm_map.*"]
+    end
+
     def load_map_file(filename)
       @loaded_filename = filename
       @filemap = MagicMaze::FileMap.new(filename)

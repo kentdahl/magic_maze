@@ -386,7 +386,7 @@ module MagicMaze
         game_loop
         case @state
         when :next_level  
-          @level += 1 
+          @level += 1 unless @training_mode
           unless @game_config.check_level( @level ) 
             @state = :endgame
           end

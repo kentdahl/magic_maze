@@ -181,6 +181,13 @@ module MagicMaze
       @state = :stopped_game
     end
 
+    def start_playtest_game( mapfilename )
+      pregame_preparation
+      @current_game = GameLoop.new( self, mapfilename, :training )
+      @current_game.start
+      @state = :stopped_game
+    end
+
     # The fade before starting the game.
     def pregame_preparation
       @graphics.put_screen( :titlescreen, false )
@@ -197,8 +204,13 @@ module MagicMaze
       if not @saved_checkpoints.empty? then
         menu_items.unshift("Continue game") 
         menu_items.push("Replay level") if @saved_checkpoints.size>1
-        menu_items.push("Map Editor") if @options[:editor]
       end
+
+      if @options[:editor] then
+        menu_items.push("Map Editor")
+        menu_items.push("Playtest Map")
+      end
+
       menu_items.push "Quit Magic Maze"
 
       case choose_from_menu( menu_items )
@@ -214,6 +226,8 @@ module MagicMaze
         open_replay_menu
       when /Editor/i
         start_map_editor
+      when /Playtest/i
+        open_playtest_menu
       end
       put_titlescreen
     end
@@ -254,6 +268,26 @@ module MagicMaze
       editor.start(@options[:map])
       put_titlescreen
       @state = :stopped_game
+    end
+
+    def open_playtest_menu
+      require 'magicmaze/mapeditor'
+      editor = MagicMaze::MapEditor::EditorLoop.new(self, @savedir)
+
+      menu_items = editor.get_modified_map_files
+
+      menu_hash = Hash.new
+      menu_items.each{|f| menu_hash[File.basename(f)] = f }
+
+      menu_items.push "Back"
+
+      selection = choose_from_menu( menu_hash.keys.sort )
+      mapfilename = menu_hash[selection]
+      if mapfilename
+        puts "Test play: " + mapfilename
+        start_playtest_game(mapfilename)
+      end
+      put_titlescreen
     end
 
 
@@ -334,7 +368,7 @@ module MagicMaze
     # Check whether we have hit a "special" level, such as the end.
     #
     def check_level( level )
-      if level > NUM_LEVELS
+      if level.to_i > NUM_LEVELS
         @state = :endgame
         false
       else
