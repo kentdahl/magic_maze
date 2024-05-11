@@ -203,6 +203,7 @@ module MagicMaze
       def get_key_press
         begin
           event = SDL2::Event.poll
+          SDL2.delay( 50 ) if event.nil?
         end until event.kind_of? SDL2::Event::KeyUp
         return event
       end
