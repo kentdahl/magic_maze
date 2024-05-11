@@ -99,10 +99,11 @@ module MagicMaze
     end
 
     def test_fade
-      @graphics.fade_out
-      @graphics.put_screen( :titlescreen, false )
+      # @graphics.fade_out
+      # @graphics.put_screen( :titlescreen, false )
 
       @graphics.fade_out
+
       put_titlescreen
       
       @graphics.fade_in

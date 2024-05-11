@@ -49,7 +49,7 @@ module MagicMaze
 
     ## put up a background screen
     def put_screen( screen, center = false, flip = true )
-      @screen.clear
+      clear_screen
       @screen.fill_rect(SDL2::Rect[0,0,@xsize,@ysize])
       image = @background_images[ screen ]
       x,y=0,0
@@ -104,8 +104,9 @@ module MagicMaze
 
 
     FADE_DURATION = 16
+    FADE_DELAY_DEFAULT = 25
 
-    def fade_out( tr = 0, tg = 0, tb = 0, fade_duration = FADE_DURATION, ms_delay = 10 )
+    def fade_out( fade_duration = FADE_DURATION, ms_delay = FADE_DELAY_DEFAULT )
       # TODO:
       range = fade_duration
       (0...range).each {|i|
@@ -120,7 +121,7 @@ module MagicMaze
       @window.brightness = 0.0
     end
 
-    def fade_in( fade_duration = FADE_DURATION, ms_delay = 10 )
+    def fade_in( fade_duration = FADE_DURATION, ms_delay = FADE_DELAY_DEFAULT )
       # TODO:
       range = fade_duration
       (0..range).each {|i|
