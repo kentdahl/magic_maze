@@ -21,22 +21,25 @@ Ruby, SDL2 and Ruby-SDL2.
 ## Screenshots
 
 
-![In-game](https://github.com/kentdahl/magic_maze/blob/readme-md/doc/images/screenshots/mm_screenshot1.png?raw=true) ![Title screen](https://github.com/kentdahl/magic_maze/blob/main/data/gfx/title.png?raw=true) ![Game UI](https://github.com/kentdahl/magic_maze/blob/main/data/gfx/background.png?raw=true)
+![In-game](https://github.com/kentdahl/magic_maze/blob/readme-md/doc/images/screenshots/mm_screenshot1.png?raw=true)
+
+![Title screen](https://github.com/kentdahl/magic_maze/blob/main/data/gfx/title.png?raw=true) ![Game UI](https://github.com/kentdahl/magic_maze/blob/main/data/gfx/background.png?raw=true)
 
 
 
 ## Credits
 
-Idea, design & coding:  Kent Dahl
+Idea, design & coding:  **Kent Dahl**
 
-Graphics design:        Kent Dahl
+Graphics design:        **Kent Dahl**
 
-Level design:           Kent Dahl, Daniel Dahl
+Level design:           **Kent Dahl**, **Daniel Dahl**
 
-Game testing:           Per Ejnar Thomsen (original), Randi Rørvik (Ruby port),
-                        Daniel Dahl (original & Ruby port)
+Game testing:           **Per Ejnar Thomsen**  *(original)*,
+                        **Randi Rørvik**       *(Ruby port)*,
+                        **Daniel Dahl**        *(original & Ruby port)*
 
-Debian packaging:       Joe Nahmias, Petter Reinholdtsen
+Debian packaging:       **Joe Nahmias**, **Petter Reinholdtsen**
 
 
 
