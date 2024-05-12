@@ -99,10 +99,11 @@ module MagicMaze
     end
 
     def test_fade
-      @graphics.fade_out
-      @graphics.put_screen( :titlescreen, false )
+      # @graphics.fade_out
+      # @graphics.put_screen( :titlescreen, false )
 
       @graphics.fade_out
+
       put_titlescreen
       
       @graphics.fade_in
@@ -182,7 +183,7 @@ module MagicMaze
 
     # The fade before starting the game.
     def pregame_preparation
-      @graphics.put_screen( :titlescreen, true )
+      @graphics.put_screen( :titlescreen, false )
       @graphics.fade_out
       @state = :starting_game
     end

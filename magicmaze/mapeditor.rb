@@ -14,7 +14,8 @@ require 'magicmaze/map'
 require 'magicmaze/gameloop'
 require 'magicmaze/editor/dungeonmaster'
 
-
+require 'date'
+require 'fileutils'
 
 module MagicMaze
 
@@ -30,6 +31,8 @@ module MagicMaze
       @input = @game_input  = Input::Control.new( self, :in_game )
       @game_delay  = 50
       @savedir = savedir
+      @map_save_dir = @savedir + '/maps/'
+      @map_dir_path = @graphics.get_data_dir_path_to('maps/') || 'data/maps/'
 
       @map = nil
       @player = nil
@@ -49,8 +52,8 @@ module MagicMaze
 
     def choose_level_to_load
       menu_items = [
-        Dir[@savedir+"/*.map"],
-        Dir["data/maps/mm_map.*"]
+        Dir[@map_dir_path + "mm_map.*"],
+        Dir[@map_save_dir + "/*.map"],
       ]
       menu_items.flatten!
       menu_items.push "Exit"
@@ -65,21 +68,39 @@ module MagicMaze
     end
 
     def load_map_file(filename)
-      @load_filename = filename
+      @loaded_filename = filename
       @filemap = MagicMaze::FileMap.new(filename)
       @map = @filemap.to_gamemap
+
+      if @loaded_filename.end_with?('.map')
+        # Modified or non-standard map; save directly.
+        @map_save_filename = File.basename(@loaded_filename)
+      else
+        datetimestr = DateTime.now.strftime('%Y%m%d') # WAS: %H%M')
+        ext = File.extname(@loaded_filename).sub('.', '')
+        @map_save_filename = 'mm' + ext + '_' + datetimestr + '.map'
+      end
+
       @player = DungeonMaster.new( @map, self )
     end
 
     def save_map_file
       @filemap.from_gamemap(@map)
       @filemap.update_header_data
-      @filemap.save_to(@savedir+"/modified.map")
+      FileUtils.mkdir_p(@map_save_dir)
+      @filemap.save_to(@map_save_dir + (@map_save_filename || 'mm_modified.map'))
     end
     
     def save_game
       puts "SAVE MAP!"
       save_map_file
+    end
+
+    def escape
+      super
+      really_do?(_("Save modified map?")) do
+        save_map_file
+      end if @state == :stopped_game
     end
 
     def process_entities

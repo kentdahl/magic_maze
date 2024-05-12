@@ -262,6 +262,7 @@ module MagicMaze
     end
 
     def pause_game
+      # TODO: @graphics.put_screen(:background, false, false)
       @graphics.show_long_message( _("Paused!\n \nPress any key\nto resume game.") )
       @game_input.get_key_press
     end
@@ -333,12 +334,10 @@ module MagicMaze
 
 
       # Fade out.
-      @graphics.put_screen( :background, false, false )
-      draw_now
+      # @graphics.put_screen( :background, false, false )
+      # draw_now
 
-      @graphics.fade_out do  
-        @graphics.sleep_delay(1)
-      end
+      @graphics.fade_out
       
       # Clear screen for returning to the title loop
       @graphics.clear_screen

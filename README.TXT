@@ -68,14 +68,15 @@ F4             - load savegame
 * In-game *       
 
 Arrow keys - movement of the little blue wizard.
-Ctrl       - cast missile spell (not implemented yet)
-Space      - cast secondary spell (also "Alt" key)
+Ctrl       - cast missile attack spell
+Space      - cast secondary support spell
 Z and X    - leaf through missile spells in book
 A and S    - leaf through secondary spells in book
 Esc / Q    - exit game 
 F1 / H     - help
+F5         - save game / map
 F9 / R     - restart level
-F12	   - toggle fullscreen
+F12        - toggle fullscreen
 PageUp/Dn  - tune volume
 Plus/Minus - tune speed (on numeric keypad)
 

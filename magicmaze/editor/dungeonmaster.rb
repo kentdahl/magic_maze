@@ -17,13 +17,15 @@ module MagicMaze
   # The Dungeon Master - or map-editor player...
   #
   class DungeonMaster < Player
-    DM_SPELL_NAMES = {
-      :primary   => DEFAULT_ALL_OBJECT_TILES.keys.sort{|a,b| a.to_s<=>b.to_s },
-      :secondary => DEFAULT_MONSTER_TILES.keys.sort{|a,b|    a.to_s<=>b.to_s }
-    }
 
-    DM_CREATE_SPELL_TILES = DEFAULT_ALL_OBJECT_TILES
+    DM_CREATE_SPELL_TILES = DEFAULT_ALL_OBJECT_TILES.merge(DEFAULT_FLOOR_TILES)
     DM_SUMMON_SPELL_TILES = DEFAULT_MONSTER_TILES
+
+
+    DM_SPELL_NAMES = {
+      :primary   => DM_CREATE_SPELL_TILES.keys.sort{|a,b| a.to_s<=>b.to_s },
+      :secondary => DM_SUMMON_SPELL_TILES.keys.sort{|a,b|    a.to_s<=>b.to_s }
+    }
     
     def initialize( map, game_config, *args )
       super( map, game_config, *args )
