@@ -447,8 +447,8 @@ module MagicMaze
       lines = [
         '  ---++* Magic Maze Help *++---',
         'Arrow keys to move the wizard.',
-        'Ctrl :-  Cast attack spell',
-        'Alt :-  Cast secondary spell',
+        'Ctrl / C :-  Cast attack spell',
+        'Alt  / D :-  Cast secondary spell',
         'X / Z :- Toggle attack spell',
         'A / S :- Toggle secondary spell',
         '', # Failed for RubySDL2.0.1 and Ruby1.9.1-p1
