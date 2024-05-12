@@ -71,7 +71,24 @@ module MagicMaze
     end    
 
     def flip
+      # TODO: draw_wand
       @screen.present
+    end
+
+    def draw_wand
+      return unless @sprite_images
+      sprite_id = 11 # :spell_bigball
+      image = @sprite_images[sprite_id]
+      mice = SDL2::Mouse.state
+      x = mice.x * ::MagicMaze::Graphics::FULLSCREEN[2] / @window.size.first
+      y = mice.y * ::MagicMaze::Graphics::FULLSCREEN[3] / @window.size.last
+      @wand_angle ||= 0
+      @wand_angle += 7
+      dest = SDL2::Rect[x, y, image.w / 2, image.h / 2]
+      angle = @wand_angle
+      center = nil
+      flaps = 0
+      @screen.copy_ex(image, nil, dest, angle, center, flaps)
     end
 
     def toogle_fullscreen
