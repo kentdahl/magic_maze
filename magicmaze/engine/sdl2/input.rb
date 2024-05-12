@@ -69,6 +69,9 @@ module MagicMaze
         SDL2::Key::Scan::KP_1   => :cast_primary_spell,     # V
         SDL2::Key::Scan::KP_9   => :cast_alternative_spell, # O
 
+        # ASD / ZXC - left-hand spell casting
+        SDL2::Key::Scan::C   => :cast_primary_spell,     # C
+        SDL2::Key::Scan::D   => :cast_alternative_spell, # D
   
 
       }
