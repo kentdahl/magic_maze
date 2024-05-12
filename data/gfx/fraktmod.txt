@@ -12,7 +12,7 @@ no obligation to do this, I just like to see how my fonts get used.
 A license.txt file should have been included with this font, explaining the
 license under which it is made available. You can also read it at:
 
-http://www.squaregear.net/fonts/license.shtml
+http://www.squaregear.net/fonts/license.html
 
 About the font:
 
