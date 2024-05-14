@@ -170,6 +170,40 @@ module MagicMaze
   end
 
 
+  class MagicBlockSpellTile < SpellTile
+    def initialize(*a)
+      @block_health = a.pop
+      super(*a)
+    end
+
+    def do_magic
+      false
+    end
+  end
+
+  class MagicBlockCrackSpellTile < SpellTile
+    def initialize(*a)
+      @block_damage = a.pop
+      super(*a)
+    end
+
+    def do_magic
+      false
+    end
+  end
+
+
+  ### Spell Tile IDs ###
+
+  LIGHTNING_SPELL_TILE_ID = 10
+  BIG_BALL_SPELL_TILE_ID  = 11
+  COOL_CUBE_SPELL_TILE_ID = 12
+  # ...
+  MAGIC_BLOCK_SPELL_TILE_ID = 88
+  MAGIC_BLOCK_CRACK_SPELL_TILE_ID = 89
+
+
+
   ### Default Spells in Spellbook ===
 
   DEFAULT_ATTACK_SPELL_TILES = {
@@ -183,6 +217,8 @@ module MagicMaze
     :spell_heal           => HealSpellTile.new( 14, 2, 2 ),
     :spell_summon_mana    => SummonManaSpellTile.new( 15, 0, 3, 2 ),
     :spell_spy_eye        => SpyEyeSpellTile.new( 16, 1 ),
+    :spell_magic_block    => MagicBlockSpellTile.new( MAGIC_BLOCK_SPELL_TILE_ID, 8, 64),
+    :spell_magic_block_crack => MagicBlockCrackSpellTile.new( MAGIC_BLOCK_CRACK_SPELL_TILE_ID, 8, 32)
   }
 
 end

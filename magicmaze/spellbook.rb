@@ -18,7 +18,7 @@ module MagicMaze
     class SpellBook
       SPELL_NAMES = {
         :primary => [:spell_lightning, :spell_bigball, :spell_coolcube],
-        :secondary => [:spell_heal, :spell_summon_mana, :spell_magic_map, :spell_spy_eye]
+        :secondary => [:spell_heal, :spell_summon_mana, :spell_magic_map, :spell_spy_eye, :spell_magic_block, :spell_magic_block_crack]
       }
         
       ##

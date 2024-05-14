@@ -23,4 +23,34 @@ class TestSpellBook < Test::Unit::TestCase
     assert_equal( orig_spell, spell )
   end
 
+  def test_secondary_loop
+    orig_spell = @spellbook.spell( :secondary )
+    assert_equal( DEFAULT_OTHER_SPELL_TILES[:spell_heal], orig_spell)
+
+    @spellbook.page_spell(:secondary)
+    spell = @spellbook.spell(:secondary)
+    assert_equal( DEFAULT_OTHER_SPELL_TILES[:spell_summon_mana], spell)
+    @spellbook.page_spell(:secondary, -1)
+    spell = @spellbook.spell(:secondary)
+    assert_equal( orig_spell, spell )
+  end
+
+  def test_secondary_spell_names
+
+    secondary_spell_names = ::MagicMaze::SpellBook::SPELL_NAMES[:secondary]
+
+    (1...secondary_spell_names.size).each do |index|
+      @spellbook.page_spell(:secondary)
+      spell = @spellbook.spell(:secondary)
+      spell_name = secondary_spell_names[index]
+      p spell_name
+      p spell
+      assert_equal( DEFAULT_OTHER_SPELL_TILES[ spell_name ], spell)
+    end
+
+
+  end
+
+
+
 end
