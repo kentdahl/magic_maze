@@ -177,8 +177,32 @@ module MagicMaze
     end
 
     def do_magic
-      false
+
+      cmap = @caster.location.map
+      cx, cy = @caster.location.to_a
+      dx, dy = @caster.direction.to_2D_vector
+      bx = cx + dx
+      by = cy + dy
+
+      p "MagicBlockSpellTile doing..."
+      p [cx, cy], [dx, dy]
+
+      back_tile = cmap.background.get(bx, by)
+      if !back_tile.blocked? && !back_tile.kind_of?(MagicBlockTile)
+        block_tile = MagicBlockTile.new(30, @block_health, back_tile)
+        # TODO: Add to list to limit the amount allowed to be put.
+        # TODO: If it already exists, replenish door health?
+        cmap.background.set(bx, by, block_tile)
+        return true
+      else
+        # TODO: restore_mana
+        return false
+      end
+
     end
+
+    attr_accessor :original_object_tile
+
   end
 
   class MagicBlockCrackSpellTile < SpellTile

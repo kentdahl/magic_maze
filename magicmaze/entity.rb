@@ -355,7 +355,7 @@ module MagicMaze
 
         # if blocked, set desire = 0
         location = @location.to_maplocation + Direction.get_constant( curr_direction )
-        if location and not @location.allowed_access_to?( location.x, location.y )
+        if location and location.valid? and not @location.allowed_access_to?( location.x, location.y )
           desire = 0
         end
         if not location

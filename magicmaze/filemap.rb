@@ -243,9 +243,9 @@ module MagicMaze
           # Just for testing...
           if tile.blocked? and !tile_blocked
             puts "ERROR with tile at #{x}, #{y}" 
-            p @tilehash[:background][10]
-            p @tilehash[:background][138]
-            p tile
+            #p @tilehash[:background][10]
+            #p @tilehash[:background][138]
+            #p tile
           end
 
           gamemap.set_background( x, y, tile )

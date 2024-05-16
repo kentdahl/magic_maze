@@ -42,7 +42,7 @@ module MagicMaze
         raise ArgumentError, "Could not add #{diff.class} to Location."
       end
       # puts "#{@x}+#{dx}, #{@y}+#{dy}"
-      set_coords!( @x+dx, @y+dy )
+      set_coords!( (@x||0) +dx, (@y||0)+dy )    # TODO: Why are @x and/or @y occasionally not set here?!?
     end
 
     def +( diff )
@@ -111,6 +111,9 @@ module MagicMaze
       @map.send(grid_type).set( @x, @y, object )
     end
 
+    def valid?
+      @x && @y
+    end
 
     def to_maplocation
       MapLocation.new(@map,@x,@y)

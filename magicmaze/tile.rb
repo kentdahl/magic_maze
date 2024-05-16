@@ -238,8 +238,8 @@ module MagicMaze
     attr_reader :blocked
     alias :blocked? :blocked
    
-    def initialize( sprite_id = 0, blocked = false )
-      super( sprite_id + BACKGROUND_TILES_BEGIN )
+    def initialize( bg_sprite_id = 0, blocked = false )
+      super( bg_sprite_id + BACKGROUND_TILES_BEGIN )
       @blocked = blocked
     end
 
@@ -252,6 +252,22 @@ module MagicMaze
       dx, dy = caster.direction.to_2D_vector
       loc.map.set_background(loc.x + dx, loc.y + dy, self) rescue log_tile_error("Floor outside map!")
     end
+
+  end
+
+  class MagicBlockTile < BackgroundTile
+    attr_accessor :original_background_tile
+
+    def initialize( bg_sprite_id = 0, hodor = 64, orig_tile = nil )
+      super( bg_sprite_id )
+      @hodor = hodor
+      @original_background_tile = orig_tile
+    end
+
+    def blocked
+      @hodor > 0
+    end
+    alias :blocked? :blocked
 
   end
 

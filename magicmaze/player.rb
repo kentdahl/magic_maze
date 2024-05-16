@@ -118,6 +118,9 @@ module MagicMaze
       @direction.value = direction
     end
     
+    def peeking_location
+      (@location.to_maplocation + @direction).to_maplocation
+    end
 
     ##################################
     # Action ticks - what to check 

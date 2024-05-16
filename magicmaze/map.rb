@@ -262,6 +262,10 @@ module MagicMaze
     end
 
 
+    def inspect
+      "#{ self.class }"
+    end
+
 
   end
 
