@@ -212,7 +212,23 @@ module MagicMaze
     end
 
     def do_magic
-      false
+      cmap = @caster.location.map
+      cx, cy = @caster.location.to_a
+      dx, dy = @caster.direction.to_2D_vector
+      bx = cx + dx
+      by = cy + dy
+
+      p "CRACK MagicBlockSpellTile doing..."
+      p [cx, cy], [dx, dy]
+
+      back_tile = cmap.background.get(bx, by)
+      if back_tile.kind_of?(MagicBlockTile)
+        orig_tile = back_tile.original_background_tile
+        cmap.background.set(bx, by, orig_tile)
+        return true
+      else
+        return false
+      end
     end
   end
 
