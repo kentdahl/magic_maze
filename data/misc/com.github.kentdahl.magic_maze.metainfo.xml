@@ -18,6 +18,9 @@
   <provides>
     <binary>magicmaze</binary>
   </provides>
+  <developer id="io.github.kentdahl">
+    <name>Kent Dahl</name>
+  </developer>
   <content_rating type="oars-1.0">
     <content_attribute id="violence-cartoon">moderate</content_attribute>
     <content_attribute id="violence-bloodshed">mild</content_attribute>
